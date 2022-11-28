@@ -1,15 +1,23 @@
 export const SET_USER = "SET_USER";
 export const LOG_OUT = "LOG_OUT";
 
+export const SET_SPESE_LIST= "SET_SPESE_LIST";
+
+
 
 export const setUser = (user) => ({
     type : SET_USER ,
-    payload : user ,
+    payload : user 
 });
 
 export const logout = () => ({
-    type : LOG_OUT ,
+    type : LOG_OUT
 });
+
+export const setSpeseList = (speseList) => ({
+    type: SET_SPESE_LIST,
+    payload : speseList
+})
 
 export const logIn = (obj) => {
     const baseEndpoint = "http://localhost:8080/auth/login";
