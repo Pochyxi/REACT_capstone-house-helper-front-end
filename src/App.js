@@ -14,7 +14,8 @@ function App() {
             <Container fluid
                        style={{
                            backgroundColor: "#f3f2ef",
-                           minHeight: "100vh"
+                           minHeight: "100vh",
+                           overflow: "auto"
             }}>
                 <Row className="d-flex justify-content-between">
                     <AppBarComponent />

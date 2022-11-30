@@ -120,7 +120,6 @@ const AlimentiComponent = () => {
         const header = {
             'Authorization' : 'Bearer ' + token
         }
-
         try {
             const response = await fetch ( baseEndpoint , {
                 method : 'DELETE' ,
@@ -131,6 +130,7 @@ const AlimentiComponent = () => {
                 dispatch ( getProdottiList ( user.token ) )
                 dispatch ( getSpeseList ( user.token , user.id ) )
                 setSpesaListaNome ( [] )
+                console.log ("done")
             }
         } catch ( e ) {
             console.log ( e )
@@ -226,7 +226,11 @@ const AlimentiComponent = () => {
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     onFocus={ () => setDeleteProdottiFlag(true)}
-                                    onBlur={ () => setDeleteProdottiFlag(false)}
+                                    onBlur={ () => {
+                                        setTimeout(() => {
+                                            setDeleteProdottiFlag(false)
+                                        }, 1000)
+                                    }}
                                     value={ searchObj.search }
                                     onChange={ (e) => {
                                         handleSearch ( "search" , e.target.value )
