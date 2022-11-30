@@ -11,7 +11,11 @@ import AlimentiComponent from "./components/Alimenti/AlimentiComponent";
 function App() {
     return (
         <BrowserRouter>
-            <Container fluid>
+            <Container fluid
+                       style={{
+                           backgroundColor: "#f3f2ef",
+                           minHeight: "100vh"
+            }}>
                 <Row className="d-flex justify-content-between">
                     <AppBarComponent />
                     <Col xs={ 12 } style={{marginTop: "60px"}} className={ "py-2 px-0" }>

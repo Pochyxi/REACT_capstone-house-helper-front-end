@@ -15,7 +15,6 @@ const MenuProps = {
     PaperProps: {
         style: {
             maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
         },
     },
 };
@@ -47,11 +46,9 @@ const ProdottiSelectComponent = ({productName, setProductName}) => {
         );
     };
 
-    console.log(productName)
-
     return (
         <div>
-            <FormControl sx={{ m: 1, width: 300 }}>
+            <FormControl sx={{ m: 1, width: "100%" }}>
                 <InputLabel id="demo-multiple-chip-label">Prodotti</InputLabel>
                 <Select
                     labelId="demo-multiple-chip-label"
