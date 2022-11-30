@@ -10,7 +10,7 @@ const AppBarComponent = () => {
 
     return (
         <Box sx={ {flexGrow : 1 , padding : 0} }>
-            <AppBar position="static">
+            <AppBar position="fixed">
                 <Toolbar>
                     <IconButton
                         size="large"

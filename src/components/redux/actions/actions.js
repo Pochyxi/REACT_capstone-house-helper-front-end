@@ -2,12 +2,13 @@ export const SET_USER = "SET_USER";
 export const LOG_OUT = "LOG_OUT";
 
 export const SET_SPESE_LIST= "SET_SPESE_LIST";
+export const SET_PRODOTTI_LIST= "SET_PRODOTTI_LIST";
 
 
 
 export const setUser = (user) => ({
     type : SET_USER ,
-    payload : user 
+    payload : user
 });
 
 export const logout = () => ({
@@ -17,6 +18,11 @@ export const logout = () => ({
 export const setSpeseList = (speseList) => ({
     type: SET_SPESE_LIST,
     payload : speseList
+})
+
+export const setProdottiList = (prodottiList) => ({
+    type: SET_PRODOTTI_LIST,
+    payload : prodottiList
 })
 
 export const logIn = (obj) => {
@@ -42,6 +48,66 @@ export const logIn = (obj) => {
                 console.log ( data );
             } else {
                 console.log ( "username o password errata" );
+            }
+        } catch ( error ) {
+            console.log ( error );
+        }
+    };
+};
+
+export const getSpeseList = (key, userId) => {
+    const baseEndpoint = `http://localhost:8080/api/lista/userId/${userId}`;
+
+    const header = {
+        "Content-type" : "application/json" ,
+        "Authorization" : `Bearer ${key}`
+    };
+
+    return async (dispatch , getState) => {
+        try {
+            const response = await fetch ( baseEndpoint , {
+                method : "GET" ,
+                headers : header
+            } );
+
+            if ( response.ok ) {
+                const data = await response.json ();
+
+                dispatch ( setSpeseList ( data ) );
+
+                console.log ( data );
+            } else {
+                console.log ( "Error" );
+            }
+        } catch ( error ) {
+            console.log ( error );
+        }
+    };
+};
+
+export const getProdottiList = (key) => {
+    const baseEndpoint = `http://localhost:8080/api/prodotto`;
+
+    const header = {
+        "Content-type" : "application/json" ,
+        "Authorization" : `Bearer ${key}`
+    };
+
+    return async (dispatch , getState) => {
+        try {
+            const response = await fetch ( baseEndpoint , {
+                method : "GET" ,
+                headers : header
+            } );
+
+            if ( response.ok ) {
+                const data = await response.json ();
+
+                dispatch ( setProdottiList ( data ) );
+
+                console.log ( data );
+            } else {
+                console.log ( "Error" );
             }
         } catch ( error ) {
             console.log ( error );
