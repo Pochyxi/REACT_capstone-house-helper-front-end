@@ -43,9 +43,7 @@ const ListaSpesaSelectComponent = ({spesaListaNome, setSpesaListaNome}) => {
             typeof value === 'string' ? value.split(',') : value,
         );
     };
-
-    console.log(spesaListaNome)
-
+    
     return (
         <div>
             <FormControl sx={{ m: 1, width: 300 }}>

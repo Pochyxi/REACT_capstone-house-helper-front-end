@@ -14,7 +14,7 @@ function App() {
             <Container fluid>
                 <Row className="d-flex justify-content-between">
                     <AppBarComponent />
-                    <Col xs={ 12 } className={ "py-2 px-0" }>
+                    <Col xs={ 12 } style={{marginTop: "60px"}} className={ "py-2 px-0" }>
                         <Routes>
                             <Route path="/login" element={ <LoginComponent/> }/>
                             <Route path="/signup" element={ <SignUpComponent/> }/>
