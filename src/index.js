@@ -6,12 +6,18 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import { persistor , store } from "./components/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { DevSupport } from "@react-buddy/ide-toolbox";
+import { ComponentPreviews , useInitial } from "./dev";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+const root = ReactDOM.createRoot ( document.getElementById ( 'root' ) );
+root.render (
     <Provider store={ store }>
         <PersistGate persistor={ persistor }>
-            <App/>
+            <DevSupport ComponentPreviews={ ComponentPreviews }
+                        useInitialHook={ useInitial }
+            >
+                <App/>
+            </DevSupport>
         </PersistGate>
     </Provider>
 );
@@ -19,4 +25,4 @@ root.render(
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals ();

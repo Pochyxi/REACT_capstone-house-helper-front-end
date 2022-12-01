@@ -11,6 +11,7 @@ import Card from "@mui/material/Card";
 import SearchIcon from '@mui/icons-material/Search';
 import { styled , alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
+import { useNavigate } from "react-router-dom";
 
 const Search = styled ( 'div' ) ( ({theme}) => ({
     position : 'relative' ,
@@ -56,6 +57,7 @@ const StyledInputBase = styled ( InputBase ) ( ({theme}) => ({
 
 const AlimentiComponent = () => {
     const spesaList = useSelector ( state => state.fetch.spesaList )
+    const navigate = useNavigate ()
     const prodottiList = useSelector ( state => state.fetch.productList )
     const user = useSelector ( state => state.user.user )
     const [ deleteProdottiFlag , setDeleteProdottiFlag ] = useState (false);
@@ -90,6 +92,12 @@ const AlimentiComponent = () => {
         dispatch ( getSpeseList ( user.token , user.id ) )
         dispatch ( getProdottiList ( user.token ) )
     } , [] )
+
+    useEffect ( () => {
+        if (!user.token) {
+            navigate("/login");
+        }
+    }, [user.token] );
 
     const addListaSpesa = async (obj , token) => {
         const baseEndpoint = `http://localhost:8080/api/lista/new`
@@ -144,8 +152,9 @@ const AlimentiComponent = () => {
             <Row className={ "justify-content-center" }>
                 <Col
                     style={ {
-                        backgroundColor : "aliceblue" ,
+                        backgroundColor : "#0d6efd" ,
                         borderRight : "2px solid royalblue" ,
+                        boxShadow: "1px 1px 2px gray",
                         minHeight : 100 + "vh" ,
                         position : "fixed" ,
                         left : 0

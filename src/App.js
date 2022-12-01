@@ -7,6 +7,8 @@ import SignUpComponent from "./components/Signup/SignUpComponent";
 import HomeComponent from "./components/Home/HomeComponent";
 import AppBarComponent from "./components/AppBar/AppBarComponent";
 import AlimentiComponent from "./components/Alimenti/AlimentiComponent";
+import { Drawer , List , ListItem , ListItemText } from "@mui/material";
+import PostitComponent from "./components/Postit/PostitComponent";
 
 function App() {
     return (
@@ -25,6 +27,7 @@ function App() {
                             <Route path="/signup" element={ <SignUpComponent/> }/>
                             <Route path="/" element={ <HomeComponent/> }/>
                             <Route path="/alimenti" element={ <AlimentiComponent/> }/>
+                            <Route path="/postit" element={ <PostitComponent/> }/>
                         </Routes>
                     </Col>
                 </Row>

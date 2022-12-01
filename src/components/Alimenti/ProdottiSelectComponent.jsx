@@ -47,8 +47,8 @@ const ProdottiSelectComponent = ({productName, setProductName}) => {
     };
 
     return (
-        <div>
-            <FormControl sx={{ m: 1, width: "100%" }}>
+        <>
+            <FormControl sx={{width: "100%"}}>
                 <InputLabel id="demo-multiple-chip-label">Prodotti</InputLabel>
                 <Select
                     labelId="demo-multiple-chip-label"
@@ -77,7 +77,7 @@ const ProdottiSelectComponent = ({productName, setProductName}) => {
                     ))}
                 </Select>
             </FormControl>
-        </div>
+        </>
     );
 };
 

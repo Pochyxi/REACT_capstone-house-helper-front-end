@@ -182,129 +182,145 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                     <>
                         <Card sx={ {minWidth : "100%" , margin : "20px auto"} }>
                             <CardContent>
-                                <Row>
-                                    <Col className={ "d-flex align-items-center justify-content-end" }>
+                                <Row className={ "d-flex align-items-center justify-content-center" }>
+                                    <Col
+                                        style={{
+                                            borderBottom: "2px solid royalblue",
+                                    }}
+                                        xs={6}>
                                         <Typography style={ {textAlign : "center"} } variant="h5" component="div">
                                             {
                                                 spesaList.find ( el => el.id === parseInt ( idList ) ).nome + " "
                                             }
                                         </Typography>
                                     </Col>
-                                    <Col>
-                                        <Typography style={ {textAlign : "end"} } variant="h5" component="div">
-
-                                            <Button onClick={ () => {
-                                                removeLista ( idList , user.token )
-                                            } }>
-                                                <DeleteSweepIcon style={ {
-                                                    fontSize : "40px" ,
-                                                    cursor : "pointer"
-                                                } } color={ "error" }/>
-                                            </Button>
-
-                                        </Typography>
-                                    </Col>
-
                                 </Row>
-                                <Row
-                                    style={ {
-                                        border : "1px solid gainsboro" ,
-                                        borderRadius : "5px" ,
-                                        backgroundColor : "aliceblue"
-                                    } }
-                                    className={ "justify-content-center align-items-center mb-3" }>
-                                    <Col className={ "p-3" }>
-                                        {
-                                            !formProdottiFlag && (
-                                                <Form className={ "d-flex flex-row justify-content-center" }>
-                                                    <FormControl>
-                                                        <TextField
-                                                            required
-                                                            value={ formObj.nome }
-                                                            id="outlined-required"
-                                                            label="Nome prodotto"
-                                                            onChange={ event => handleForm ( "nome" , event.target.value ) }
-                                                        />
-                                                    </FormControl>
-                                                    <FormControl>
-                                                        <TextField
-                                                            required
-                                                            id="outlined-number"
-                                                            value={ formObj.prezzo }
-                                                            label="Prezzo"
-                                                            type="number"
-                                                            onChange={ event => handleForm ( "prezzo" , event.target.value ) }
-                                                            InputLabelProps={ {
-                                                                shrink : true ,
-                                                            } }
-                                                        />
-                                                    </FormControl>
-                                                    <Button
-                                                        onClick={ () => {
-                                                            addProduct ( formObj , user.token )
-                                                        } }
-                                                    >
-                                                        invia
-                                                    </Button>
-                                                    <Button
-                                                        onClick={ () => {
-                                                            setFormProdottiFlag ( true )
-                                                        } }
-                                                        color={ "error" }>
-                                                        indietro
-                                                    </Button>
-                                                </Form>
-                                            )
-                                        }
+                                <Row className={ "justify-content-center align-items-center mb-3"} style={ {
+                                    border : "1px solid gainsboro" ,
+                                    borderRadius : "5px" ,
+                                    borderBottom: 'none' ,
+                                    borderTop: 'none' ,
+                                    backgroundColor : "white" ,
+                                    color: "royalblue",
+                                    padding : "10px" ,
+                                    boxShadow: "0 1px 5px gray",
+                                } }>
+                                    <Row>
+
+                                        <Col className={ "d-flex align-items-center justify-content-start" }>
+                                            <Typography  style={ {textAlign : "start"} } variant="h6" component="div">
+                                                TOTALE:
+                                                { " " +
+                                                    calculateTotal ( idList , spesaList )[0]
+                                                }
+                                                ,
+                                                {
+                                                    calculateTotal ( idList , spesaList )[1] ?
+                                                        calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ).length === 1 ?
+                                                            calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "0" :
+                                                            calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "" :
+                                                        "00"
+
+                                                } €
+                                            </Typography>
+
+                                        </Col>
+                                        <Col>
+                                            <Typography style={ {textAlign : "end"} } variant="h5" component="div">
+
+                                                <Button onClick={ () => {
+                                                    removeLista ( idList , user.token )
+                                                } }>
+                                                    <DeleteSweepIcon style={ {
+                                                        fontSize : "40px" ,
+                                                        cursor : "pointer"
+                                                    } } color={ "error" }/>
+                                                </Button>
+
+                                            </Typography>
+                                        </Col>
+                                    </Row>
+                                    <Row className={ "justify-content-center align-items-center mb-3" }>
+                                        <Col className={ "bg-light p-0" }>
+                                            {
+                                                !formProdottiFlag && (
+                                                    <Col>
+                                                        <Form className={ "d-flex flex-row justify-content-center" }>
+                                                            <FormControl>
+                                                                <TextField
+                                                                    required
+                                                                    value={ formObj.nome }
+                                                                    id="outlined-required"
+                                                                    label="Nome prodotto"
+                                                                    onChange={ event => handleForm ( "nome" , event.target.value ) }
+                                                                />
+                                                            </FormControl>
+                                                            <FormControl>
+                                                                <TextField
+                                                                    required
+                                                                    id="outlined-number"
+                                                                    value={ formObj.prezzo }
+                                                                    label="Prezzo"
+                                                                    type="number"
+                                                                    onChange={ event => handleForm ( "prezzo" , event.target.value ) }
+                                                                    InputLabelProps={ {
+                                                                        shrink : true ,
+                                                                    } }
+                                                                />
+                                                            </FormControl>
+                                                            <Button
+                                                                variant='outlined'
+                                                                className={ 'mx-2' }
+                                                                onClick={ () => {
+                                                                    addProduct ( formObj , user.token )
+                                                                } }
+                                                            >
+                                                                invia
+                                                            </Button>
+                                                            <Button
+                                                                variant='outlined'
+                                                                onClick={ () => {
+                                                                    setFormProdottiFlag ( true )
+                                                                } }
+                                                                color={ "error" }>
+                                                                indietro
+                                                            </Button>
+                                                        </Form>
+                                                    </Col>
+                                                )
+                                            }
+                                            {
+                                                formProdottiFlag && (
+                                                    <Col>
+                                                        <ProdottiSelectComponent productName={ productName } setProductName={ setProductName }/>
+                                                    </Col>
+                                                )
+                                            }
+                                        </Col>
                                         {
                                             formProdottiFlag && (
-                                                <ProdottiSelectComponent productName={ productName }
-                                                                         setProductName={ setProductName }/>
+                                                <Col className={ "text-start" }>
+                                                    <ChangeCircleIcon
+                                                        onClick={ () => {
+                                                            setFormProdottiFlag ( !formProdottiFlag )
+                                                        } }
+                                                        sx={ {
+                                                            '&:hover' : {
+                                                                color : "royalblue"
+                                                            }
+                                                        } }
+                                                        style={ {
+                                                            fontSize : "2em" ,
+                                                            marginBottom : "5px" ,
+                                                            cursor : "pointer"
+                                                        } }/>
+                                                    <h5 className={ "d-inline" }>Inserisci manualmente</h5>
+                                                </Col>
                                             )
                                         }
-
-                                    </Col>
-                                    {
-                                        formProdottiFlag && (
-                                            <Col className={ "text-start" }>
-                                                <ChangeCircleIcon
-                                                    onClick={ () => {
-                                                        setFormProdottiFlag ( !formProdottiFlag )
-                                                    } }
-                                                    sx={ {
-                                                        '&:hover' : {
-                                                            color : "royalblue"
-                                                        }
-                                                    } }
-                                                    style={ {
-                                                        fontSize : "2em" ,
-                                                        marginBottom : "5px" ,
-                                                        cursor : "pointer"
-                                                    } }/>
-                                                <h5 className={ "d-inline" }>Inserisci manualmente</h5>
-                                            </Col>
-                                        )
-                                    }
-
-
-                                    <Col style={ {
-                                        textAlign : "end"
-                                    } }>
-                                        TOTALE:
-                                        { " " +
-                                            calculateTotal ( idList , spesaList )[0]
-                                        }
-                                        ,
-                                        {
-                                            calculateTotal ( idList , spesaList )[1] ?
-                                                calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ).length === 1 ?
-                                                    calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "0" :
-                                                    calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "" :
-                                                "00"
-
-                                        } €
-                                    </Col>
+                                    </Row>
                                 </Row>
+
 
                                 {
 
@@ -320,7 +336,7 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                                                         } }
                                                         xs={ 4 }>
                                                         <Button
-                                                            style={{margin: 0, padding: 0}}
+                                                            style={ {margin : 0 , padding : 0} }
                                                             onClick={ () => {
                                                                 removeProductOnList ( idList , p.id , user.token , "PUT" )
                                                             } }>
@@ -354,7 +370,6 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                                 }
                                 <Row
                                     style={ {
-                                        borderTop : "2px solid indigo" ,
                                         padding : "10px"
                                     } }
                                     className={ "mt-4" }>

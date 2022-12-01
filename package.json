@@ -23,7 +23,9 @@
     "redux": "^4.2.0",
     "redux-persist": "^6.0.0",
     "redux-persist-transform-encrypt": "^4.0.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@react-buddy/ide-toolbox": "^2.3.1",
+    "@react-buddy/palette-mui": "^5.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
