@@ -2,7 +2,7 @@ import React , { useEffect , useState } from 'react';
 import { Col , Container , Form , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
 import { useDispatch , useSelector } from "react-redux";
-import { getPostitList } from "../redux/actions/actions";
+import { getPostitList } from "../../redux/actions/actions";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import {
     Button ,

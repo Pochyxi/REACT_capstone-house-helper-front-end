@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
-import { persistor , store } from "./components/redux/store";
+import { persistor , store } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { DevSupport } from "@react-buddy/ide-toolbox";
 import { ComponentPreviews , useInitial } from "./dev";

@@ -9,6 +9,7 @@ import AppBarComponent from "./components/AppBar/AppBarComponent";
 import AlimentiComponent from "./components/Alimenti/AlimentiComponent";
 import { Drawer , List , ListItem , ListItemText } from "@mui/material";
 import PostitComponent from "./components/Postit/PostitComponent";
+import UtenzeComponent from "./components/Utenze/UtenzeComponent";
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                             <Route path="/" element={ <HomeComponent/> }/>
                             <Route path="/alimenti" element={ <AlimentiComponent/> }/>
                             <Route path="/postit" element={ <PostitComponent/> }/>
+                            <Route path="/utenze" element={ <UtenzeComponent/> }/>
                         </Routes>
                     </Col>
                 </Row>

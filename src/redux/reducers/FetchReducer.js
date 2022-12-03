@@ -1,10 +1,11 @@
-import { SET_POSTIT_LIST , SET_PRODOTTI_LIST , SET_SPESE_LIST } from "../actions/actions";
+import { SET_BOLLETTE_LIST , SET_POSTIT_LIST , SET_PRODOTTI_LIST , SET_SPESE_LIST } from "../actions/actions";
 
 
 const initialState = {
     spesaList: [],
     productList: [],
     postitList: [],
+    bollettaList: []
 };
 
 const fetchReducer = (state = initialState, action) => {
@@ -25,6 +26,12 @@ const fetchReducer = (state = initialState, action) => {
             return {
                 ...state,
                 postitList : action.payload
+            }
+
+        case SET_BOLLETTE_LIST:
+            return {
+                ...state,
+                bollettaList : action.payload
             }
 
         default:

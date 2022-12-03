@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Col , Form , Row } from "react-bootstrap";
 import ProdottiSelectComponent from "./ProdottiSelectComponent";
-import { getProdottiList , getSpeseList , setSpeseList , setUser } from "../redux/actions/actions";
+import { getProdottiList , getSpeseList , setSpeseList , setUser } from "../../redux/actions/actions";
 import { useDispatch , useSelector } from "react-redux";
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';

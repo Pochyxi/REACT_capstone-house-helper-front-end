@@ -3,7 +3,7 @@ import { AppBar , Box , Button , IconButton , Tab , Tabs , Toolbar , Typography 
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation , useNavigate } from "react-router-dom";
 import { useDispatch , useSelector } from "react-redux";
-import { logout } from "../redux/actions/actions";
+import { logout } from "../../redux/actions/actions";
 
 
 const AppBarComponent = () => {
@@ -32,6 +32,8 @@ const AppBarComponent = () => {
             setValue('ALIMENTI');
         } else if (location.pathname === "/postit") {
             setValue('POSTIT');
+        } else if (location.pathname === "/utenze") {
+            setValue('UTENZE')
         }
     }, [location.pathname] );
 
@@ -44,6 +46,8 @@ const AppBarComponent = () => {
             navigate("/alimenti")
         } else if (value === 'POSTIT') {
             navigate("/postit")
+        } else if (value === 'UTENZE') {
+            navigate("/utenze")
         }
     }, [value] );
 
@@ -101,6 +105,7 @@ const AppBarComponent = () => {
                                 <Tab value="HOME" label={ "HOME" }/>
                                 <Tab value={ "POSTIT" } label="POSTIT"/>
                                 <Tab value={ "ALIMENTI" } label="ALIMENTI"/>
+                                <Tab value={ "UTENZE" } label="UTENZE"/>
                             </Tabs>
                         )
                     }

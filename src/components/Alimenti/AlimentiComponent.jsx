@@ -1,7 +1,7 @@
 import React , { useEffect , useState } from 'react';
 import { Col , Container , Form , Row } from "react-bootstrap";
 import { useDispatch , useSelector } from "react-redux";
-import { getProdottiList , getSpeseList } from "../redux/actions/actions";
+import { getProdottiList , getSpeseList } from "../../redux/actions/actions";
 import ProdottiSelectComponent from "./ProdottiSelectComponent";
 import ListaSpesaSelectComponent from "./ListaSpesaSelectComponent";
 import CardSpesaList from "./CardSpesaList";
