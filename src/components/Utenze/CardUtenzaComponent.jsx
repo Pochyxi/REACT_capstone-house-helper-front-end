@@ -1,5 +1,13 @@
-import React from 'react';
-import { Paper } from "@mui/material";
+import React , { useState } from 'react';
+import {
+    Button , Dialog ,
+    DialogActions ,
+    DialogContent ,
+    DialogContentText ,
+    DialogTitle ,
+    IconButton ,
+    Paper , Slide
+} from "@mui/material";
 import { Col , Row } from "react-bootstrap";
 import GasMeterIcon from '@mui/icons-material/GasMeter';
 import OpacityIcon from '@mui/icons-material/Opacity';
@@ -8,8 +16,24 @@ import GradingIcon from '@mui/icons-material/Grading';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
 import EuroIcon from '@mui/icons-material/Euro';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import { getBolletteList } from "../../redux/actions/actions";
+import { useDispatch , useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
 
 const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
+    const user = useSelector ( state => state.user.user )
+    const dispatch = useDispatch ()
+    const navigate = useNavigate ()
+
+    const [ dialogEliminazioneFlag , setDialogEliminazioneFlag ] = useState (false);
+    const handleClickOpen = () => {
+        setDialogEliminazioneFlag(true);
+    };
+    const handleClose = () => {
+        setDialogEliminazioneFlag(false);
+    };
 
     //IN BASE ALLA STRINGA RITORNERA' UN'ICONA DIVERSA
     const determinaIcona = (string) => {
@@ -32,10 +56,53 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
                 )
         }
     }
+
+    // FETCH PER ELIMINARE UNA BOLLETTA
+    const deleteBolletta = async (bollettaId , key) => {
+        const baseEndpoint = `http://localhost:8080/api/bolletta/delete/${ bollettaId }`
+        const header = {
+            'Authorization' : 'Bearer ' + key
+        }
+
+        try {
+            const response = await fetch ( baseEndpoint , {
+                method : 'DELETE' ,
+                headers : header ,
+            } )
+
+            if ( response.ok ) {
+                handleClose()
+                dispatch ( getBolletteList ( user.token , user.id ) )
+            }
+
+        } catch ( e ) {
+            console.log ( e )
+        }
+    }
+
+    console.log(dialogEliminazioneFlag)
+
     return (
         <Paper>
             {/*CONTENITORE ESTERNO*/ }
-            <Row className={ 'd-flex justify-content-center p-2' }>
+            <Row className={ 'd-flex justify-content-center pb-2' }>
+                <Col>
+                    <IconButton
+                        onClick={handleClickOpen}
+                        style={ {
+                            color : 'red'
+                        } }
+                        aria-label="add">
+                        <BackspaceIcon/>
+                    </IconButton>
+                    <DialogDeleteComponent
+                        dialogEliminazioneFlag={dialogEliminazioneFlag}
+                        handleClose={handleClose}
+                        deleteBolletta={deleteBolletta}
+                        bolletta={bolletta}
+                        user={user}
+                    />
+                </Col>
                 {/*SEZIONE FORNITURA PIU' LOGO*/ }
                 <Col
                     className={ 'd-flex' }
@@ -45,11 +112,11 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
                         sx={ {
                             fontSize : '2em'
                         } }
-                        className={ 'd-flex align-items-end p-3' }>
+                        className={ 'd-flex align-items-end p-3 pt-0' }>
                         <h4 className={ 'm-0' }>{ bolletta.fornitura }</h4>
                     </Col>
                     {/*COLONNA LOGO*/ }
-                    <Col className={ 'p-3 text-end' }>
+                    <Col className={ 'p-3 pt-0 text-end' }>
                         { determinaIcona ( bolletta.fornitura ) }
                     </Col>
                 </Col>
@@ -59,7 +126,7 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
 
                     className={ 'd-flex flex-wrap justify-content-center' }
                     xs={ 11 }>
-                    {/*I DATI DELLA BOLLETTA*/}
+                    {/*I DATI DELLA BOLLETTA*/ }
                     <Col
                         xs={ 12 }
                         md={ 6 }
@@ -67,42 +134,42 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
                             borderLeft : '3px solid black' ,
                         } }
                         className={ 'p-3' }>
-                        {/*DATI BOLLETTA*/}
+                        {/*DATI BOLLETTA*/ }
                         <Row style={ {
                             position : 'relative' ,
                             bottom : '20px'
                         } }>
                             <b style={ {color : 'royalblue'} } className={ 'p-0' }><ReceiptLongIcon/> DATI BOLLETTA</b>
                         </Row>
-                        {/*FORNITURA*/}
+                        {/*FORNITURA*/ }
                         <Row className={ 'px-2 mt-1' }>
                             <Col>
                                 <b>Fornitura</b>
                             </Col>
                             <Col>
-                                { bolletta.fornitura}
+                                { bolletta.fornitura }
                             </Col>
                         </Row>
-                        {/*NUMERO*/}
+                        {/*NUMERO*/ }
                         <Row className={ 'px-2 mt-1' }>
                             <Col>
                                 <b>N. Fattura</b>
                             </Col>
                             <Col>
-                                { bolletta.numero}
+                                <b>{ bolletta.numero }</b>
                             </Col>
                         </Row>
-                        {/*DATA DI EMISSIONE*/}
+                        {/*DATA DI EMISSIONE*/ }
                         <Row className={ 'px-2 mt-1' }>
                             <Col>
                                 <b>Del</b>
                             </Col>
                             <Col>
-                                { bolletta.emissione}
+                                <b>{ bolletta.emissione }</b>
                             </Col>
                         </Row>
                     </Col>
-                    {/*SEZIONE TOTALE DA PAGARE*/}
+                    {/*SEZIONE TOTALE DA PAGARE*/ }
                     <Col
                         xs={ 12 }
                         md={ 6 }
@@ -111,40 +178,40 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
                             color : 'royalblue' ,
                             borderLeft : '3px solid black'
                         } }>
-                        {/*TOTALE DA PAGARE*/}
+                        {/*TOTALE DA PAGARE*/ }
                         <Row style={ {
                             position : 'relative' ,
                             bottom : '20px'
                         } }>
                             <b style={ {color : 'royalblue'} } className={ 'p-0' }><EuroIcon/> TOTALE DA PAGARE</b>
                         </Row>
-                        <Row className={'flex-column align-items-end'}>
+                        <Row className={ 'flex-column align-items-end' }>
                             <Col
-                                className={'d-flex'}
-                                style={{
-                                    fontSize: '1.5em',
-                                    fontWeight: 'bolder',
-                                    color: 'black'
-                                }}
-                                xs={6}>
+                                className={ 'd-flex' }
+                                style={ {
+                                    fontSize : '1.5em' ,
+                                    fontWeight : 'bolder' ,
+                                    color : 'black'
+                                } }
+                                xs={ 6 }>
                                 <Col>
-                                    {bolletta.totale}
+                                    { bolletta.totale }
                                 </Col>
-                                <Col style={{
-                                    fontSize: '.9em',
-                                }}>
-                                    <EuroIcon style={{fontSize: '1.5em'}}/>
+                                <Col style={ {
+                                    fontSize : '.9em' ,
+                                } }>
+                                    <EuroIcon style={ {fontSize : '1.5em'} }/>
                                 </Col>
                             </Col>
                         </Row>
-                        <Row className={'flex-column align-items-end'}>
+                        <Row className={ 'flex-column align-items-end' }>
                             <Col
-                                style={{
-                                    fontSize: '.9em',
-                                    color: 'black'
-                                }}
-                                xs={12}>
-                                Entro il <b>{bolletta.scadenza}</b>
+                                style={ {
+                                    fontSize : '.9em' ,
+                                    color : 'black'
+                                } }
+                                xs={ 12 }>
+                                Entro il <b>{ bolletta.scadenza }</b>
                             </Col>
                         </Row>
                     </Col>
@@ -165,11 +232,11 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
                                 <b style={ {color : 'royalblue'} } className={ 'p-0' }><QueryBuilderIcon/> PERIODO</b>
                             </Row>
                             <Row>
-                                <Col style={{
-                                    fontSize : '1.1em',
+                                <Col style={ {
+                                    fontSize : '1.1em' ,
                                     color : "black"
-                                }}>
-                                    Dal <b>{bolletta.periodoInizio}</b> al <b>{bolletta.periodoFine}</b>
+                                } }>
+                                    Dal <b>{ bolletta.periodoInizio }</b> al <b>{ bolletta.periodoFine }</b>
                                 </Col>
                             </Row>
                         </Col>
