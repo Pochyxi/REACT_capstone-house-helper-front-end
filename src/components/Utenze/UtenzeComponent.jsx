@@ -105,7 +105,7 @@ const UtenzeComponent = () => {
     //
 
     // FLAG PER APRIRE LA SOTTOSEZIONE DI RICERCA PER SCADENZA RANGE
-    const [ ricercaScadenzaRangeFlag , setRicercaScadenzaRangeFlag ] = useState (false);
+    const [ ricercaScadenzaRangeFlag , setRicercaScadenzaRangeFlag ] = useState ( false );
     //
 
     // VALORI DELLA SELEZIONE EFFETTUATA NEL RANGE DI SCADENZA
@@ -121,81 +121,81 @@ const UtenzeComponent = () => {
     //
 
     // FETCH DI RICERCA PER RANGE DI EMISSIONE
-    const fetchRicercaEmissioneRange = async (inizio, fine, userId, token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/emissione-range/${inizio}/${fine}/userId/${userId}`
+    const fetchRicercaEmissioneRange = async (inizio , fine , userId , token) => {
+        const baseEndpoint = `http://localhost:8080/api/bolletta/emissione-range/${ inizio }/${ fine }/userId/${ userId }`
         const header = {
             'Authorization' : 'Bearer ' + token
         }
 
         try {
-            const response = await fetch(
-                baseEndpoint,
+            const response = await fetch (
+                baseEndpoint ,
                 {
-                    method: 'GET',
-                    headers: header
+                    method : 'GET' ,
+                    headers : header
                 }
             )
 
-            if (response.ok) {
-                const data = await response.json();
-                dispatch(setBolletteList(data));
+            if ( response.ok ) {
+                const data = await response.json ();
+                dispatch ( setBolletteList ( data ) );
                 // dispatch(getBolletteList(user.token, user.id))
-                console.log (data)
+                console.log ( data )
             }
-        } catch (e) {
-            console.log ( e)
+        } catch ( e ) {
+            console.log ( e )
         }
     }
 
     //FETCH DI RICERCA PER RANGE DI SCADENZA
-    const fetchRicercaScadenzaRange = async (inizio, fine, userId, token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/scadenza-maggiore/${inizio}/scadenza-minore/${fine}/userId/${userId}`
+    const fetchRicercaScadenzaRange = async (inizio , fine , userId , token) => {
+        const baseEndpoint = `http://localhost:8080/api/bolletta/scadenza-maggiore/${ inizio }/scadenza-minore/${ fine }/userId/${ userId }`
         const header = {
             'Authorization' : 'Bearer ' + token
         }
 
         try {
-            const response = await fetch(
-                baseEndpoint,
+            const response = await fetch (
+                baseEndpoint ,
                 {
-                    method: 'GET',
-                    headers: header
+                    method : 'GET' ,
+                    headers : header
                 }
             )
 
-            if (response.ok) {
-                const data = await response.json();
-                dispatch(setBolletteList(data));
-                console.log (data)
+            if ( response.ok ) {
+                const data = await response.json ();
+                dispatch ( setBolletteList ( data ) );
+                console.log ( data )
             }
-        } catch (e) {
-            console.log ( e)
+        } catch ( e ) {
+            console.log ( e )
         }
     }
 
     // FETCH DI RICERCA PER NUMERO FATTURA
-    const fetchRicercaNumeroFattura = async (numeroFattura, userId, token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/numero-fattura/${numeroFattura}/userId/${userId}`
+    const fetchRicercaNumeroFattura = async (numeroFattura , userId , token) => {
+        const baseEndpoint = `http://localhost:8080/api/bolletta/numero-fattura/${ numeroFattura }/userId/${ userId }`
         const header = {
             'Authorization' : 'Bearer ' + token
         }
 
         try {
-            const response = await fetch(
-                baseEndpoint,
+            const response = await fetch (
+                baseEndpoint ,
                 {
-                    method: 'GET',
-                    headers: header
+                    method : 'GET' ,
+                    headers : header
                 }
             )
 
-            if (response.ok) {
-                const data = await response.json();
-                dispatch(setBolletteList(data));
-                console.log (data)
+            if ( response.ok ) {
+                const data = await response.json ();
+                dispatch ( setBolletteList ( data ) );
+                console.log ( data )
             }
-        } catch (e) {
-            console.log ( e)
+        } catch ( e ) {
+            console.log ( e )
         }
     }
 
@@ -269,17 +269,6 @@ const UtenzeComponent = () => {
     }
     //
 
-
-    console.log ( "INIZIO TEST VALORI RICERCA" )
-    console.log ( "Valori range emissione")
-    console.log ( dataInizioRange )
-    console.log ( dataFineRange )
-    console.log ("valori range scadenza")
-    console.log ( dataInizioRangeScadenza)
-    console.log ( dataFineRangeScadenza )
-    console.log ( "valore numero fattura")
-    console.log ( numeroFattura )
-    console.log ( "fine----------" )
 
     console.log ( formBollettaObj )
 
@@ -355,7 +344,7 @@ const UtenzeComponent = () => {
 
                                         } }>
                                             <Row className={ "p-2 justify-content-center" }>
-                                                {/*COMPONENTE PER LA SELEZIONE DELLA FORNITURA*/}
+                                                {/*COMPONENTE PER LA SELEZIONE DELLA FORNITURA*/ }
                                                 <FornituraSelectedComponent
                                                     handleForm={ handleForm }
                                                     fornituraState={ fornituraState }
@@ -459,7 +448,7 @@ const UtenzeComponent = () => {
 
                         </Card>
 
-                        {/*SEZIONE DI RICERCA*/}
+                        {/*SEZIONE DI RICERCA*/ }
                         <Card sx={ {
                             overflow : "scroll" ,
                             '&::-webkit-scrollbar' : {
@@ -475,11 +464,13 @@ const UtenzeComponent = () => {
                                         <ContentPasteSearchIcon/>
                                     </IconButton>
                                 ) : (
+                                    // AL CLICK CHIUDO TUTTE LE SEZIONI
                                     <IconButton onClick={ () => {
                                         setRicercaFlag ( false )
-                                        setRicercaRangeFlag(false);
-                                        setRicercaNumeroFatturaFlag(false)
-                                        dispatch(getBolletteList(user.token, user.id))
+                                        setRicercaRangeFlag ( false );
+                                        setRicercaNumeroFatturaFlag ( false )
+                                        setRicercaScadenzaRangeFlag ( false )
+                                        dispatch ( getBolletteList ( user.token , user.id ) )
                                     } } aria-label="delete">
                                         <CancelIcon/>
                                     </IconButton>
@@ -505,7 +496,8 @@ const UtenzeComponent = () => {
                                                                 fontSize : '1.5em' ,
                                                             } }/>
                                                         </IconButton>
-                                                        <b className={ 'd-flex align-items-end' }>Ricerca per periodo emissione range</b>
+                                                        <b className={ 'd-flex align-items-end' }>Ricerca per periodo emissione
+                                                            range</b>
                                                     </Col>
                                                 )
                                             }
@@ -570,8 +562,8 @@ const UtenzeComponent = () => {
                                                 </Col>
                                                 <Col>
                                                     <TextField
-                                                        value={dataInizioRangeScadenza}
-                                                        onChange={(e) => setDataInizioRangeScadenza(e.target.value)}
+                                                        value={ dataInizioRangeScadenza }
+                                                        onChange={ (e) => setDataInizioRangeScadenza ( e.target.value ) }
                                                         type="date"
                                                         id="outlined-basic"
                                                         variant="outlined"/>
@@ -589,8 +581,8 @@ const UtenzeComponent = () => {
                                                 </Col>
                                                 <Col>
                                                     <TextField
-                                                        value={dataFineRangeScadenza}
-                                                        onChange={(e) => setDataFineRangeScadenza(e.target.value)}
+                                                        value={ dataFineRangeScadenza }
+                                                        onChange={ (e) => setDataFineRangeScadenza ( e.target.value ) }
                                                         type="date"
                                                         id="outlined-basic"
                                                         variant="outlined"/>
@@ -601,14 +593,14 @@ const UtenzeComponent = () => {
                                         <Row className={ 'pt-3' }>
                                             <Col>
                                                 <Button
-                                                    onClick={() => {
-                                                        fetchRicercaScadenzaRange(
-                                                            dataInizioRangeScadenza,
-                                                            dataFineRangeScadenza,
-                                                            user.id,
+                                                    onClick={ () => {
+                                                        fetchRicercaScadenzaRange (
+                                                            dataInizioRangeScadenza ,
+                                                            dataFineRangeScadenza ,
+                                                            user.id ,
                                                             user.token
                                                         )
-                                                    }}
+                                                    } }
                                                     variant={ 'contained' }
                                                     color={ "primary" }
                                                     aria-label="add">
@@ -636,8 +628,8 @@ const UtenzeComponent = () => {
                                                 </Col>
                                                 <Col>
                                                     <TextField
-                                                        value={dataInizioRange}
-                                                        onChange={(e) => setDataInizioRange(e.target.value)}
+                                                        value={ dataInizioRange }
+                                                        onChange={ (e) => setDataInizioRange ( e.target.value ) }
                                                         type="date"
                                                         id="outlined-basic"
                                                         variant="outlined"/>
@@ -655,8 +647,8 @@ const UtenzeComponent = () => {
                                                 </Col>
                                                 <Col>
                                                     <TextField
-                                                        value={dataFineRange}
-                                                        onChange={(e) => setDataFineRange(e.target.value)}
+                                                        value={ dataFineRange }
+                                                        onChange={ (e) => setDataFineRange ( e.target.value ) }
                                                         type="date"
                                                         id="outlined-basic"
                                                         variant="outlined"/>
@@ -667,14 +659,14 @@ const UtenzeComponent = () => {
                                         <Row className={ 'pt-3' }>
                                             <Col>
                                                 <Button
-                                                    onClick={() => {
-                                                        fetchRicercaEmissioneRange(
-                                                            dataInizioRange,
-                                                            dataFineRange,
-                                                            user.id,
+                                                    onClick={ () => {
+                                                        fetchRicercaEmissioneRange (
+                                                            dataInizioRange ,
+                                                            dataFineRange ,
+                                                            user.id ,
                                                             user.token
                                                         )
-                                                    }}
+                                                    } }
                                                     variant={ 'contained' }
                                                     color={ "primary" }
                                                     aria-label="add">
@@ -703,8 +695,8 @@ const UtenzeComponent = () => {
                                             </Col>
                                             <Col>
                                                 <TextField
-                                                    value={numeroFattura}
-                                                    onChange={(e) => setNumeroFattura(e.target.value)}
+                                                    value={ numeroFattura }
+                                                    onChange={ (e) => setNumeroFattura ( e.target.value ) }
                                                     type="number"
                                                     label="N. Fattura"
                                                     id="outlined-basic"
@@ -714,9 +706,9 @@ const UtenzeComponent = () => {
                                         <Row className={ 'pt-3' }>
                                             <Col>
                                                 <Button
-                                                    onClick={() => {
-                                                        fetchRicercaNumeroFattura(numeroFattura, user.id, user.token)
-                                                    }}
+                                                    onClick={ () => {
+                                                        fetchRicercaNumeroFattura ( numeroFattura , user.id , user.token )
+                                                    } }
                                                     variant={ 'contained' }
                                                     color={ "primary" }
                                                     aria-label="add">
@@ -730,12 +722,12 @@ const UtenzeComponent = () => {
                         </Card>
                     </Row>
                 </Col>
-                {/*COLONNA FANTASMA CHE PRENDE LO SPAZIO DELLA NAVBAR SINISTRA FIXED*/}
+                {/*COLONNA FANTASMA CHE PRENDE LO SPAZIO DELLA NAVBAR SINISTRA FIXED*/ }
                 <Col xs={ 3 }>
 
                 </Col>
 
-                {/*SEZIONE DEGLI SWITCH FORNITURA*/}
+                {/*SEZIONE DEGLI SWITCH FORNITURA*/ }
                 <Col xs={ 9 }>
                     <Row className={ 'text-center justify-content-between' }>
                         <Col className={ 'd-flex justify-content-center' }>

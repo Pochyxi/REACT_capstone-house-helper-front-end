@@ -34,6 +34,8 @@ const AppBarComponent = () => {
             setValue('POSTIT');
         } else if (location.pathname === "/utenze") {
             setValue('UTENZE')
+        } else if (location.pathname === "/statistiche") {
+            setValue('STATISTICHE');
         }
     }, [location.pathname] );
 
@@ -48,6 +50,8 @@ const AppBarComponent = () => {
             navigate("/postit")
         } else if (value === 'UTENZE') {
             navigate("/utenze")
+        } else if(value === 'STATISTICHE') {
+            navigate("/statistiche")
         }
     }, [value] );
 
@@ -106,6 +110,7 @@ const AppBarComponent = () => {
                                 <Tab value={ "POSTIT" } label="POSTIT"/>
                                 <Tab value={ "ALIMENTI" } label="ALIMENTI"/>
                                 <Tab value={ "UTENZE" } label="UTENZE"/>
+                                <Tab value={ "STATISTICHE" } label="STATISTICHE"/>
                             </Tabs>
                         )
                     }

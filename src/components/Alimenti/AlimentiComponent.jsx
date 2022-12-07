@@ -2,7 +2,6 @@ import React , { useEffect , useState } from 'react';
 import { Col , Container , Form , Row } from "react-bootstrap";
 import { useDispatch , useSelector } from "react-redux";
 import { getProdottiList , getSpeseList } from "../../redux/actions/actions";
-import ProdottiSelectComponent from "./ProdottiSelectComponent";
 import ListaSpesaSelectComponent from "./ListaSpesaSelectComponent";
 import CardSpesaList from "./CardSpesaList";
 import { Button , List , ListItem , ListItemButton , ListItemText , TextField } from "@mui/material";
@@ -12,6 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { styled , alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import { useNavigate } from "react-router-dom";
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 
 const Search = styled ( 'div' ) ( ({theme}) => ({
     position : 'relative' ,
@@ -145,7 +145,18 @@ const AlimentiComponent = () => {
         }
     }
 
-    console.log ( prodottiList.filter ( list => list.nome.toUpperCase ().includes ( searchObj.search.toUpperCase () ) ) )
+    console.log (spesaListaNome)
+
+    useEffect(() => {
+        if(spesaList.length > 0) {
+            for(let i = 0; i < spesaList.length - 1; i++) {
+                setSpesaListaNome(
+                    [...spesaListaNome, spesaList[i].id + " " + spesaList[i].nome]
+                )
+            }
+
+        }
+    }, [])
 
     return (
         <Container fluid>
@@ -277,29 +288,42 @@ const AlimentiComponent = () => {
 
                 </Col>
                 <Col xs={ 9 }>
-                    <Row className={ "justify-content-center" }>
-                        {
-                            spesaListaNome.map ( (list , i) => {
-                                let size = 12
-                                switch (spesaListaNome.length) {
-                                    case 1:
-                                        size = 12
-                                        break
-                                    case 2:
-                                        size = 6
-                                        break
-                                    default:
-                                        size = 12
+                    {
+                        spesaListaNome.length > 0 ? (
+                            <Row className={ "justify-content-center" }>
+                                {
+                                    spesaListaNome.map ( (list , i) => {
+                                        let size = 12
+                                        switch (spesaListaNome.length) {
+                                            case 1:
+                                                size = 12
+                                                break
+                                            case 2:
+                                                size = 6
+                                                break
+                                            default:
+                                                size = 12
+                                        }
+                                        return (
+                                            <Col key={ i } xs={ size }>
+                                                <CardSpesaList setSpesaListaNome={ setSpesaListaNome } list={ list }
+                                                               spesaList={ spesaList } index={ i }/>
+                                            </Col>
+                                        )
+                                    } )
                                 }
-                                return (
-                                    <Col key={ i } xs={ size }>
-                                        <CardSpesaList setSpesaListaNome={ setSpesaListaNome } list={ list }
-                                                       spesaList={ spesaList } index={ i }/>
-                                    </Col>
-                                )
-                            } )
-                        }
-                    </Row>
+                            </Row>
+                        ) : (
+                            <Row className={ "justify-content-center mt-5"}>
+                                <Col  className={'mt-4'}>
+                                    <KeyboardDoubleArrowLeftIcon style={{fontSize: '3em', color: 'royalblue'}}/>
+                                </Col>
+                                <h3>Seleziona una lista per iniziare</h3>
+                            </Row>
+
+                        )
+                    }
+
                 </Col>
             </Row>
         </Container>

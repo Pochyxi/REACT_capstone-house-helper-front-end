@@ -52,14 +52,18 @@ function SignUpComponent() {
   return (
     <div style={
       {
-        color: "royalblue",
         borderRadius: "5px",
-        padding: "20px",
-        backgroundColor: "aliceblue",
-        fontSize: "1.5em"
+        fontSize: "1.5em",
+        minHeight: "100vh",
       }
     }>
       <Form
+          style={{
+            width: "50%",
+            margin: "0 auto",
+            borderLeft: "5px solid black",
+            padding: "10px",
+          }}
         onSubmit={(e) => {
           e.preventDefault();
           signUp(formObj);

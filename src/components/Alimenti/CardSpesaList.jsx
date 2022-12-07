@@ -203,7 +203,7 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                                     backgroundColor : "white" ,
                                     color: "royalblue",
                                     padding : "10px" ,
-                                    boxShadow: "0 1px 5px gray",
+                                    boxShadow: "0 1px 1px gray",
                                 } }>
                                     <Row>
 
@@ -323,12 +323,11 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
 
 
                                 {
-
                                     spesaList.find ( el => el.id === parseInt ( idList ) ).prodotti?.map ( (p , i) => {
 
                                         return (
                                             <Row key={ i }>
-                                                <Row className={ "justify-content-between align-items-end mb-2" }>
+                                                <Row className={ "justify-content-end align-items-end mb-2" }>
                                                     <Col
                                                         style={ {
                                                             borderBottom : "1px solid indigo" ,
@@ -373,7 +372,7 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                                         padding : "10px"
                                     } }
                                     className={ "mt-4" }>
-                                    <Row className={ "justify-content-between" } sx={ {textAlign : "start"} }>
+                                    <Row className={ "justify-content-center" } sx={ {textAlign : "start"} }>
                                         <Col
                                             style={ {
                                                 borderBottom : "1px solid green"
