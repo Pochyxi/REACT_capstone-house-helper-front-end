@@ -196,14 +196,10 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                                     </Col>
                                 </Row>
                                 <Row className={ "justify-content-center align-items-center mb-3"} style={ {
-                                    border : "1px solid gainsboro" ,
-                                    borderRadius : "5px" ,
-                                    borderBottom: 'none' ,
-                                    borderTop: 'none' ,
+                                    borderBottom: '3px solid royalblue' ,
                                     backgroundColor : "white" ,
                                     color: "royalblue",
                                     padding : "10px" ,
-                                    boxShadow: "0 1px 1px gray",
                                 } }>
                                     <Row>
 

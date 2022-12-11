@@ -3,6 +3,7 @@ import { Col , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
 import { useDispatch , useSelector } from "react-redux";
 import { getBolletteList , getSpeseList } from "../../../redux/actions/actions";
+import ChartSpeseComponent from "../ChartComponent/ChartSpeseComponent";
 
 const StatisticheSpeseComponent = () => {
     const user = useSelector ( state => state.user.user )
@@ -60,7 +61,7 @@ const StatisticheSpeseComponent = () => {
                 index = i
             }
 
-            let monthArr = arr.filter ( el => el.dataCreazione.split ( '-' )[1] === index.toString () )
+            let monthArr = arr.filter ( el => el.dataCreazione?.split ( '-' )[1] === index.toString () )
             let monthTotal = []
 
             if (monthArr.length > 0) {
@@ -97,49 +98,21 @@ const StatisticheSpeseComponent = () => {
 
     return (
         <Row className={'text-center justify-content-center'}>
+            <ChartSpeseComponent
+                nomeStatistica={"Spese"}
+                arrOfTotal={statisticGenerator ( speseList ).arrOfTotal}
+                arrOfHeightsOfTabs={statisticGenerator ( speseList).arrOfHeightsOfTabs}
+                monthGenerator={monthGenerator}
+                statisticGeneratorObj={statisticGenerator(speseList)}
+            />
             <Card>
-                <Row>
-                    <h4>Statistiche Spese mese per mese</h4>
-                </Row>
-                <Row
-                    style={ {
-                        borderBottom : '2px solid black' ,
-                        padding : '5px' ,
-                        overflowX: 'auto'
-                    } }
-                    className={ "justify-content-center align-items-end w-100 flex-nowrap p-0 m-0" }>
-
-                    {
-                        statisticGenerator ( speseList ).arrOfTotal.map ( (month , i) => {
-                            return (
-                                <Col
-                                    xs={ 1 }
-                                    key={ i }
-                                >
-                                    <button
-                                        style={ {
-                                            height : statisticGenerator ( speseList ).arrOfHeightsOfTabs[i].toString () +
-                                                'px' ,
-                                            backgroundColor : 'royalblue' ,
-                                            maxHeight : '300px',
-                                        } }>
-                                    </button>
-                                    <Col>
-                                        {monthGenerator(i + 1) }
-                                    </Col>
-                                </Col>
-                            )
-                        } )
-                    }
-                </Row>
-                <Card>
                     <Row className={'mt-2'}>
                         {
                             statisticGenerator ( speseList ).arrOfTotal.map ( (month , i) => {
                                 return (
                                     <Col
                                         key={i}
-                                        className={'mt-2'}
+                                        className={'mt-2 p-2'}
                                         xs={4}>
                                         <Row
                                             style={{
@@ -166,7 +139,6 @@ const StatisticheSpeseComponent = () => {
                             })
                         }
                     </Row>
-                </Card>
             </Card>
         </Row>
     );

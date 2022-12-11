@@ -3,13 +3,15 @@ import { useDispatch , useSelector } from "react-redux";
 import { Col , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
 import { getBolletteList , getPostitList } from "../../../redux/actions/actions";
+import ChartBolletteComponent from "../ChartComponent/ChartBolletteComponent";
+import ChartPostitComponent from "../ChartComponent/ChartPostitComponent";
 
 const StatistichePostitComponent = () => {
     const user = useSelector ( state => state.user.user )
 
     const dispatch = useDispatch ()
 
-    const postitList = useSelector ( state => state.fetch.postitList)
+    const postitList = useSelector ( state => state.fetch.postitList )
 
     const monthGenerator = (index) => {
         switch (index) {
@@ -42,10 +44,10 @@ const StatistichePostitComponent = () => {
 
     const statisticGenerator = (arr) => {
         let obj = {
-            arrOfTotalMonths: [],
-            arrOfTotalMonthsNotComplete: [],
-            arrOfTotalMonthsComplete: [],
-            arrOfHeightsOfTabs: [],
+            arrOfTotalMonths : [] ,
+            arrOfTotalMonthsNotComplete : [] ,
+            arrOfTotalMonthsComplete : [] ,
+            arrOfHeightsOfTabs : [] ,
         }
 
         for (let i = 1; i <= 12; i++) {
@@ -61,20 +63,22 @@ const StatistichePostitComponent = () => {
             let monthTotal = arr.filter ( el => el.scadenza.split ( '-' )[1] === index.toString () ).length
             obj[monthGenerator ( i ) + "TotalExpNumber"] = monthTotal
             // ARRAY CON 12 ELEMENTI OGNI ELEMENTO E' IL NUMERO DI POSTIT PER OGNI MESE
-            obj.arrOfTotalMonths = [...obj.arrOfTotalMonths, monthTotal]
+            obj.arrOfTotalMonths = [ ...obj.arrOfTotalMonths , monthTotal ]
 
             // PER OGNI MESE CONTROLLO QUANTI POSTIT SCADONO E CONTROLLO SE SONO STATI COMPLETATI
             // NON COMPLETATI
-            let monthTotalExpNotCompleted = arr.filter ( el => el.scadenza.split ( '-' )[1] === index.toString () ).filter(el => !el.stato).length
+            let monthTotalExpNotCompleted = arr.filter ( el => el.scadenza.split ( '-' )[1] ===
+                index.toString () ).filter ( el => !el.stato ).length
             obj[monthGenerator ( i ) + "TotalExpNotComplete"] = monthTotalExpNotCompleted
             // ARRAY CON 12 ELEMENTI
-            obj.arrOfTotalMonthsNotComplete = [...obj.arrOfTotalMonthsNotComplete, monthTotalExpNotCompleted]
+            obj.arrOfTotalMonthsNotComplete = [ ...obj.arrOfTotalMonthsNotComplete , monthTotalExpNotCompleted ]
 
             // COMPLETATI
-            let monthTotalExpCompleted = arr.filter ( el => el.scadenza.split ( '-' )[1] === index.toString () ).filter(el => el.stato).length
+            let monthTotalExpCompleted = arr.filter ( el => el.scadenza.split ( '-' )[1] ===
+                index.toString () ).filter ( el => el.stato ).length
             obj[monthGenerator ( i ) + "TotalExpComplete"] = monthTotalExpCompleted
             // ARRAY CON 12 ELEMENTI
-            obj.arrOfTotalMonthsComplete = [...obj.arrOfTotalMonthsComplete, monthTotalExpCompleted]
+            obj.arrOfTotalMonthsComplete = [ ...obj.arrOfTotalMonthsComplete , monthTotalExpCompleted ]
         }
 
         for (let i = 0; i <= 11; i++) {
@@ -93,71 +97,48 @@ const StatistichePostitComponent = () => {
         dispatch ( getPostitList ( user.token , user.id ) )
     } , [] )
 
-    console.log (statisticGenerator(postitList))
+    console.log ( statisticGenerator ( postitList ) )
 
     return (
-        <Row className={'text-center justify-content-center'}>
+        <Row className={ 'text-center justify-content-center' }>
+            <ChartPostitComponent
+                nomeStatistica={"Postit"}
+                arrOfTotal={ statisticGenerator ( postitList ).arrOfTotalMonths }
+                arrOfHeightsOfTabs={ statisticGenerator ( postitList ).arrOfHeightsOfTabs }
+                monthGenerator={ monthGenerator }
+                statisticGeneratorObj={ statisticGenerator ( postitList ) }
+            />
             <Card>
-                <Row>
-                    <h4>Statistiche Postit mese per mese</h4>
-                </Row>
-                <Row
-                    style={ {
-                        borderBottom : '2px solid black' ,
-                        padding : '5px' ,
-                        overflowX: 'auto'
-                    } }
-                    className={ "justify-content-center align-items-end w-100 flex-nowrap p-0 m-0" }>
-                    {
-                        statisticGenerator ( postitList ).arrOfTotalMonths.map ( (month , i) => {
-                            return (
-                                <Col
-                                    xs={ 1 }
-                                    key={ i }
-                                >
-                                    <button
-                                        style={ {
-                                            height : statisticGenerator ( postitList ).arrOfHeightsOfTabs[i].toString () +
-                                                'px' ,
-                                            backgroundColor : 'royalblue' ,
-                                            maxHeight : '500px',
-                                        } }>
-                                    </button>
-                                    <Col>
-                                        {monthGenerator(i + 1) }
-                                    </Col>
-                                </Col>
-                            )
-                        } )
-                    }
-                </Row>
-                <Card>
-                    <Row className={'mt-2'}>
+                    <Row className={ 'mt-2' }>
                         {
                             statisticGenerator ( postitList ).arrOfTotalMonths.map ( (month , i) => {
                                 return (
                                     <Col
-                                        key={i}
-                                        className={'mt-2 p-2'}
-                                        xs={4}>
+                                        key={ i }
+                                        className={ 'mt-2 p-2' }
+                                        xs={ 4 }>
                                         <Row
-                                        style={{
-                                            borderRight: '3px solid black',
-                                            borderBottom:'3px solid black'
-                                        }}>
-                                            <h6 style={{
-                                                color: 'royalblue'
-                                            }}>{monthGenerator(i + 1)}</h6>
-                                            <p><b>Postit</b>: {statisticGenerator ( postitList )[monthGenerator(i + 1) + "TotalExpNumber"]}</p>
-                                            <p><b>Completati</b>: {statisticGenerator ( postitList )[monthGenerator(i + 1) + "TotalExpComplete"]}</p>
-                                            <p><b>Non completati</b>: {statisticGenerator ( postitList )[monthGenerator(i + 1) + "TotalExpNotComplete"]}</p>
+                                            style={ {
+                                                borderRight : '3px solid black' ,
+                                                borderBottom : '3px solid black'
+                                            } }>
+                                            <h6 style={ {
+                                                color : 'royalblue'
+                                            } }>{ monthGenerator ( i + 1 ) }</h6>
+                                            <p><b>Postit</b>: { statisticGenerator ( postitList )[monthGenerator ( i +
+                                                1 ) + "TotalExpNumber"] }</p>
+                                            <p>
+                                                <b>Completati</b>: { statisticGenerator ( postitList )[monthGenerator ( i +
+                                                1 ) + "TotalExpComplete"] }</p>
+                                            <p><b>Non
+                                                completati</b>: { statisticGenerator ( postitList )[monthGenerator ( i +
+                                                1 ) + "TotalExpNotComplete"] }</p>
                                         </Row>
                                     </Col>
                                 )
-                            })
+                            } )
                         }
                     </Row>
-                </Card>
             </Card>
         </Row>
     );

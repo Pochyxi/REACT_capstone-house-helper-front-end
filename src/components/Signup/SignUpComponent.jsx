@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form , Button , Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function SignUpComponent() {
@@ -50,7 +50,7 @@ function SignUpComponent() {
   };
 
   return (
-    <div style={
+    <Container fluid style={
       {
         borderRadius: "5px",
         fontSize: "1.5em",
@@ -59,7 +59,6 @@ function SignUpComponent() {
     }>
       <Form
           style={{
-            width: "50%",
             margin: "0 auto",
             borderLeft: "5px solid black",
             padding: "10px",
@@ -114,7 +113,7 @@ function SignUpComponent() {
           REGISTRATI
         </Button>
       </Form>
-    </div>
+    </Container>
   );
 }
 

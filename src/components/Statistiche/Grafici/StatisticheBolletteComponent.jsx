@@ -3,6 +3,7 @@ import { Col , Container , Row } from "react-bootstrap";
 import { getBolletteList } from "../../../redux/actions/actions";
 import { useDispatch , useSelector } from "react-redux";
 import Card from "@mui/material/Card";
+import ChartBolletteComponent from "../ChartComponent/ChartBolletteComponent";
 
 const StatisticheBolletteComponent = (props) => {
     const user = useSelector ( state => state.user.user )
@@ -87,51 +88,25 @@ const StatisticheBolletteComponent = (props) => {
         dispatch ( getBolletteList ( user.token , user.id ) )
     } , [] )
 
+    console.log (statisticGenerator ( bolletteList ))
+
     return (
         <Row className={'text-center justify-content-center'}>
+            <ChartBolletteComponent
+                nomeStatistica={"Bollette"}
+                arrOfTotal={statisticGenerator ( bolletteList ).arrOfTotal}
+                arrOfHeightsOfTabs={statisticGenerator ( bolletteList).arrOfHeightsOfTabs}
+                monthGenerator={monthGenerator}
+                statisticGeneratorObj={statisticGenerator( bolletteList)}
+            />
             <Card>
-                <Row>
-                    <h4>Statistiche Bollette mese per mese</h4>
-                </Row>
-                <Row
-                    style={ {
-                        borderBottom : '2px solid black' ,
-                        padding : '5px' ,
-                        overflowX: 'auto'
-                    } }
-                    className={ "justify-content-center align-items-end w-100 flex-nowrap p-0 m-0" }>
-
-                    {
-                        statisticGenerator ( bolletteList ).arrOfTotal.map ( (month , i) => {
-                            return (
-                                <Col
-                                    xs={ 1 }
-                                    key={ i }
-                                >
-                                    <button
-                                        style={ {
-                                            height : statisticGenerator ( bolletteList ).arrOfHeightsOfTabs[i].toString () +
-                                                'px' ,
-                                            backgroundColor : 'royalblue' ,
-                                            maxHeight : '500px',
-                                        } }>
-                                    </button>
-                                    <Col>
-                                        {monthGenerator(i + 1) }
-                                    </Col>
-                                </Col>
-                            )
-                        } )
-                    }
-                </Row>
-                <Card>
                     <Row className={'mt-2'}>
                         {
                             statisticGenerator ( bolletteList ).arrOfTotal.map ( (month , i) => {
                                 return (
                                     <Col
                                         key={i}
-                                        className={'mt-2'}
+                                        className={'mt-2 p-2'}
                                         xs={4}>
                                         <Row
                                             style={{
@@ -158,7 +133,6 @@ const StatisticheBolletteComponent = (props) => {
                             })
                         }
                     </Row>
-                </Card>
             </Card>
         </Row>
 

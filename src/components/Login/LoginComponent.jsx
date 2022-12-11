@@ -1,5 +1,5 @@
 import React , { useEffect , useState } from "react";
-import { Form , Button } from "react-bootstrap";
+import { Form , Button , Row , Col } from "react-bootstrap";
 import { Link , useNavigate } from "react-router-dom"
 import { useDispatch , useSelector } from "react-redux";
 import { logIn } from "../../redux/actions/actions";
@@ -57,13 +57,6 @@ function LoginComponent() {
     }
 
 
-    useEffect ( () => {
-        if ( user.token !== undefined ) {
-            navigate ( "/" )
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    } , [ user.token ] );
-
     const [ formObj , setFormObj ] = useState ( { // oggetto per la compilazione del form
         username : '' ,
         password : ''
@@ -115,7 +108,6 @@ function LoginComponent() {
         }>
             <Form
                 style={{
-                    width: "50%",
                     margin: "0 auto",
                     borderLeft: "5px solid black",
                     padding: "10px",
@@ -147,22 +139,34 @@ function LoginComponent() {
                         autoComplete="current-password"
                         placeholder="Inserisci la tua password"/>
                 </Form.Group>
-                <Button className={ "w-25 d-block mx-auto my-2" } variant="primary" type="submit">
-                    ACCEDI
-                </Button>
+                <Row className={'justify-content-center text-center'}>
+                    <Col>
+                        <Button className={ "" } variant="primary" type="submit">
+                            ACCEDI
+                        </Button>
+                    </Col>
+                    <Col>
+                        <GoogleLogin
+                            clientId={ clientId }
+                            onSuccess={ onSuccess }
+                            onFailure={ onFailure }
+                            cookiePolicy={ "single_host_policy" }
+                        />
+                    </Col>
+                    <Col>
+                        <Link to="/signup">
+                            <p className={ "w-50 d-block text-center mx-auto my-2" }>Registrati</p>
+                        </Link>
+                    </Col>
+                </Row>
+
+
                 <div className='btn d-block m-auto'>
-                    <GoogleLogin
-                        clientId={ clientId }
-                        onSuccess={ onSuccess }
-                        onFailure={ onFailure }
-                        cookiePolicy={ "single_host_policy" }
-                    />
+
                 </div>
             </Form>
 
-            <Link to="/signup">
-                <p className={ "w-25 d-block text-center mx-auto my-2" }>Se non sei registrato clicca a qui.</p>
-            </Link>
+
 
         </div>
     );
