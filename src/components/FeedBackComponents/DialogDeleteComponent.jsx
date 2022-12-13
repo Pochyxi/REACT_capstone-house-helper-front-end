@@ -8,12 +8,19 @@ import {
     DialogTitle ,
     Slide
 } from "@mui/material";
+import { useDispatch , useSelector } from "react-redux";
+import { getPostitList } from "../../redux/actions/actions";
 
 const Transition = React.forwardRef ( function Transition(props , ref) {
     return <Slide direction="up" ref={ ref } { ...props } />;
 } );
 
 const DialogDeleteComponent = (props) => {
+    const user = useSelector ( state => state.user.user )
+
+    const dispatch = useDispatch ()
+
+
     return (
         <Dialog
             open={ props.dialogEliminazioneFlag }
@@ -39,7 +46,15 @@ const DialogDeleteComponent = (props) => {
                     variant={ "outlined" }
                     color={ "primary" }
                     onClick={ () => {
-                        props.deleteBolletta(props.bolletta.id, props.user.token)
+                        props.fetchToDelete(props.item.id, props.user.token).then( (r) => {
+                                if (r === 'success') {
+                                    props.openSuccess()
+                                    props.handleClose()
+                                } else {
+                                    props.openError()
+                                    props.handleClose()
+                                }
+                        })
                     } }
                 >Elimina</Button>
             </DialogActions>

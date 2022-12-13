@@ -12,7 +12,9 @@ import { useDispatch , useSelector } from "react-redux";
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import FormControl from "@mui/material/FormControl";
-import { TextField } from "@mui/material";
+import { IconButton , TextField } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 const bull = (
     <Box
@@ -30,7 +32,8 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
         const [ formProdottiFlag , setFormProdottiFlag ] = useState ( true );
         const [ formObj , setFormObj ] = useState ( {
             nome : "" ,
-            prezzo : ""
+            prezzo : "" ,
+            userId : user.id
         } );
 
 
@@ -62,6 +65,7 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                     const data = await response.json ();
 
                     dispatch ( getSpeseList ( user.token , user.id ) );
+                    dispatch ( getProdottiList ( user.token , user.id ) );
 
                     console.log ( "fetch eseguita" );
                 } else {
@@ -90,7 +94,6 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
 
                     dispatch ( getSpeseList ( user.token , user.id ) );
 
-                    console.log ( data );
                 } else {
                     console.log ( "Qualcosa è andato storto" );
                 }
@@ -161,11 +164,11 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
 
                 if ( response.ok ) {
                     const data = await response.json ();
-                    console.log ( data )
-                    dispatch ( getProdottiList ( user.token ) )
+                    dispatch ( getProdottiList ( user.token , user.id ) )
                     setFormObj ( {
                         nome : "" ,
                         prezzo : "" ,
+                        userId : user.id
                     } )
                     addProductOnList ( idList , data.id , user.token , "PUT" )
                         .then ( () => dispatch ( getSpeseList ( user.token , user.id ) ) )
@@ -183,205 +186,201 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                         <Card sx={ {minWidth : "100%" , margin : "20px auto"} }>
                             <CardContent>
                                 <Row className={ "d-flex align-items-center justify-content-center" }>
-                                    <Col
-                                        style={{
-                                            borderBottom: "2px solid royalblue",
-                                    }}
-                                        xs={6}>
-                                        <Typography style={ {textAlign : "center"} } variant="h5" component="div">
+                                    <Col xs={ 6 }>
+                                        <Typography style={ {textAlign : "start"} } variant="h5" component="div">
                                             {
                                                 spesaList.find ( el => el.id === parseInt ( idList ) ).nome + " "
                                             }
                                         </Typography>
                                     </Col>
+                                    <Col xs={ 6 }>
+                                        <Typography style={ {textAlign : "end"} } variant="h6" component="div">
+
+                                            <Button onClick={ () => {
+                                                removeLista ( idList , user.token )
+                                            } }>
+                                                <RemoveCircleIcon style={ {
+                                                    fontSize : "30px" ,
+                                                    cursor : "pointer"
+                                                } } color={ "error" }/>
+                                            </Button>
+
+                                        </Typography>
+                                    </Col>
                                 </Row>
-                                <Row className={ "justify-content-center align-items-center mb-3"} style={ {
-                                    border : "1px solid gainsboro" ,
-                                    borderRadius : "5px" ,
-                                    borderBottom: 'none' ,
-                                    borderTop: 'none' ,
-                                    backgroundColor : "white" ,
-                                    color: "royalblue",
-                                    padding : "10px" ,
-                                    boxShadow: "0 1px 5px gray",
-                                } }>
-                                    <Row>
 
-                                        <Col className={ "d-flex align-items-center justify-content-start" }>
-                                            <Typography  style={ {textAlign : "start"} } variant="h6" component="div">
-                                                TOTALE:
-                                                { " " +
-                                                    calculateTotal ( idList , spesaList )[0]
-                                                }
-                                                ,
-                                                {
-                                                    calculateTotal ( idList , spesaList )[1] ?
-                                                        calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ).length === 1 ?
-                                                            calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "0" :
-                                                            calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "" :
-                                                        "00"
-
-                                                } €
-                                            </Typography>
-
-                                        </Col>
-                                        <Col>
-                                            <Typography style={ {textAlign : "end"} } variant="h5" component="div">
-
-                                                <Button onClick={ () => {
-                                                    removeLista ( idList , user.token )
-                                                } }>
-                                                    <DeleteSweepIcon style={ {
-                                                        fontSize : "40px" ,
-                                                        cursor : "pointer"
-                                                    } } color={ "error" }/>
-                                                </Button>
-
-                                            </Typography>
-                                        </Col>
-                                    </Row>
-                                    <Row className={ "justify-content-center align-items-center mb-3" }>
-                                        <Col className={ "bg-light p-0" }>
-                                            {
-                                                !formProdottiFlag && (
-                                                    <Col>
-                                                        <Form className={ "d-flex flex-row justify-content-center" }>
-                                                            <FormControl>
-                                                                <TextField
-                                                                    required
-                                                                    value={ formObj.nome }
-                                                                    id="outlined-required"
-                                                                    label="Nome prodotto"
-                                                                    onChange={ event => handleForm ( "nome" , event.target.value ) }
-                                                                />
-                                                            </FormControl>
-                                                            <FormControl>
-                                                                <TextField
-                                                                    required
-                                                                    id="outlined-number"
-                                                                    value={ formObj.prezzo }
-                                                                    label="Prezzo"
-                                                                    type="number"
-                                                                    onChange={ event => handleForm ( "prezzo" , event.target.value ) }
-                                                                    InputLabelProps={ {
-                                                                        shrink : true ,
-                                                                    } }
-                                                                />
-                                                            </FormControl>
-                                                            <Button
-                                                                variant='outlined'
-                                                                className={ 'mx-2' }
-                                                                onClick={ () => {
-                                                                    addProduct ( formObj , user.token )
+                                <Row className={ "justify-content-center align-items-center mb-3" }>
+                                    <Row className={ "bg-light p-0" }>
+                                        {
+                                            !formProdottiFlag && (
+                                                <Col>
+                                                    <Form onSubmit={ (e) => {
+                                                        e.preventDefault ();
+                                                        addProduct ( formObj , user.token )
+                                                    } } className={ "d-flex flex-row justify-content-center" }>
+                                                        <FormControl>
+                                                            <TextField
+                                                                required
+                                                                value={ formObj.nome }
+                                                                id="outlined-required"
+                                                                label="Nome prodotto"
+                                                                onChange={ event => handleForm ( "nome" , event.target.value ) }
+                                                            />
+                                                        </FormControl>
+                                                        <FormControl>
+                                                            <TextField
+                                                                required
+                                                                id="outlined-number"
+                                                                value={ formObj.prezzo }
+                                                                label="Prezzo"
+                                                                type="number"
+                                                                onChange={ event => handleForm ( "prezzo" , event.target.value ) }
+                                                                InputLabelProps={ {
+                                                                    shrink : true ,
                                                                 } }
-                                                            >
-                                                                invia
-                                                            </Button>
-                                                            <Button
-                                                                variant='outlined'
-                                                                onClick={ () => {
-                                                                    setFormProdottiFlag ( true )
-                                                                } }
-                                                                color={ "error" }>
-                                                                indietro
-                                                            </Button>
-                                                        </Form>
-                                                    </Col>
-                                                )
-                                            }
-                                            {
-                                                formProdottiFlag && (
-                                                    <Col>
-                                                        <ProdottiSelectComponent productName={ productName } setProductName={ setProductName }/>
-                                                    </Col>
-                                                )
-                                            }
-                                        </Col>
+                                                            />
+                                                        </FormControl>
+                                                        <Button
+                                                            variant='outlined'
+                                                            className={ 'mx-2' }
+                                                            type='submit'
+                                                        >
+                                                            invia
+                                                        </Button>
+                                                        <Button
+                                                            variant='outlined'
+                                                            onClick={ () => {
+                                                                setFormProdottiFlag ( true )
+                                                            } }
+                                                            color={ "error" }>
+                                                            indietro
+                                                        </Button>
+                                                    </Form>
+                                                </Col>
+                                            )
+                                        }
                                         {
                                             formProdottiFlag && (
-                                                <Col className={ "text-start" }>
-                                                    <ChangeCircleIcon
-                                                        onClick={ () => {
-                                                            setFormProdottiFlag ( !formProdottiFlag )
-                                                        } }
-                                                        sx={ {
-                                                            '&:hover' : {
-                                                                color : "royalblue"
-                                                            }
-                                                        } }
-                                                        style={ {
-                                                            fontSize : "2em" ,
-                                                            marginBottom : "5px" ,
-                                                            cursor : "pointer"
-                                                        } }/>
-                                                    <h5 className={ "d-inline" }>Inserisci manualmente</h5>
+                                                <Col>
+                                                    <ProdottiSelectComponent productName={ productName }
+                                                                             setProductName={ setProductName }/>
                                                 </Col>
                                             )
                                         }
                                     </Row>
+                                    {
+                                        formProdottiFlag && (
+                                            <Col className={ "text-end" }>
+                                                <ChangeCircleIcon
+                                                    onClick={ () => {
+                                                        setFormProdottiFlag ( !formProdottiFlag )
+                                                    } }
+                                                    sx={ {
+                                                        '&:hover' : {
+                                                            color : "royalblue"
+                                                        }
+                                                    } }
+                                                    style={ {
+                                                        fontSize : "2em" ,
+                                                        marginBottom : "5px" ,
+                                                        cursor : "pointer"
+                                                    } }/>
+                                                <h6 className={ "d-inline" }>Inserisci manualmente</h6>
+                                            </Col>
+                                        )
+                                    }
+                                </Row>
+                                <Row className={ "justify-content-center align-items-center mb-3" } style={ {
+                                    backgroundColor : "white" ,
+                                    color : "royalblue" ,
+                                    padding : "10px" ,
+                                } }
+                                >
+                                    <Col className={ "d-flex align-items-center justify-content-center" }>
+                                        <Typography
+                                            style={ {textAlign : "center" , borderBottom : '4px solid royalblue' ,} }
+                                            variant="h6" component="div">
+                                            TOTALE:
+                                            { " " +
+                                                calculateTotal ( idList , spesaList )[0]
+                                            }
+                                            ,
+                                            {
+                                                calculateTotal ( idList , spesaList )[1] ?
+                                                    calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ).length ===
+                                                    1 ?
+                                                        calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "0" :
+                                                        calculateTotal ( idList , spesaList )[1].slice ( 0 , 2 ) + "" :
+                                                    "00"
+
+                                            } €
+                                        </Typography>
+                                    </Col>
                                 </Row>
 
 
+                                <Row
+                                    style={ {
+                                        borderLeft : '4px solid black' ,
+                                        maxHeight : '20vh' ,
+                                        overflow : 'scroll'
+                                    } }
+                                    className={ 'justify-content-center' }>
                                 {
-
                                     spesaList.find ( el => el.id === parseInt ( idList ) ).prodotti?.map ( (p , i) => {
 
                                         return (
-                                            <Row key={ i }>
-                                                <Row className={ "justify-content-between align-items-end mb-2" }>
+
+                                                <Row key={ i } className={ "justify-content-between align-items-end mb-2" }>
                                                     <Col
-                                                        style={ {
-                                                            borderBottom : "1px solid indigo" ,
-                                                            textAlign : "start"
-                                                        } }
+                                                        className={ 'text-start text-nowrap' }
                                                         xs={ 4 }>
-                                                        <Button
+                                                        <IconButton
                                                             style={ {margin : 0 , padding : 0} }
                                                             onClick={ () => {
                                                                 removeProductOnList ( idList , p.id , user.token , "PUT" )
-                                                            } }>
-                                                            { p.nome }
-                                                        </Button>
-
+                                                            } }
+                                                            aria-label="delete">
+                                                            <Delete/>
+                                                        </IconButton>
+                                                        { p.nome }
                                                     </Col>
-
-                                                    <Col style={ {
-                                                        borderBottom : "1px solid indigo" ,
-                                                        textAlign : "end"
-                                                    } }
-                                                         xs={ 4 }>
-                                                        { p.prezzo.toString ().split ( '.' )[0]
+                                                    <Col className={ 'text-end' } xs={ 4 }>
+                                                        { p.prezzo?.toString ().split ( '.' )[0]
                                                         }
                                                         ,
-                                                        { p.prezzo.toString ().split ( '.' )[1] ?
-                                                            p.prezzo.toString ().split ( '.' )[1].slice ( 0 , 2 ).length ===
+                                                        { p.prezzo?.toString ().split ( '.' )[1] ?
+                                                            p.prezzo?.toString ().split ( '.' )[1].slice ( 0 , 2 ).length ===
                                                             1 ?
-                                                                p.prezzo.toString ().split ( '.' )[1].slice ( 0 , 2 ) +
+                                                                p.prezzo?.toString ().split ( '.' )[1].slice ( 0 , 2 ) +
                                                                 "0" :
-                                                                p.prezzo.toString ().split ( '.' )[1].slice ( 0 , 2 ) + "" :
+                                                                p.prezzo?.toString ().split ( '.' )[1].slice ( 0 , 2 ) +
+                                                                "" :
                                                             "00"
                                                         } €
                                                     </Col>
                                                 </Row>
-                                            </Row>
+
                                         )
                                     } )
-
                                 }
+                                </Row>
                                 <Row
                                     style={ {
-                                        padding : "10px"
+                                        padding : "10px" ,
+                                        justifyContent : "center"
                                     } }
                                     className={ "mt-4" }>
-                                    <Row className={ "justify-content-between" } sx={ {textAlign : "start"} }>
-                                        <Col
-                                            style={ {
-                                                borderBottom : "1px solid green"
-                                            } }
-                                            xs={ 5 }>
+                                    <Row
+                                        style={ {
+                                            borderBottom : "4px solid royalblue"
+                                        } }
+                                        className={ "justify-content-center" }
+                                        sx={ {textAlign : "start"} }>
+                                        <Col className={ 'p-0' } xs={ 6 }>
                                             TOTALE
                                         </Col>
-                                        <Col style={ {borderBottom : "1px solid green" , textAlign : "center"} } xs={ 5 }>
+                                        <Col className={ 'p-0' } style={ {textAlign : "end"} } xs={ 6 }>
                                             { " " +
                                                 calculateTotal ( idList , spesaList )[0]
                                             }
@@ -396,12 +395,8 @@ const CardSpesaList = ({spesaList , list , setSpesaListaNome}) => {
                                             } €
                                         </Col>
                                     </Row>
-                                    <Row>
-
-                                    </Row>
                                 </Row>
                             </CardContent>
-
                         </Card>
                     </>
                 ) }

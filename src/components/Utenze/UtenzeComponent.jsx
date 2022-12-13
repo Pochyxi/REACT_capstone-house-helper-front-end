@@ -10,7 +10,7 @@ import OpacityIcon from '@mui/icons-material/Opacity';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import GradingIcon from '@mui/icons-material/Grading';
 import CardUtenzaComponent from "./CardUtenzaComponent";
-import { Add } from "@mui/icons-material";
+import { Add , Delete } from "@mui/icons-material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import FormControl from "@mui/material/FormControl";
 import FornituraSelectedComponent from "./FornituraSelectedComponent";
@@ -19,6 +19,12 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import SearchIcon from '@mui/icons-material/Search';
 import AlarmIcon from '@mui/icons-material/Alarm';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import SettingsIcon from '@mui/icons-material/Settings';
+import CloseIcon from '@mui/icons-material/Close';
+import { addBolletta , fetchRicercaEmissioneRange , fetchRicercaScadenzaRange } from "./api/api";
+import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
+import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
 
 const UtenzeComponent = () => {
     const user = useSelector ( state => state.user.user )
@@ -59,32 +65,6 @@ const UtenzeComponent = () => {
         } )
     }
 
-    //FETCH PER AGGIUNGERE UNA BOLLETTA
-    const addBolletta = async (obj , key) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/new`
-        const header = {
-            'Content-Type' : 'application/json' ,
-            'Authorization' : 'Bearer ' + key
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'POST' ,
-                headers : header ,
-                body : JSON.stringify ( obj )
-            } )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                console.log ( data )
-                dispatch ( getBolletteList ( user.token , user.id ) )
-                setFornituraState ( '' )
-            }
-
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
     //////////////
     // FINE FORM//
 
@@ -105,7 +85,7 @@ const UtenzeComponent = () => {
     //
 
     // FLAG PER APRIRE LA SOTTOSEZIONE DI RICERCA PER SCADENZA RANGE
-    const [ ricercaScadenzaRangeFlag , setRicercaScadenzaRangeFlag ] = useState (false);
+    const [ ricercaScadenzaRangeFlag , setRicercaScadenzaRangeFlag ] = useState ( false );
     //
 
     // VALORI DELLA SELEZIONE EFFETTUATA NEL RANGE DI SCADENZA
@@ -119,85 +99,6 @@ const UtenzeComponent = () => {
     // VALORE SELEZIONATO NELLA SEZIONE NUMEROM FATTURA
     const [ numeroFattura , setNumeroFattura ] = useState ( '' );
     //
-
-    // FETCH DI RICERCA PER RANGE DI EMISSIONE
-    const fetchRicercaEmissioneRange = async (inizio, fine, userId, token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/emissione-range/${inizio}/${fine}/userId/${userId}`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch(
-                baseEndpoint,
-                {
-                    method: 'GET',
-                    headers: header
-                }
-            )
-
-            if (response.ok) {
-                const data = await response.json();
-                dispatch(setBolletteList(data));
-                // dispatch(getBolletteList(user.token, user.id))
-                console.log (data)
-            }
-        } catch (e) {
-            console.log ( e)
-        }
-    }
-
-    //FETCH DI RICERCA PER RANGE DI SCADENZA
-    const fetchRicercaScadenzaRange = async (inizio, fine, userId, token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/scadenza-maggiore/${inizio}/scadenza-minore/${fine}/userId/${userId}`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch(
-                baseEndpoint,
-                {
-                    method: 'GET',
-                    headers: header
-                }
-            )
-
-            if (response.ok) {
-                const data = await response.json();
-                dispatch(setBolletteList(data));
-                console.log (data)
-            }
-        } catch (e) {
-            console.log ( e)
-        }
-    }
-
-    // FETCH DI RICERCA PER NUMERO FATTURA
-    const fetchRicercaNumeroFattura = async (numeroFattura, userId, token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/numero-fattura/${numeroFattura}/userId/${userId}`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch(
-                baseEndpoint,
-                {
-                    method: 'GET',
-                    headers: header
-                }
-            )
-
-            if (response.ok) {
-                const data = await response.json();
-                dispatch(setBolletteList(data));
-                console.log (data)
-            }
-        } catch (e) {
-            console.log ( e)
-        }
-    }
 
     /////////////////////////////
     // FINE LOGICA DI RICERCA //
@@ -229,15 +130,6 @@ const UtenzeComponent = () => {
     // FINE LOGICA SWITCH //
 
 
-    //CONTROLLA SE L'UTENTE E' LOGGATO
-    useEffect ( () => {
-        if ( user.token === undefined ) {
-            navigate ( "/login" )
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    } , [ user.token ] );
-    //
-
     // ALL'AVVIO DELLA PAGINA FAREMO LA FETCH DELLE BOLLETTE_LIST
     useEffect ( () => {
         dispatch ( getBolletteList ( user.token , user.id ) )
@@ -267,478 +159,530 @@ const UtenzeComponent = () => {
 
         return arrFiltered
     }
+
+    // OFFCANVAS //
+    //////////////
+    const [ show , setShow ] = useState ( false );
+
+    const handleClose = () => setShow ( false );
+    const handleShow = () => setShow ( true );
+
+    ////////////////////
+    // FINE OFFCANVAS //
+
+    // SNACKBARS //
+    ///////////////
+
+    // aggiunta nuova bolletta //
+    const [snackAddBollettaFlag, setSnackAddBollettaFlag] = useState ( false );
+
+    const handleClickAddBollettaFlag = () => setSnackAddBollettaFlag ( true );
+    const handleCloseAddBollettaFlag = () => setSnackAddBollettaFlag(false);
     //
 
+    // errore generico //
+    const [snackErrorFlag, setSnackErrorFlag] = useState ( false );
 
-    console.log ( "INIZIO TEST VALORI RICERCA" )
-    console.log ( "Valori range emissione")
-    console.log ( dataInizioRange )
-    console.log ( dataFineRange )
-    console.log ("valori range scadenza")
-    console.log ( dataInizioRangeScadenza)
-    console.log ( dataFineRangeScadenza )
-    console.log ( "valore numero fattura")
-    console.log ( numeroFattura )
-    console.log ( "fine----------" )
+    const handleClickError = () => setSnackErrorFlag (true)
+    const handleCloseError = () => setSnackErrorFlag(false)
+    //
 
-    console.log ( formBollettaObj )
+    // ricerca range di emissione //
+    const [snackEmissioneFlag, setSnackEmissioneFlag] = useState (false)
+
+    const handleClickEmissione = () => setSnackEmissioneFlag (true)
+    const handleCloseEmissione = () => setSnackEmissioneFlag (false)
+    //
+
+    // ricerca range di scadenza //
+    const [snackScadenzaFlag, setSnackScadenzaFlag] = useState (false)
+
+    const handleClickScadenza = () => setSnackScadenzaFlag(true)
+    const handleCloseScadenza = () => setSnackScadenzaFlag(false)
+    //
+
+    // eliminazione di una bolletta //
+    const [snackEliminazioneFlag, setSnackEliminazioneFlag] = useState (false)
+
+    const handleClickEliminazione = () => setSnackEliminazioneFlag(true)
+    const handleCloseEliminazione = () => setSnackEliminazioneFlag(false)
+
+    // FINE SNACKBARS //
+    ////////////////////
+
+    console.log (typeof dataInizioRange)
 
     return (
         <Container fluid>
-            <Row
-                style={ {
-                    fontSize : '.7em'
-                } }
-                className={ "justify-content-center" }>
-                {/*SEZIONE LATERALE*/ }
-                <Col
-                    style={ {
-                        backgroundColor : "#0d6efd" ,
-                        borderRight : "2px solid royalblue" ,
-                        boxShadow : "1px 1px 2px gray" ,
-                        minHeight : '100%' ,
-                        overflowY : 'scroll' ,
-                        position : "fixed" ,
-                        bottom : '0%' ,
-                        top : '50px' ,
-                        left : 0 ,
-                        paddingBottom : '50px'
-                    } }
-                    className={ "text-center hideScrollBar" }
-                    xs={ 3 }>
+            <SnackbarSuccessComponent
+                openFlag={ snackAddBollettaFlag }
+                closeFunction={ handleCloseAddBollettaFlag }
+                message={ 'Bolletta aggiunta con successo!' }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackEmissioneFlag }
+                closeFunction={ handleCloseEmissione }
+                message={ "Bollette filtrate per range di emissione dal " + dataInizioRange + " al " + dataFineRange }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackScadenzaFlag }
+                closeFunction={ handleCloseScadenza }
+                message={ "Bollette filtrate per range di scadenza dal " + dataInizioRangeScadenza + " al " + dataFineRangeScadenza }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackEliminazioneFlag }
+                closeFunction={ handleCloseEliminazione }
+                message={ "Bolletta eliminata con successo" }
+            />
+            <SnackbarErrorComponent
+                openFlag={ snackErrorFlag }
+                closeFunction={ handleCloseError }
+                message={ "Uffa, c'è qualcosa che non va" }
+            />
+            <Row className={ "justify-content-center" }>
+                <Offcanvas show={ show } onHide={ handleClose }>
+                    <Offcanvas.Header closeButton>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body
+                        style={ {
+                            backgroundColor : "#0d6efd" ,
+                            borderRight : "2px solid royalblue" ,
+                            boxShadow : "1px 1px 2px gray" ,
+                            minHeight : '100%'
+                        } }
+                        className={ "text-center" }
+                    >
+                        <Row className={ 'justify-content-end' }>
+                            <Col xs={ 2 }>
+                                <IconButton
+                                    onClick={ () => handleClose () }
+                                    aria-label="delete">
+                                    <CloseIcon
+                                        style={ {
+                                            fontSize : '2rem'
+                                        } }/>
+                                </IconButton>
+                            </Col>
+                        </Row>
+                        {/*CONTENITORE PER LE CARDS*/ }
+                        <Row className={ "p-3" }>
 
-                    {/*CONTENITORE PER LE CARDS*/ }
-                    <Row className={ "p-2" }>
-
-                        {/*CARD PER L'AGGIUNTA DI UNA NUOVA BOLLETTA*/ }
-                        <Card
-                            sx={ {margin : "20px auto" , maxHeight : '100%'} }
-                            className={ "p-2" }>
-                            {/*TITOLO*/ }
-                            <h5>Aggiungi una nuova Bolletta</h5>
-
-                            {/*BOTTONE CHE FA COMPARIRE IL FORM*/ }
-                            {
-                                !formUtenzaFlag ? (
-                                    <IconButton onClick={ () => setFormUtenzaFlag ( true ) } aria-label="add">
-                                        <Add/>
-                                    </IconButton>
-                                ) : (
-                                    <IconButton onClick={ () => setFormUtenzaFlag ( false ) } aria-label="delete">
-                                        <CancelIcon/>
-                                    </IconButton>
-                                )
-                            }
-
-                            {/*CONTENITORE DEL FORM*/ }
-                            <Row>
+                            {/*CARD PER L'AGGIUNTA DI UNA NUOVA BOLLETTA*/ }
+                            <Card
+                                sx={ {margin : "20px auto"} }
+                                className={ "p-2" }>
+                                {/*TITOLO*/ }
+                                <h5>Aggiungi una nuova Bolletta</h5>
+                                {/*BOTTONE CHE FA COMPARIRE IL FORM*/ }
                                 {
-                                    // SEZIONE AGGIUNGI BOLLETTA
-                                    formUtenzaFlag && (
-                                        <Form onSubmit={ (e) => {
-                                            e.preventDefault ()
-                                            if ( formBollettaObj.fornitura.length === 0 ) {
-                                                setErrorFornituraFlag ( true )
-                                            } else {
-                                                addBolletta ( formBollettaObj , user.token ).then ( () => setFormUtenzaFlag ( false ) );
-                                                setFormBollettaObj ( {
-                                                    fornitura : '' ,
-                                                    userId : user.id ,
-                                                    numero : '' ,
-                                                    totale : '' ,
-                                                    emissione : '' ,
-                                                    periodoInizio : '' ,
-                                                    periodoFine : '' ,
-                                                    scadenza : '' ,
-                                                } )
-                                            }
-
-                                        } }>
-                                            <Row className={ "p-2 justify-content-center" }>
-                                                {/*COMPONENTE PER LA SELEZIONE DELLA FORNITURA*/}
-                                                <FornituraSelectedComponent
-                                                    handleForm={ handleForm }
-                                                    fornituraState={ fornituraState }
-                                                    setFornituraState={ setFornituraState }/>
-                                                {
-                                                    // NEL CASO IN CUI NON SI SELEZIONA LA FORNITURA
-                                                    errorFornituraFlag && (
-                                                        <Alert severity="error">E' necessario selezionare una fornitura</Alert>
-                                                    )
-                                                }
-                                            </Row>
-                                            <Row className={ "p-2" }>
-                                                <h6>Numero Bolletta</h6>
-                                                <FormControl>
-                                                    <TextField
-                                                        required
-                                                        type="number"
-                                                        value={ formBollettaObj.numero }
-                                                        onChange={ event => handleForm ( "numero" , event.target.value ) }
-                                                        className={ "mt-2" }
-                                                        id="outlined-basic"
-                                                        label="Inserisci il numero..."
-                                                        variant="outlined"/>
-                                                </FormControl>
-
-
-                                            </Row>
-                                            <Row className={ "p-2" }>
-                                                <h6>Totale dovuto</h6>
-                                                <FormControl>
-                                                    <TextField
-                                                        type="number"
-                                                        required
-                                                        value={ formBollettaObj.totale }
-                                                        onChange={ event => handleForm ( "totale" , event.target.value ) }
-                                                        className={ "mt-2" }
-                                                        id="outlined-basic"
-                                                        label="Inserisci il totale..."
-                                                        variant="outlined"/>
-                                                </FormControl>
-                                            </Row>
-                                            <Row className={ "p-2" }>
-                                                <h6>Inserisci data di emissione</h6>
-                                                <FormControl>
-                                                    <TextField
-                                                        type="date"
-                                                        required
-                                                        value={ formBollettaObj.emissione }
-                                                        onChange={ event => handleForm ( "emissione" , event.target.value ) }
-                                                        className={ "mt-2" }
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </FormControl>
-                                            </Row>
-                                            <Row className={ "p-2" }>
-                                                <h6>Inserisci periodo iniziale</h6>
-                                                <FormControl>
-                                                    <TextField
-                                                        type="date"
-                                                        required
-                                                        value={ formBollettaObj.periodoInizio }
-                                                        onChange={ event => handleForm ( "periodoInizio" , event.target.value ) }
-                                                        className={ "mt-2" }
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </FormControl>
-                                            </Row>
-                                            <Row className={ "p-2" }>
-                                                <h6>Inserisci periodo di fine</h6>
-                                                <FormControl>
-                                                    <TextField
-                                                        type="date"
-                                                        required
-                                                        value={ formBollettaObj.periodoFine }
-                                                        onChange={ event => handleForm ( "periodoFine" , event.target.value ) }
-                                                        className={ "mt-2" }
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </FormControl>
-                                            </Row>
-                                            <Row className={ "p-2" }>
-                                                <h6>Scadenza pagamento</h6>
-                                                <FormControl>
-                                                    <TextField
-                                                        type="date"
-                                                        required
-                                                        value={ formBollettaObj.scadenza }
-                                                        onChange={ event => handleForm ( "scadenza" , event.target.value ) }
-                                                        className={ "mt-2" }
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </FormControl>
-                                            </Row>
-                                            <Button type={ 'submit' } variant="contained" sx={ {my : 2} }>
-                                                Aggiungi
-                                            </Button>
-                                        </Form>
+                                    !formUtenzaFlag ? (
+                                        <IconButton onClick={ () => setFormUtenzaFlag ( true ) } aria-label="add">
+                                            <Add/>
+                                        </IconButton>
+                                    ) : (
+                                        <IconButton onClick={ () => setFormUtenzaFlag ( false ) } aria-label="delete">
+                                            <CancelIcon/>
+                                        </IconButton>
                                     )
                                 }
-                            </Row>
 
-                        </Card>
+                                {/*CONTENITORE DEL FORM*/ }
+                                <Row>
+                                    {
+                                        // SEZIONE AGGIUNGI BOLLETTA
+                                        formUtenzaFlag && (
+                                            <Form onSubmit={ (e) => {
+                                                e.preventDefault ()
+                                                if ( formBollettaObj.fornitura.length === 0 ) {
+                                                    setErrorFornituraFlag ( true )
+                                                } else {
+                                                    addBolletta ( formBollettaObj , user.token ).then ( (r) => {
+                                                        if (r) {
+                                                            setFormUtenzaFlag ( false )
+                                                            dispatch ( getBolletteList ( user.token , user.id ) )
+                                                            setFornituraState ( '' )
+                                                            handleClickAddBollettaFlag()
+                                                        } else {
+                                                            handleClickError()
+                                                        }
 
-                        {/*SEZIONE DI RICERCA*/}
-                        <Card sx={ {
-                            overflow : "scroll" ,
-                            '&::-webkit-scrollbar' : {
-                                display : "none"
-                            } ,
-                            padding : 1 + "em"
-                        } }>
-                            <h6>Vuoi effettuare una ricerca?</h6>
-                            {/*BOTTONE CHE FA COMPARIRE IL FORM*/ }
-                            {
-                                !ricercaFlag ? (
-                                    <IconButton onClick={ () => setRicercaFlag ( true ) } aria-label="add">
-                                        <ContentPasteSearchIcon/>
-                                    </IconButton>
-                                ) : (
-                                    <IconButton onClick={ () => {
-                                        setRicercaFlag ( false )
-                                        setRicercaRangeFlag(false);
-                                        setRicercaNumeroFatturaFlag(false)
-                                        dispatch(getBolletteList(user.token, user.id))
-                                    } } aria-label="delete">
-                                        <CancelIcon/>
-                                    </IconButton>
-                                )
-                            }
-                            {
-                                // LA SEZIONE DI RICERCA
-                                ricercaFlag && (
-                                    <>
-                                        <Col className={ 'm-auto' } xs={ 6 }>
-                                            {
-                                                // ICONA DI RICERCA PER PERIODO DI EMISSIONE RANGE
-                                                // TUTTE LE BOLLETTE EMESSE IN UN ARCO TEMPORALE
-                                                !ricercaNumeroFatturaFlag &&
-                                                !ricercaScadenzaRangeFlag && (
-                                                    <Col className={ 'd-flex justify-content-start' }>
-                                                        <IconButton
-                                                            className={ 'p-0' }
-                                                            color={ ricercaRangeFlag ? 'secondary' : 'primary' }
-                                                            onClick={ () => setRicercaRangeFlag ( !ricercaRangeFlag ) }
-                                                            aria-label="add">
-                                                            <DateRangeIcon style={ {
-                                                                fontSize : '1.5em' ,
-                                                            } }/>
-                                                        </IconButton>
-                                                        <b className={ 'd-flex align-items-end' }>Ricerca per periodo emissione range</b>
-                                                    </Col>
-                                                )
-                                            }
+                                                    } );
+                                                    setFormBollettaObj ( {
+                                                        fornitura : '' ,
+                                                        userId : user.id ,
+                                                        numero : '' ,
+                                                        totale : '' ,
+                                                        emissione : '' ,
+                                                        periodoInizio : '' ,
+                                                        periodoFine : '' ,
+                                                        scadenza : '' ,
+                                                    } )
+                                                }
 
-                                            {
-                                                // ICONA DI RICERCA PER RANGE DI SCADENZA
-                                                // TUTTE LE BOLLETTE CHE SCADONO IN UN ARCO TEMPORALE
-                                                !ricercaRangeFlag &&
-                                                !ricercaNumeroFatturaFlag && (
-                                                    <Col className={ 'd-flex justify-content-start my-3' }>
-                                                        <IconButton
-                                                            className={ 'p-0' }
-                                                            color={ ricercaScadenzaRangeFlag ? 'secondary' : 'primary' }
-                                                            onClick={ () => setRicercaScadenzaRangeFlag ( !ricercaScadenzaRangeFlag ) }
-                                                            aria-label="add">
-                                                            <AlarmIcon style={ {
-                                                                fontSize : '1.5em' ,
-                                                            } }/>
-                                                        </IconButton>
-                                                        <b className={ 'd-flex align-items-end' }>Ricerca per scadenza range</b>
-                                                    </Col>
-                                                )
-                                            }
-
-                                            {
-                                                // ICONA DI RICERCA PER NUMERO FATTURA
-                                                // ARRAY CONTENENTE ANCHE 0 ELEMENTI NEL CASO IN CUI NON VIENE TROVATO IL NUMERO FATTURA
-                                                !ricercaRangeFlag &&
-                                                !ricercaScadenzaRangeFlag && (
-                                                    <Col className={ 'd-flex justify-content-start my-3' }>
-                                                        <IconButton
-                                                            className={ 'p-0' }
-                                                            color={ ricercaNumeroFatturaFlag ? 'secondary' : 'primary' }
-                                                            onClick={ () => setRicercaNumeroFatturaFlag ( !ricercaNumeroFatturaFlag ) }
-                                                            aria-label="add">
-                                                            <ReceiptLongIcon style={ {
-                                                                fontSize : '1.5em' ,
-                                                            } }/>
-                                                        </IconButton>
-                                                        <b className={ 'd-flex align-items-end' }>Ricerca per numero fattura</b>
-                                                    </Col>
-                                                )
-                                            }
-                                        </Col>
-                                    </>
-                                )
-                            }
-
-                            {
-                                // SEZIONE DI RICERCA SCADENZA RANGE
-                                ricercaScadenzaRangeFlag && (
-                                    <>
-                                        <Row className={ 'pt-2' }>
-                                            <Col className={ 'd-flex' } xs={ 12 }>
-                                                <Col
-                                                    style={ {
-                                                        fontSize : '1.5em' ,
-                                                        fontWeight : 'bold'
-                                                    } }
-                                                    className={ 'd-flex align-items-end' }>
-                                                    Dal
-                                                </Col>
-                                                <Col>
-                                                    <TextField
-                                                        value={dataInizioRangeScadenza}
-                                                        onChange={(e) => setDataInizioRangeScadenza(e.target.value)}
-                                                        type="date"
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </Col>
-                                            </Col>
-
-                                            <Col className={ 'd-flex' }>
-                                                <Col
-                                                    style={ {
-                                                        fontSize : '1.5em' ,
-                                                        fontWeight : 'bold'
-                                                    } }
-                                                    className={ 'd-flex align-items-end' }>
-                                                    al
-                                                </Col>
-                                                <Col>
-                                                    <TextField
-                                                        value={dataFineRangeScadenza}
-                                                        onChange={(e) => setDataFineRangeScadenza(e.target.value)}
-                                                        type="date"
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </Col>
-                                            </Col>
-
-                                        </Row>
-                                        <Row className={ 'pt-3' }>
-                                            <Col>
-                                                <Button
-                                                    onClick={() => {
-                                                        fetchRicercaScadenzaRange(
-                                                            dataInizioRangeScadenza,
-                                                            dataFineRangeScadenza,
-                                                            user.id,
-                                                            user.token
+                                            } }>
+                                                <Row className={ "p-2 justify-content-center" }>
+                                                    {/*COMPONENTE PER LA SELEZIONE DELLA FORNITURA*/ }
+                                                    <FornituraSelectedComponent
+                                                        handleForm={ handleForm }
+                                                        fornituraState={ fornituraState }
+                                                        setFornituraState={ setFornituraState }/>
+                                                    {
+                                                        // NEL CASO IN CUI NON SI SELEZIONA LA FORNITURA
+                                                        errorFornituraFlag && (
+                                                            <Alert severity="error">E' necessario selezionare una
+                                                                fornitura</Alert>
                                                         )
-                                                    }}
-                                                    variant={ 'contained' }
-                                                    color={ "primary" }
-                                                    aria-label="add">
-                                                    <SearchIcon/>Ricerca
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </>
-                                )
-                            }
+                                                    }
+                                                </Row>
+                                                <Row className={ "p-2" }>
+                                                    <h6>Numero Bolletta</h6>
+                                                    <FormControl>
+                                                        <TextField
+                                                            required
+                                                            type="number"
+                                                            value={ formBollettaObj.numero }
+                                                            onChange={ event => handleForm ( "numero" , event.target.value ) }
+                                                            className={ "mt-2" }
+                                                            id="outlined-basic"
+                                                            label="Inserisci il numero..."
+                                                            variant="outlined"/>
+                                                    </FormControl>
 
-                            {
-                                // SEZIONE DI RICERCA EMISSIONE RANGE
-                                ricercaRangeFlag && (
-                                    <>
-                                        <Row className={ 'pt-2' }>
-                                            <Col className={ 'd-flex' } xs={ 12 }>
-                                                <Col
-                                                    style={ {
-                                                        fontSize : '1.5em' ,
-                                                        fontWeight : 'bold'
-                                                    } }
-                                                    className={ 'd-flex align-items-end' }>
-                                                    Dal
+
+                                                </Row>
+                                                <Row className={ "p-2" }>
+                                                    <h6>Totale dovuto</h6>
+                                                    <FormControl>
+                                                        <TextField
+                                                            type="number"
+                                                            required
+                                                            value={ formBollettaObj.totale }
+                                                            onChange={ event => handleForm ( "totale" , event.target.value ) }
+                                                            className={ "mt-2" }
+                                                            id="outlined-basic"
+                                                            label="Inserisci il totale..."
+                                                            variant="outlined"/>
+                                                    </FormControl>
+                                                </Row>
+                                                <Row className={ "p-2" }>
+                                                    <h6>Inserisci data di emissione</h6>
+                                                    <FormControl>
+                                                        <TextField
+                                                            type="date"
+                                                            required
+                                                            value={ formBollettaObj.emissione }
+                                                            onChange={ event => handleForm ( "emissione" , event.target.value ) }
+                                                            className={ "mt-2" }
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </FormControl>
+                                                </Row>
+                                                <Row className={ "p-2" }>
+                                                    <h6>Inserisci periodo iniziale</h6>
+                                                    <FormControl>
+                                                        <TextField
+                                                            type="date"
+                                                            required
+                                                            value={ formBollettaObj.periodoInizio }
+                                                            onChange={ event => handleForm ( "periodoInizio" , event.target.value ) }
+                                                            className={ "mt-2" }
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </FormControl>
+                                                </Row>
+                                                <Row className={ "p-2" }>
+                                                    <h6>Inserisci periodo di fine</h6>
+                                                    <FormControl>
+                                                        <TextField
+                                                            type="date"
+                                                            required
+                                                            value={ formBollettaObj.periodoFine }
+                                                            onChange={ event => handleForm ( "periodoFine" , event.target.value ) }
+                                                            className={ "mt-2" }
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </FormControl>
+                                                </Row>
+                                                <Row className={ "p-2" }>
+                                                    <h6>Scadenza pagamento</h6>
+                                                    <FormControl>
+                                                        <TextField
+                                                            type="date"
+                                                            required
+                                                            value={ formBollettaObj.scadenza }
+                                                            onChange={ event => handleForm ( "scadenza" , event.target.value ) }
+                                                            className={ "mt-2" }
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </FormControl>
+                                                </Row>
+                                                <Button type={ 'submit' } variant="contained" sx={ {my : 2} }>
+                                                    Aggiungi
+                                                </Button>
+                                            </Form>
+                                        )
+                                    }
+                                </Row>
+
+                            </Card>
+
+                            {/*SEZIONE DI RICERCA*/ }
+                            <Card sx={ {
+                                overflow : "scroll" ,
+                                '&::-webkit-scrollbar' : {
+                                    display : "none"
+                                } ,
+                                padding : 1 + "em"
+                            } }>
+                                <h6>Vuoi effettuare una ricerca?</h6>
+                                {/*BOTTONE CHE FA COMPARIRE IL FORM*/ }
+                                {
+                                    !ricercaFlag ? (
+                                        <IconButton onClick={ () => setRicercaFlag ( true ) } aria-label="add">
+                                            <ContentPasteSearchIcon/>
+                                        </IconButton>
+                                    ) : (
+                                        // AL CLICK CHIUDO TUTTE LE SEZIONI
+                                        <IconButton onClick={ () => {
+                                            setRicercaFlag ( false )
+                                            setRicercaRangeFlag ( false );
+                                            setRicercaNumeroFatturaFlag ( false )
+                                            setRicercaScadenzaRangeFlag ( false )
+                                            dispatch ( getBolletteList ( user.token , user.id ) )
+                                        } } aria-label="delete">
+                                            <CancelIcon/>
+                                        </IconButton>
+                                    )
+                                }
+                                {
+                                    // LA SEZIONE DI RICERCA
+                                    ricercaFlag && (
+                                        <>
+                                            <Col className={ 'm-auto' } xs={ 12 }>
+                                                {
+                                                    // ICONA DI RICERCA PER PERIODO DI EMISSIONE RANGE
+                                                    // TUTTE LE BOLLETTE EMESSE IN UN ARCO TEMPORALE
+                                                    !ricercaNumeroFatturaFlag &&
+                                                    !ricercaScadenzaRangeFlag && (
+                                                        <Col className={ 'd-flex flex-column justify-content-start' }>
+                                                            <Col>
+                                                                <IconButton
+                                                                    className={ 'p-0' }
+                                                                    color={ ricercaRangeFlag ? 'secondary' : 'primary' }
+                                                                    onClick={ () => setRicercaRangeFlag ( !ricercaRangeFlag ) }
+                                                                    aria-label="add">
+                                                                    <DateRangeIcon style={ {
+                                                                        fontSize : '1.5em' ,
+                                                                    } }/>
+                                                                </IconButton>
+                                                            </Col>
+                                                            <Col>
+                                                                <b>Ricerca per periodo
+                                                                    emissione
+                                                                    range</b>
+                                                            </Col>
+                                                        </Col>
+                                                    )
+                                                }
+
+                                                {
+                                                    // ICONA DI RICERCA PER RANGE DI SCADENZA
+                                                    // TUTTE LE BOLLETTE CHE SCADONO IN UN ARCO TEMPORALE
+                                                    !ricercaRangeFlag &&
+                                                    !ricercaNumeroFatturaFlag && (
+                                                        <Col className={ 'd-flex flex-column justify-content-start my-3' }>
+                                                            <Col>
+                                                                <IconButton
+                                                                    className={ 'p-0' }
+                                                                    color={ ricercaScadenzaRangeFlag ? 'secondary' : 'primary' }
+                                                                    onClick={ () => setRicercaScadenzaRangeFlag ( !ricercaScadenzaRangeFlag ) }
+                                                                    aria-label="add">
+                                                                    <AlarmIcon style={ {
+                                                                        fontSize : '1.5em' ,
+                                                                    } }/>
+                                                                </IconButton>
+                                                            </Col>
+                                                            <Col>
+                                                                <b>Ricerca per scadenza
+                                                                    range</b>
+                                                            </Col>
+                                                        </Col>
+                                                    )
+                                                }
+
+                                            </Col>
+                                        </>
+                                    )
+                                }
+
+                                {
+                                    // SEZIONE DI RICERCA SCADENZA RANGE
+                                    ricercaScadenzaRangeFlag && (
+                                        <>
+                                            <Row className={ 'pt-2' }>
+                                                <Col className={ 'd-flex' } xs={ 12 }>
+                                                    <Col
+                                                        style={ {
+                                                            fontSize : '1.5em' ,
+                                                            fontWeight : 'bold'
+                                                        } }
+                                                        className={ 'd-flex align-items-end' }>
+                                                        Dal
+                                                    </Col>
+                                                    <Col>
+                                                        <TextField
+                                                            value={ dataInizioRangeScadenza }
+                                                            onChange={ (e) => setDataInizioRangeScadenza ( e.target.value ) }
+                                                            type="date"
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </Col>
                                                 </Col>
+
+                                                <Col className={ 'd-flex' }>
+                                                    <Col
+                                                        style={ {
+                                                            fontSize : '1.5em' ,
+                                                            fontWeight : 'bold'
+                                                        } }
+                                                        className={ 'd-flex align-items-end' }>
+                                                        al
+                                                    </Col>
+                                                    <Col>
+                                                        <TextField
+                                                            value={ dataFineRangeScadenza }
+                                                            onChange={ (e) => setDataFineRangeScadenza ( e.target.value ) }
+                                                            type="date"
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </Col>
+                                                </Col>
+
+                                            </Row>
+                                            <Row className={ 'pt-3' }>
                                                 <Col>
-                                                    <TextField
-                                                        value={dataInizioRange}
-                                                        onChange={(e) => setDataInizioRange(e.target.value)}
-                                                        type="date"
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
+                                                    <Button
+                                                        onClick={ () => {
+                                                            fetchRicercaScadenzaRange (
+                                                                dataInizioRangeScadenza ,
+                                                                dataFineRangeScadenza ,
+                                                                user.id ,
+                                                                user.token
+                                                            ).then ( r => {
+                                                                if ( r ) {
+                                                                    dispatch ( setBolletteList ( r ) )
+                                                                    handleClickScadenza()
+                                                                } else {
+                                                                    console.log ( 'error' )
+                                                                    handleClickError()
+                                                                }
+                                                            } )
+                                                        } }
+                                                        variant={ 'contained' }
+                                                        color={ "primary" }
+                                                        aria-label="add">
+                                                        <SearchIcon/>Ricerca
+                                                    </Button>
                                                 </Col>
-                                            </Col>
+                                            </Row>
+                                        </>
+                                    )
+                                }
 
-                                            <Col className={ 'd-flex' }>
-                                                <Col
-                                                    style={ {
-                                                        fontSize : '1.5em' ,
-                                                        fontWeight : 'bold'
-                                                    } }
-                                                    className={ 'd-flex align-items-end' }>
-                                                    al
+                                {
+                                    // SEZIONE DI RICERCA EMISSIONE RANGE
+                                    ricercaRangeFlag && (
+                                        <>
+                                            <Row className={ 'pt-2' }>
+                                                <Col className={ 'd-flex' } xs={ 12 }>
+                                                    <Col
+                                                        style={ {
+                                                            fontSize : '1.5em' ,
+                                                            fontWeight : 'bold'
+                                                        } }
+                                                        className={ 'd-flex align-items-end' }>
+                                                        Dal
+                                                    </Col>
+                                                    <Col>
+                                                        <TextField
+                                                            value={ dataInizioRange }
+                                                            onChange={ (e) => setDataInizioRange ( e.target.value ) }
+                                                            type="date"
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </Col>
                                                 </Col>
+
+                                                <Col className={ 'd-flex' }>
+                                                    <Col
+                                                        style={ {
+                                                            fontSize : '1.5em' ,
+                                                            fontWeight : 'bold'
+                                                        } }
+                                                        className={ 'd-flex align-items-end' }>
+                                                        al
+                                                    </Col>
+                                                    <Col>
+                                                        <TextField
+                                                            value={ dataFineRange }
+                                                            onChange={ (e) => setDataFineRange ( e.target.value ) }
+                                                            type="date"
+                                                            id="outlined-basic"
+                                                            variant="outlined"/>
+                                                    </Col>
+                                                </Col>
+
+                                            </Row>
+                                            <Row className={ 'pt-3' }>
                                                 <Col>
-                                                    <TextField
-                                                        value={dataFineRange}
-                                                        onChange={(e) => setDataFineRange(e.target.value)}
-                                                        type="date"
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
+                                                    <Button
+                                                        onClick={ () => {
+                                                            fetchRicercaEmissioneRange (
+                                                                dataInizioRange ,
+                                                                dataFineRange ,
+                                                                user.id ,
+                                                                user.token
+                                                            ).then ( r => {
+                                                                if ( r ) {
+                                                                    dispatch ( setBolletteList ( r ) )
+                                                                    handleClickEmissione()
+                                                                } else {
+                                                                    console.log ( 'error' )
+                                                                }
+                                                            } )
+                                                        } }
+                                                        variant={ 'contained' }
+                                                        color={ "primary" }
+                                                        aria-label="add">
+                                                        <SearchIcon/>Ricerca
+                                                    </Button>
                                                 </Col>
-                                            </Col>
+                                            </Row>
+                                        </>
+                                    )
+                                }
+                            </Card>
+                        </Row>
+                    </Offcanvas.Body>
+                </Offcanvas>
 
-                                        </Row>
-                                        <Row className={ 'pt-3' }>
-                                            <Col>
-                                                <Button
-                                                    onClick={() => {
-                                                        fetchRicercaEmissioneRange(
-                                                            dataInizioRange,
-                                                            dataFineRange,
-                                                            user.id,
-                                                            user.token
-                                                        )
-                                                    }}
-                                                    variant={ 'contained' }
-                                                    color={ "primary" }
-                                                    aria-label="add">
-                                                    <SearchIcon/>Ricerca
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </>
-
-
-                                )
-                            }
-
-                            {
-                                // SEZIONE DI RICERCA PER NUMERO FATTURA
-                                ricercaNumeroFatturaFlag && (
-                                    <Row className={ 'pt-2' }>
-                                        <Col className={ 'd-flex' } xs={ 12 }>
-                                            <Col
-                                                style={ {
-                                                    fontSize : '1.5em' ,
-                                                    fontWeight : 'bold'
-                                                } }
-                                                className={ 'd-flex align-items-end' }>
-                                                Inserisci numero fattura
-                                            </Col>
-                                            <Col>
-                                                <TextField
-                                                    value={numeroFattura}
-                                                    onChange={(e) => setNumeroFattura(e.target.value)}
-                                                    type="number"
-                                                    label="N. Fattura"
-                                                    id="outlined-basic"
-                                                    variant="outlined"/>
-                                            </Col>
-                                        </Col>
-                                        <Row className={ 'pt-3' }>
-                                            <Col>
-                                                <Button
-                                                    onClick={() => {
-                                                        fetchRicercaNumeroFattura(numeroFattura, user.id, user.token)
-                                                    }}
-                                                    variant={ 'contained' }
-                                                    color={ "primary" }
-                                                    aria-label="add">
-                                                    <SearchIcon/>Ricerca
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </Row>
-                                )
-                            }
-                        </Card>
-                    </Row>
+                <Col>
+                    <SettingsIcon style={ {color : 'gray' , fontSize : '3em'} }/>
+                    <Switch
+                        checked={ show }
+                        onChange={ show ? handleClose : handleShow }
+                        control={ <Switch defaultChecked/> }
+                    />
                 </Col>
-                {/*COLONNA FANTASMA CHE PRENDE LO SPAZIO DELLA NAVBAR SINISTRA FIXED*/}
-                <Col xs={ 3 }>
+                <Col
+                    style={ {
+                        fontSize : '.7em'
+                    } }
+                    xs={ 12 }>
+                    <Row className={ 'mt-4 text-center justify-content-between' }>
 
-                </Col>
-
-                {/*SEZIONE DEGLI SWITCH FORNITURA*/}
-                <Col xs={ 9 }>
-                    <Row className={ 'text-center justify-content-between' }>
                         <Col className={ 'd-flex justify-content-center' }>
+
                             <Col>
                                 <GasMeterIcon style={ {color : 'royalblue' , fontSize : '3em'} }/>
                                 <Switch
@@ -772,8 +716,7 @@ const UtenzeComponent = () => {
                             </Col>
                         </Col>
                     </Row>
-
-                    <Row className={ "justify-content-center mt-3" }>
+                    <Row className={ "justify-content-center" }>
                         {
                             // LE CARD BOLLETTA
                             filtroBySwitch ( bolletteList ).map ( (bolletta , index) => {
@@ -785,6 +728,8 @@ const UtenzeComponent = () => {
                                         lg={ 6 }
                                         key={ index }>
                                         <CardUtenzaComponent
+                                            handleClickEliminazione={handleClickEliminazione}
+                                            handleClickError={handleClickError}
                                             bolletta={ bolletta }
                                             index={ index }
                                             bollettaList={ filtroBySwitch ( bolletteList ) }

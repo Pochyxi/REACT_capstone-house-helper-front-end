@@ -5,8 +5,18 @@ export const SET_SPESE_LIST= "SET_SPESE_LIST";
 export const SET_PRODOTTI_LIST= "SET_PRODOTTI_LIST";
 export const SET_POSTIT_LIST= "SET_POSTIT_LIST";
 export const SET_BOLLETTE_LIST= "SET_BOLLETTE_LIST";
+export const SET_LOGIN_FLAG_TRUE = "SET_LOGIN_FLAG_TRUE";
+export const SET_LOGIN_FLAG_FALSE = "SET_LOGIN_FLAG_FALSE";
 
+export const setLoginFlagTrue = () => ({
+    type : SET_LOGIN_FLAG_TRUE,
+    payload: true,
+})
 
+export const setLoginFlagFalse = () => ({
+    type : SET_LOGIN_FLAG_FALSE,
+    payload: false,
+})
 
 export const setUser = (user) => ({
     type : SET_USER ,
@@ -57,8 +67,9 @@ export const logIn = (obj) => {
 
                 dispatch ( setUser ( data ) );
 
-                console.log ( data );
+                dispatch(setLoginFlagFalse())
             } else {
+                dispatch(setLoginFlagTrue())
                 console.log ( "username o password errata" );
             }
         } catch ( error ) {
@@ -97,8 +108,8 @@ export const getSpeseList = (key, userId) => {
     };
 };
 
-export const getProdottiList = (key) => {
-    const baseEndpoint = `http://localhost:8080/api/prodotto`;
+export const getProdottiList = (key, userId) => {
+    const baseEndpoint = `http://localhost:8080/api/prodotto/user/${userId}`;
 
     const header = {
         "Content-type" : "application/json" ,

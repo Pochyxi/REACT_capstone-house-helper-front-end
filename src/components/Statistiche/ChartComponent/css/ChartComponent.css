@@ -1,0 +1,45 @@
+#my-chart .bar {
+    height: 300px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+@media (min-width: 600px) {
+    #my-chart .bar {
+        height: 400px;
+        max-width: 800px;
+    }
+}
+
+@media (min-width: 1000px) {
+    #my-chart .bar {
+        height: 500px;
+        max-width: 1000px;
+    }
+}
+
+#my-chart {
+    height: 300px;
+    --heading-size: 1rem;
+}
+#my-chart caption {
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.25rem;
+}
+
+ tbody td {
+    margin-inline-start: 10px;
+    margin-inline-end: 20px;
+    box-shadow:
+            1px -1px 1px lightgrey,
+            2px -2px 1px lightgrey,
+            3px -3px 1px lightgrey,
+            4px -4px 1px lightgrey,
+            5px -5px 1px lightgrey,
+            6px -6px 1px lightgrey,
+            7px -7px 1px lightgrey,
+            8px -8px 1px lightgrey,
+            9px -9px 1px lightgrey,
+            10px -10px 1px lightgrey;
+}
