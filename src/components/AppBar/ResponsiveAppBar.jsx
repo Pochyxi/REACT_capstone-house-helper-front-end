@@ -24,8 +24,10 @@ import { useEffect } from "react";
 import { useDispatch , useSelector } from "react-redux";
 import { logout } from "../../redux/actions/actions";
 import LogoutIcon from '@mui/icons-material/Logout';
-import MapComponent from "./MapComponent";
+import MapComponent from "../Home/MapComponent";
 import ChartBolletteComponent from "../Statistiche/ChartComponent/ChartBolletteComponent";
+import LoginMaterialComponent from "../Login/LoginMaterialComponent";
+import HouseHelper from '../../img/HHlogo.png'
 
 const drawerWidth = 240;
 
@@ -39,9 +41,8 @@ const ResponsiveAppBar = (props) => {
     useEffect ( () => {
         if ( !user.token ) {
             navigate ( "/login" );
-        } else {
-            // navigate ( "/")
         }
+
     } , [ user.token ] );
 
 
@@ -57,6 +58,17 @@ const ResponsiveAppBar = (props) => {
             <Typography variant="h6" sx={ {my : 2} }>
                 HouseHelper
             </Typography>
+            <Row className={'align-items-center justify-content-center'}>
+                <Col>
+                    <img
+                        style={{
+                            width : "30%",
+                            height : "30%"
+                        }}
+                        src={HouseHelper}
+                        alt="logo"/>
+                </Col>
+            </Row>
             <Divider/>
             <List>
                 { user.token ? (
@@ -175,7 +187,7 @@ const ResponsiveAppBar = (props) => {
     return (
         <Box sx={ {display : 'flex'} }>
             <AppBar component="nav">
-                <Toolbar>
+                <Toolbar style={{fontSize: '15px'}} className={'d-sm-flex justify-content-md-center'}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -183,20 +195,42 @@ const ResponsiveAppBar = (props) => {
                         onClick={ handleDrawerToggle }
                         sx={ {mr : 2 , display : {sm : 'none'}} }
                     >
-                        <MenuIcon/>
+                        <MenuIcon style={{marginRight: '5px'}}/>
+                        <Row className={'align-items-center justify-content-center'}>
+                            <Col>
+                                <img
+                                    style={{
+                                        width : "50px",
+                                        height : "50px"
+                                    }}
+                                    src={HouseHelper}
+                                    alt="logo"/>
+                            </Col>
+                        </Row>
                         <Typography
                             variant="h6"
                             component="div"
                         >
-                            HouseHelper
+                            House Helper
                         </Typography>
                     </IconButton>
+                    <Row className={'d-none d-md-flex align-items-center justify-content-center'}>
+                        <Col>
+                            <img
+                                style={{
+                                    width : "50px",
+                                    height : "50px"
+                                }}
+                                src={HouseHelper}
+                                alt="logo"/>
+                        </Col>
+                    </Row>
                     <Typography
                         variant="h6"
                         component="div"
                         sx={ {flexGrow : 1 , display : {xs : 'none' , sm : 'block'}} }
                     >
-                        HouseHelper
+                        House Helper
                     </Typography>
                     <Box sx={ {display : {xs : 'none' , sm : 'block'}} }>
                         {
@@ -209,7 +243,7 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/' ? '20px solid #f3f2ef' : 'none',
                                             } }>
                                             <ListItemText primary={ 'HOME' }/>
                                         </ListItemButton>
@@ -219,7 +253,8 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/postit' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/postit' ? '20px solid #f3f2ef' : 'none',
+
                                             } }>
                                             <ListItemText primary={ 'POSTIT' }/>
                                         </ListItemButton>
@@ -229,7 +264,7 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/alimenti' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/alimenti' ? '20px solid #f3f2ef' : 'none',
                                             } }>
                                             <ListItemText primary={ 'ALIMENTI' }/>
                                         </ListItemButton>
@@ -239,7 +274,7 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/utenze' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/utenze' ? '20px solid #f3f2ef' : 'none',
                                             } }>
                                             <ListItemText primary={ 'UTENZE' }/>
                                         </ListItemButton>
@@ -249,7 +284,7 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/statistiche' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/statistiche' ? '20px solid #f3f2ef' : 'none',
                                             } }>
                                             <ListItemText primary={ 'STATISTICHE' }/>
                                         </ListItemButton>
@@ -259,7 +294,6 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                color : 'red' ,
                                             } }>
                                             <LogoutIcon />
                                         </ListItemButton>
@@ -274,7 +308,7 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/login' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/login' ? '20px solid #f3f2ef' : 'none',
                                             } }>
                                             <ListItemText primary={ 'Login' }/>
                                         </ListItemButton>
@@ -284,9 +318,9 @@ const ResponsiveAppBar = (props) => {
                                             } }
                                             sx={ {
                                                 textAlign : 'center' ,
-                                                borderBottom : location.pathname === '/signup' ? '2px solid indigo' : 'none'
+                                                borderBottom : location.pathname === '/signup' ? '20px solid #f3f2ef' : 'none',
                                             } }>
-                                            <ListItemText primary={ 'Iscriviti' }/>
+                                            <ListItemText primary={ 'Registrati' }/>
                                         </ListItemButton>
                                     </ListItem>
                                 </>
@@ -312,7 +346,7 @@ const ResponsiveAppBar = (props) => {
                     { drawer }
                 </Drawer>
             </Box>
-            <Box component="main" sx={ {width : '100%'} }>
+            <Box component="main" sx={ {width : '100%', paddingTop: '10px'} }>
                 <Container fluid
                            style={ {
                                backgroundColor : "#f3f2ef" ,

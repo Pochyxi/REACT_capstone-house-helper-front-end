@@ -1,13 +1,5 @@
 import React , { useState } from 'react';
-import {
-    Button , Dialog ,
-    DialogActions ,
-    DialogContent ,
-    DialogContentText ,
-    DialogTitle ,
-    IconButton ,
-    Paper , Slide
-} from "@mui/material";
+import { IconButton , Paper } from "@mui/material";
 import { Col , Row } from "react-bootstrap";
 import GasMeterIcon from '@mui/icons-material/GasMeter';
 import OpacityIcon from '@mui/icons-material/Opacity';
@@ -21,8 +13,9 @@ import { getBolletteList } from "../../redux/actions/actions";
 import { useDispatch , useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
+import { deleteBolletta } from "./api/api";
 
-const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
+const CardUtenzaComponent = ({bolletta, handleClickEliminazione, handleClickError}) => {
     const user = useSelector ( state => state.user.user )
     const dispatch = useDispatch ()
     const navigate = useNavigate ()
@@ -57,30 +50,6 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
         }
     }
 
-    // FETCH PER ELIMINARE UNA BOLLETTA
-    const deleteBolletta = async (bollettaId , key) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/delete/${ bollettaId }`
-        const header = {
-            'Authorization' : 'Bearer ' + key
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'DELETE' ,
-                headers : header ,
-            } )
-
-            if ( response.ok ) {
-                handleClose()
-                dispatch ( getBolletteList ( user.token , user.id ) )
-            }
-
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
-    console.log(dialogEliminazioneFlag)
 
     return (
         <Paper>
@@ -98,9 +67,11 @@ const CardUtenzaComponent = ({bolletta , index , bollettaList}) => {
                     <DialogDeleteComponent
                         dialogEliminazioneFlag={dialogEliminazioneFlag}
                         handleClose={handleClose}
-                        deleteBolletta={deleteBolletta}
-                        bolletta={bolletta}
+                        fetchToDelete={deleteBolletta}
+                        item={bolletta}
                         user={user}
+                        openSuccess={ handleClickEliminazione }
+                        openError={ handleClickError }
                     />
                 </Col>
                 {/*SEZIONE FORNITURA PIU' LOGO*/ }

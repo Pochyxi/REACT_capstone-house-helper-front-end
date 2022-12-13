@@ -24,6 +24,11 @@ import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrow
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { addListaSpesa , removeProdottoFromDatabase } from "./api/api";
+import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
+import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
+import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
 
 const Search = styled ( 'div' ) ( ({theme}) => ({
     position : 'relative' ,
@@ -72,7 +77,7 @@ const AlimentiComponent = () => {
     const navigate = useNavigate ()
     const prodottiList = useSelector ( state => state.fetch.productList )
     const user = useSelector ( state => state.user.user )
-    const [ deleteProdottiFlag , setDeleteProdottiFlag ] = useState (false);
+    const [ deleteProdottiFlag , setDeleteProdottiFlag ] = useState ( false );
     const dispatch = useDispatch ()
     const [ formFlag , setFormFlag ] = useState ( false );
     const [ formObj , setFormObj ] = useState ( {
@@ -102,221 +107,254 @@ const AlimentiComponent = () => {
 
     useEffect ( () => {
         dispatch ( getSpeseList ( user.token , user.id ) )
-        dispatch ( getProdottiList ( user.token ) )
+        dispatch ( getProdottiList ( user.token , user.id ) )
     } , [] )
 
 
-
-    const addListaSpesa = async (obj , token) => {
-        const baseEndpoint = `http://localhost:8080/api/lista/new`
-        const header = {
-            'Content-Type' : 'application/json' ,
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'POST' ,
-                headers : header ,
-                body : JSON.stringify ( obj )
-            } )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                console.log ( data )
-                setFormFlag ( false )
-                dispatch ( getSpeseList ( user.token , user.id ) )
-            }
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
-    const removeProdottoFromDatabase = async (token , prodottoId) => {
-        const baseEndpoint = `http://localhost:8080/api/prodotto/delete/${ prodottoId }`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'DELETE' ,
-                headers : header ,
-            } )
-
-            if ( response.ok ) {
-                dispatch ( getProdottiList ( user.token ) )
-                dispatch ( getSpeseList ( user.token , user.id ) )
-                setSpesaListaNome ( [] )
-                console.log ("done")
-            }
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
     const populateSpesaListaNome = () => {
-        let arr = []
-        for(let i = 0; i < spesaList.length; i++) {
-            console.log (spesaList[i].id + " " + spesaList[i].nome)
-            arr.push(spesaList[i].id + " " + spesaList[i].nome)
+        if ( spesaListaNome.length === 0 ) {
+            let arr = []
+            for (let i = 0; i < spesaList.length; i++) {
+                console.log ( spesaList[i].id + " " + spesaList[i].nome )
+                arr.push ( spesaList[i].id + " " + spesaList[i].nome )
+            }
+            setSpesaListaNome ( arr )
         }
-        setSpesaListaNome(arr)
     }
 
 
-    useEffect(() => {
-        populateSpesaListaNome()
-    }, [spesaList])
+    useEffect ( () => {
+        populateSpesaListaNome ()
+    } , [ spesaList ] )
 
     // OFFCANVAS //
     //////////////
-    const [show, setShow] = useState(false);
+    const [ show , setShow ] = useState ( false );
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleClose = () => setShow ( false );
+    const handleShow = () => setShow ( true );
 
     ////////////////////
     // FINE OFFCANVAS //
 
+    // SNACKBARS //
+    ///////////////
+
+    // aggiunta di una nuova lista //
+    const [ snackAddListaFlag , setSnackAddListaFlag ] = useState ( false );
+
+    const handleClickLista = () => setSnackAddListaFlag ( true )
+    const handleCloseLista = () => setSnackAddListaFlag ( false )
+    //
+
+    // eliminazione di un prodotto //
+    const [ snackElProdottoFlag , setSnackElProdottoFlag ] = useState ( false )
+
+    const handleClickProdotto = () => {
+        dispatch(getProdottiList(user.token, user.id))
+        setSnackElProdottoFlag ( true )
+    }
+    const handleCloseProdotto = () => setSnackElProdottoFlag ( false )
+    //
+
+    // errore generico //
+    const [ snackErrorFlag , setSnackErrorFlag ] = useState ( false );
+
+    const handleClickError = () => {
+        setSnackErrorFlag ( true );
+    };
+
+    const handleCloseError = () => {
+        setSnackErrorFlag ( false );
+    };
+    //
+
+    // DIALOGS //
+    /////////////
+
+    const [ dialogEliminazioneProdottoFlag , setDialogEliminazioneProdottoFlag ] = useState ( false );
+    const handleClickOpenProdotto = () => {
+        setDialogEliminazioneProdottoFlag ( true );
+    };
+    const handleCloseProdottoDialog = () => {
+        setDialogEliminazioneProdottoFlag ( false );
+    };
+
+    // FINE DIALOGS //
+    //////////////////
+
+
     return (
         <Container fluid>
+            <SnackbarErrorComponent
+                openFlag={ snackErrorFlag }
+                closeFunction={ handleCloseError }
+                message={ 'Purtroppo qualcosa è andato storto' }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackAddListaFlag }
+                closeFunction={ handleCloseLista }
+                message={ "Lista della spesa aggiunta con successo!" }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackElProdottoFlag }
+                closeFunction={ handleCloseProdotto }
+                message={ "Prodotto eliminato con successo!" }
+            />
             <Row className={ "justify-content-center align-items-center flex-column" }>
-                <Offcanvas className={'p-0'} show={show} onHide={handleClose}>
+
+                <Offcanvas className={ 'p-0' } show={ show } onHide={ handleClose }>
                     <Offcanvas.Header closeButton>
                     </Offcanvas.Header>
                     <Offcanvas.Body
-                            style={ {
-                                backgroundColor : "#0d6efd" ,
-                                borderRight : "2px solid royalblue" ,
-                                boxShadow : "1px 1px 2px gray" ,
-                                minHeight : '100%',
-                            } }
-                            className={ "text-center" }
-                            >
-                        <Row className={'justify-content-end'}>
-                            <Col xs={2}>
+                        style={ {
+                            backgroundColor : "#0d6efd" ,
+                            borderRight : "2px solid royalblue" ,
+                            boxShadow : "1px 1px 2px gray" ,
+                            minHeight : '100%' ,
+                        } }
+                        className={ "text-center" }
+                    >
+                        <Row className={ 'justify-content-end' }>
+                            <Col xs={ 2 }>
                                 <IconButton
-                                    color={'error'}
-                                    onClick={() => handleClose()}
+                                    onClick={ () => handleClose () }
                                     aria-label="delete">
                                     <CloseIcon
-                                        style={{
+                                        style={ {
                                             fontSize : '2rem'
-                                        }}/>
+                                        } }/>
                                 </IconButton>
                             </Col>
                         </Row>
-                            <Row className={ "p-3" }>
-                                <Card
-                                    sx={ {margin : "20px auto"} }
-                                    className={ "p-2" }>
-                                    <Col xs={ 12 }>
-                                        <h5>Seleziona la lista della spesa</h5>
-                                        <ListaSpesaSelectComponent spesaListaNome={ spesaListaNome }
-                                                                   setSpesaListaNome={ setSpesaListaNome }/>
-                                    </Col>
+                        <Row className={ "p-3" }>
+                            <Card
+                                sx={ {margin : "20px auto"} }
+                                className={ "p-2" }>
+                                <Col xs={ 12 }>
+                                    <h5>Seleziona la lista della spesa</h5>
+                                    <ListaSpesaSelectComponent spesaListaNome={ spesaListaNome }
+                                                               setSpesaListaNome={ setSpesaListaNome }/>
+                                </Col>
 
-                                    <Col className={ "mt-2" }>
-                                        <h5>Oppure aggiungine una nuova</h5>
+                                <Col className={ "mt-2" }>
+                                    <h5>Oppure aggiungine una nuova</h5>
+                                    {
+                                        !formFlag && (
+                                            <Button onClick={ () => {
+                                                setFormFlag ( true )
+                                            } } variant="contained" color="primary">
+                                                Aggiungi Lista
+                                            </Button>
+                                        )
+                                    }
+
+                                </Col>
+                                {
+                                    formFlag && (
+                                        <Col className={ "mt-3" } xs={ 12 }>
+                                            <Form onSubmit={ event => {
+                                                event.preventDefault ()
+                                                addListaSpesa ( formObj , user.token ).then ( (r) => {
+                                                    if ( r === 'success' ) {
+                                                        setFormFlag ( false )
+                                                        dispatch ( getSpeseList ( user.token , user.id ) )
+                                                        setSpesaListaNome ( [] )
+                                                        handleClickLista ()
+                                                    } else {
+                                                        handleClickError ()
+                                                    }
+                                                } )
+                                            } }>
+                                                <FormControl>
+                                                    <TextField
+                                                        required
+                                                        id="outlined-required"
+                                                        label="Nome lista"
+                                                        onChange={ event => handleForm ( "nome" , event.target.value ) }
+                                                    />
+                                                </FormControl>
+                                                <Col>
+                                                    <Button type={ "submit" } className={ "mt-2" } variant="outlined"
+                                                            color="success">
+                                                        Aggiungi
+                                                    </Button>
+                                                </Col>
+                                                <Col>
+                                                    <Button onClick={ () => {
+                                                        setFormFlag ( false )
+                                                    } } className={ "mt-2" } variant="outlined" color="error">
+                                                        Annulla
+                                                    </Button>
+                                                </Col>
+
+                                            </Form>
+
+                                        </Col>
+                                    )
+                                }
+                            </Card>
+                            <Card sx={ {
+                                maxHeight : "30vh" ,
+                                overflow : "scroll" ,
+                                '&::-webkit-scrollbar' : {
+                                    display : "none"
+                                } ,
+                                padding : 1 + "em"
+                            } }>
+                                <h5>Gestione prodotti ({prodottiList.length})</h5>
+                                <h6>Seleziona prodotto per eliminarlo dal database</h6>
+                                <Search>
+                                    <SearchIconWrapper>
+                                        <SearchIcon/>
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        onFocus={ () => setDeleteProdottiFlag ( true ) }
+                                        onBlur={ () => {
+                                            setTimeout ( () => {
+                                                setDeleteProdottiFlag ( false )
+                                            } , 1000 )
+                                        } }
+                                        value={ searchObj.search }
+                                        onChange={ (e) => {
+                                            handleSearch ( "search" , e.target.value )
+                                        } }
+                                        placeholder="ricerca…"
+                                        inputProps={ {'aria-label' : 'search'} }
+                                    />
+                                </Search>
+                                {
+
+                                    <List className={ "text-center p-2" }>
                                         {
-                                            !formFlag && (
-                                                <Button onClick={ () => {
-                                                    setFormFlag ( true )
-                                                } } variant="contained" color="primary">
-                                                    Aggiungi Lista
-                                                </Button>
-                                            )
+                                            prodottiList.filter ( prodotto => prodotto.nome.toUpperCase ().includes ( searchObj.search.toUpperCase () ) ).map ( (prodotto , index) => {
+                                                return (
+                                                    <ListItem key={ index } disablePadding>
+                                                        <ListItemButton onClick={ handleClickOpenProdotto }
+                                                                        sx={ {color : "red"} }>
+                                                            <ListItemText className={ "text-center" }
+                                                                          primary={ prodotto.nome }/>
+                                                        </ListItemButton>
+                                                        <DialogDeleteComponent
+                                                            dialogEliminazioneFlag={ dialogEliminazioneProdottoFlag }
+                                                            handleClose={ handleCloseProdottoDialog }
+                                                            fetchToDelete={ removeProdottoFromDatabase }
+                                                            item={ prodotto }
+                                                            user={ user }
+                                                            openSuccess={ handleClickProdotto }
+                                                            openError={ handleClickError }
+                                                        />
+                                                    </ListItem>
+                                                )
+                                            } )
                                         }
 
-                                    </Col>
-                                    {
-                                        formFlag && (
-                                            <Col className={ "mt-3" } xs={ 12 }>
-                                                <Form onSubmit={ event => {
-                                                    event.preventDefault ()
-                                                    addListaSpesa ( formObj , user.token )
-                                                } }>
-                                                    <FormControl>
-                                                        <TextField
-                                                            required
-                                                            id="outlined-required"
-                                                            label="Nome lista"
-                                                            onChange={ event => handleForm ( "nome" , event.target.value ) }
-                                                        />
-                                                    </FormControl>
-                                                    <Col>
-                                                        <Button type={ "submit" } className={ "mt-2" } variant="outlined"
-                                                                color="success">
-                                                            Aggiungi
-                                                        </Button>
-                                                    </Col>
-                                                    <Col>
-                                                        <Button onClick={ () => {
-                                                            setFormFlag ( false )
-                                                        } } className={ "mt-2" } variant="outlined" color="error">
-                                                            Annulla
-                                                        </Button>
-                                                    </Col>
+                                    </List>
 
-                                                </Form>
+                                }
 
-                                            </Col>
-                                        )
-                                    }
-                                </Card>
-                                <Card sx={ {
-                                    maxHeight : "30vh" ,
-                                    overflow : "scroll" ,
-                                    '&::-webkit-scrollbar' : {
-                                        display : "none"
-                                    },
-                                    padding: 1 +"em"
-                                } }>
-                                    <h5>Gestione prodotti</h5>
-                                    <h6>Seleziona prodotto per eliminarlo dal database</h6>
-                                    <Search>
-                                        <SearchIconWrapper>
-                                            <SearchIcon/>
-                                        </SearchIconWrapper>
-                                        <StyledInputBase
-                                            onFocus={ () => setDeleteProdottiFlag(true)}
-                                            onBlur={ () => {
-                                                setTimeout(() => {
-                                                    setDeleteProdottiFlag(false)
-                                                }, 1000)
-                                            }}
-                                            value={ searchObj.search }
-                                            onChange={ (e) => {
-                                                handleSearch ( "search" , e.target.value )
-                                            } }
-                                            placeholder="ricerca…"
-                                            inputProps={ {'aria-label' : 'search'} }
-                                        />
-                                    </Search>
-                                    {
-                                        deleteProdottiFlag && (
-                                            <List className={ "text-center p-2" }>
-                                                {
-                                                    prodottiList.filter ( prodotto => prodotto.nome.toUpperCase ().includes ( searchObj.search.toUpperCase () ) ).map ( (prodotto , index) => {
-                                                        return (
-                                                            <ListItem key={ index } disablePadding>
-                                                                <ListItemButton onClick={ () => {
-                                                                    removeProdottoFromDatabase ( user.token , prodotto.id )
-                                                                } } sx={ {color : "red"} }>
-                                                                    <ListItemText className={ "text-center" }
-                                                                                  primary={ prodotto.nome }/>
-                                                                </ListItemButton>
-                                                            </ListItem>
-                                                        )
-                                                    } )
-                                                }
-
-                                            </List>
-                                        )
-                                    }
-
-                                </Card>
-                            </Row>
+                            </Card>
+                        </Row>
 
                     </Offcanvas.Body>
                 </Offcanvas>
@@ -335,7 +373,7 @@ const AlimentiComponent = () => {
                                 {
                                     spesaListaNome.map ( (list , i) => {
                                         return (
-                                            <Col key={ i } xs={ 12 } xl={6}>
+                                            <Col key={ i } xs={ 12 } sm={ 8 } xl={ 6 } xxl={ 4 }>
                                                 <CardSpesaList setSpesaListaNome={ setSpesaListaNome } list={ list }
                                                                spesaList={ spesaList } index={ i }/>
                                             </Col>
@@ -344,9 +382,9 @@ const AlimentiComponent = () => {
                                 }
                             </Row>
                         ) : (
-                            <Row className={ "justify-content-center mt-5"}>
-                                <Col  className={'mt-4'}>
-                                    <KeyboardDoubleArrowLeftIcon style={{fontSize: '3em', color: 'royalblue'}}/>
+                            <Row className={ "justify-content-center mt-5" }>
+                                <Col className={ 'mt-4' }>
+                                    <KeyboardDoubleArrowLeftIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
                                 </Col>
                                 <h3>Seleziona una lista per iniziare</h3>
                             </Row>

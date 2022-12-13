@@ -22,6 +22,9 @@ import AlarmIcon from '@mui/icons-material/Alarm';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
+import { addBolletta , fetchRicercaEmissioneRange , fetchRicercaScadenzaRange } from "./api/api";
+import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
+import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
 
 const UtenzeComponent = () => {
     const user = useSelector ( state => state.user.user )
@@ -62,32 +65,6 @@ const UtenzeComponent = () => {
         } )
     }
 
-    //FETCH PER AGGIUNGERE UNA BOLLETTA
-    const addBolletta = async (obj , key) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/new`
-        const header = {
-            'Content-Type' : 'application/json' ,
-            'Authorization' : 'Bearer ' + key
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'POST' ,
-                headers : header ,
-                body : JSON.stringify ( obj )
-            } )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                console.log ( data )
-                dispatch ( getBolletteList ( user.token , user.id ) )
-                setFornituraState ( '' )
-            }
-
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
     //////////////
     // FINE FORM//
 
@@ -122,85 +99,6 @@ const UtenzeComponent = () => {
     // VALORE SELEZIONATO NELLA SEZIONE NUMEROM FATTURA
     const [ numeroFattura , setNumeroFattura ] = useState ( '' );
     //
-
-    // FETCH DI RICERCA PER RANGE DI EMISSIONE
-    const fetchRicercaEmissioneRange = async (inizio , fine , userId , token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/emissione-range/${ inizio }/${ fine }/userId/${ userId }`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch (
-                baseEndpoint ,
-                {
-                    method : 'GET' ,
-                    headers : header
-                }
-            )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                dispatch ( setBolletteList ( data ) );
-                // dispatch(getBolletteList(user.token, user.id))
-                console.log ( data )
-            }
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
-    //FETCH DI RICERCA PER RANGE DI SCADENZA
-    const fetchRicercaScadenzaRange = async (inizio , fine , userId , token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/scadenza-maggiore/${ inizio }/scadenza-minore/${ fine }/userId/${ userId }`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch (
-                baseEndpoint ,
-                {
-                    method : 'GET' ,
-                    headers : header
-                }
-            )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                dispatch ( setBolletteList ( data ) );
-                console.log ( data )
-            }
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
-    // FETCH DI RICERCA PER NUMERO FATTURA
-    const fetchRicercaNumeroFattura = async (numeroFattura , userId , token) => {
-        const baseEndpoint = `http://localhost:8080/api/bolletta/numero-fattura/${ numeroFattura }/userId/${ userId }`
-        const header = {
-            'Authorization' : 'Bearer ' + token
-        }
-
-        try {
-            const response = await fetch (
-                baseEndpoint ,
-                {
-                    method : 'GET' ,
-                    headers : header
-                }
-            )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                dispatch ( setBolletteList ( data ) );
-                console.log ( data )
-            }
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
 
     /////////////////////////////
     // FINE LOGICA DI RICERCA //
@@ -272,8 +170,75 @@ const UtenzeComponent = () => {
     ////////////////////
     // FINE OFFCANVAS //
 
+    // SNACKBARS //
+    ///////////////
+
+    // aggiunta nuova bolletta //
+    const [snackAddBollettaFlag, setSnackAddBollettaFlag] = useState ( false );
+
+    const handleClickAddBollettaFlag = () => setSnackAddBollettaFlag ( true );
+    const handleCloseAddBollettaFlag = () => setSnackAddBollettaFlag(false);
+    //
+
+    // errore generico //
+    const [snackErrorFlag, setSnackErrorFlag] = useState ( false );
+
+    const handleClickError = () => setSnackErrorFlag (true)
+    const handleCloseError = () => setSnackErrorFlag(false)
+    //
+
+    // ricerca range di emissione //
+    const [snackEmissioneFlag, setSnackEmissioneFlag] = useState (false)
+
+    const handleClickEmissione = () => setSnackEmissioneFlag (true)
+    const handleCloseEmissione = () => setSnackEmissioneFlag (false)
+    //
+
+    // ricerca range di scadenza //
+    const [snackScadenzaFlag, setSnackScadenzaFlag] = useState (false)
+
+    const handleClickScadenza = () => setSnackScadenzaFlag(true)
+    const handleCloseScadenza = () => setSnackScadenzaFlag(false)
+    //
+
+    // eliminazione di una bolletta //
+    const [snackEliminazioneFlag, setSnackEliminazioneFlag] = useState (false)
+
+    const handleClickEliminazione = () => setSnackEliminazioneFlag(true)
+    const handleCloseEliminazione = () => setSnackEliminazioneFlag(false)
+
+    // FINE SNACKBARS //
+    ////////////////////
+
+    console.log (typeof dataInizioRange)
+
     return (
         <Container fluid>
+            <SnackbarSuccessComponent
+                openFlag={ snackAddBollettaFlag }
+                closeFunction={ handleCloseAddBollettaFlag }
+                message={ 'Bolletta aggiunta con successo!' }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackEmissioneFlag }
+                closeFunction={ handleCloseEmissione }
+                message={ "Bollette filtrate per range di emissione dal " + dataInizioRange + " al " + dataFineRange }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackScadenzaFlag }
+                closeFunction={ handleCloseScadenza }
+                message={ "Bollette filtrate per range di scadenza dal " + dataInizioRangeScadenza + " al " + dataFineRangeScadenza }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackEliminazioneFlag }
+                closeFunction={ handleCloseEliminazione }
+                message={ "Bolletta eliminata con successo" }
+            />
+            <SnackbarErrorComponent
+                openFlag={ snackErrorFlag }
+                closeFunction={ handleCloseError }
+                message={ "Uffa, c'è qualcosa che non va" }
+            />
             <Row className={ "justify-content-center" }>
                 <Offcanvas show={ show } onHide={ handleClose }>
                     <Offcanvas.Header closeButton>
@@ -287,16 +252,15 @@ const UtenzeComponent = () => {
                         } }
                         className={ "text-center" }
                     >
-                        <Row className={'justify-content-end'}>
-                            <Col xs={2}>
+                        <Row className={ 'justify-content-end' }>
+                            <Col xs={ 2 }>
                                 <IconButton
-                                    color={'error'}
-                                    onClick={() => handleClose()}
+                                    onClick={ () => handleClose () }
                                     aria-label="delete">
                                     <CloseIcon
-                                        style={{
+                                        style={ {
                                             fontSize : '2rem'
-                                        }}/>
+                                        } }/>
                                 </IconButton>
                             </Col>
                         </Row>
@@ -332,7 +296,17 @@ const UtenzeComponent = () => {
                                                 if ( formBollettaObj.fornitura.length === 0 ) {
                                                     setErrorFornituraFlag ( true )
                                                 } else {
-                                                    addBolletta ( formBollettaObj , user.token ).then ( () => setFormUtenzaFlag ( false ) );
+                                                    addBolletta ( formBollettaObj , user.token ).then ( (r) => {
+                                                        if (r) {
+                                                            setFormUtenzaFlag ( false )
+                                                            dispatch ( getBolletteList ( user.token , user.id ) )
+                                                            setFornituraState ( '' )
+                                                            handleClickAddBollettaFlag()
+                                                        } else {
+                                                            handleClickError()
+                                                        }
+
+                                                    } );
                                                     setFormBollettaObj ( {
                                                         fornitura : '' ,
                                                         userId : user.id ,
@@ -484,25 +458,29 @@ const UtenzeComponent = () => {
                                     // LA SEZIONE DI RICERCA
                                     ricercaFlag && (
                                         <>
-                                            <Col className={ 'm-auto' } xs={ 6 }>
+                                            <Col className={ 'm-auto' } xs={ 12 }>
                                                 {
                                                     // ICONA DI RICERCA PER PERIODO DI EMISSIONE RANGE
                                                     // TUTTE LE BOLLETTE EMESSE IN UN ARCO TEMPORALE
                                                     !ricercaNumeroFatturaFlag &&
                                                     !ricercaScadenzaRangeFlag && (
-                                                        <Col className={ 'd-flex justify-content-start' }>
-                                                            <IconButton
-                                                                className={ 'p-0' }
-                                                                color={ ricercaRangeFlag ? 'secondary' : 'primary' }
-                                                                onClick={ () => setRicercaRangeFlag ( !ricercaRangeFlag ) }
-                                                                aria-label="add">
-                                                                <DateRangeIcon style={ {
-                                                                    fontSize : '1.5em' ,
-                                                                } }/>
-                                                            </IconButton>
-                                                            <b className={ 'd-flex align-items-end' }>Ricerca per periodo
-                                                                emissione
-                                                                range</b>
+                                                        <Col className={ 'd-flex flex-column justify-content-start' }>
+                                                            <Col>
+                                                                <IconButton
+                                                                    className={ 'p-0' }
+                                                                    color={ ricercaRangeFlag ? 'secondary' : 'primary' }
+                                                                    onClick={ () => setRicercaRangeFlag ( !ricercaRangeFlag ) }
+                                                                    aria-label="add">
+                                                                    <DateRangeIcon style={ {
+                                                                        fontSize : '1.5em' ,
+                                                                    } }/>
+                                                                </IconButton>
+                                                            </Col>
+                                                            <Col>
+                                                                <b>Ricerca per periodo
+                                                                    emissione
+                                                                    range</b>
+                                                            </Col>
                                                         </Col>
                                                     )
                                                 }
@@ -512,42 +490,26 @@ const UtenzeComponent = () => {
                                                     // TUTTE LE BOLLETTE CHE SCADONO IN UN ARCO TEMPORALE
                                                     !ricercaRangeFlag &&
                                                     !ricercaNumeroFatturaFlag && (
-                                                        <Col className={ 'd-flex justify-content-start my-3' }>
-                                                            <IconButton
-                                                                className={ 'p-0' }
-                                                                color={ ricercaScadenzaRangeFlag ? 'secondary' : 'primary' }
-                                                                onClick={ () => setRicercaScadenzaRangeFlag ( !ricercaScadenzaRangeFlag ) }
-                                                                aria-label="add">
-                                                                <AlarmIcon style={ {
-                                                                    fontSize : '1.5em' ,
-                                                                } }/>
-                                                            </IconButton>
-                                                            <b className={ 'd-flex align-items-end' }>Ricerca per scadenza
-                                                                range</b>
+                                                        <Col className={ 'd-flex flex-column justify-content-start my-3' }>
+                                                            <Col>
+                                                                <IconButton
+                                                                    className={ 'p-0' }
+                                                                    color={ ricercaScadenzaRangeFlag ? 'secondary' : 'primary' }
+                                                                    onClick={ () => setRicercaScadenzaRangeFlag ( !ricercaScadenzaRangeFlag ) }
+                                                                    aria-label="add">
+                                                                    <AlarmIcon style={ {
+                                                                        fontSize : '1.5em' ,
+                                                                    } }/>
+                                                                </IconButton>
+                                                            </Col>
+                                                            <Col>
+                                                                <b>Ricerca per scadenza
+                                                                    range</b>
+                                                            </Col>
                                                         </Col>
                                                     )
                                                 }
 
-                                                {
-                                                    // ICONA DI RICERCA PER NUMERO FATTURA
-                                                    // ARRAY CONTENENTE ANCHE 0 ELEMENTI NEL CASO IN CUI NON VIENE TROVATO IL NUMERO FATTURA
-                                                    !ricercaRangeFlag &&
-                                                    !ricercaScadenzaRangeFlag && (
-                                                        <Col className={ 'd-flex justify-content-start my-3' }>
-                                                            <IconButton
-                                                                className={ 'p-0' }
-                                                                color={ ricercaNumeroFatturaFlag ? 'secondary' : 'primary' }
-                                                                onClick={ () => setRicercaNumeroFatturaFlag ( !ricercaNumeroFatturaFlag ) }
-                                                                aria-label="add">
-                                                                <ReceiptLongIcon style={ {
-                                                                    fontSize : '1.5em' ,
-                                                                } }/>
-                                                            </IconButton>
-                                                            <b className={ 'd-flex align-items-end' }>Ricerca per numero
-                                                                fattura</b>
-                                                        </Col>
-                                                    )
-                                                }
                                             </Col>
                                         </>
                                     )
@@ -606,7 +568,15 @@ const UtenzeComponent = () => {
                                                                 dataFineRangeScadenza ,
                                                                 user.id ,
                                                                 user.token
-                                                            )
+                                                            ).then ( r => {
+                                                                if ( r ) {
+                                                                    dispatch ( setBolletteList ( r ) )
+                                                                    handleClickScadenza()
+                                                                } else {
+                                                                    console.log ( 'error' )
+                                                                    handleClickError()
+                                                                }
+                                                            } )
                                                         } }
                                                         variant={ 'contained' }
                                                         color={ "primary" }
@@ -672,7 +642,14 @@ const UtenzeComponent = () => {
                                                                 dataFineRange ,
                                                                 user.id ,
                                                                 user.token
-                                                            )
+                                                            ).then ( r => {
+                                                                if ( r ) {
+                                                                    dispatch ( setBolletteList ( r ) )
+                                                                    handleClickEmissione()
+                                                                } else {
+                                                                    console.log ( 'error' )
+                                                                }
+                                                            } )
                                                         } }
                                                         variant={ 'contained' }
                                                         color={ "primary" }
@@ -682,48 +659,6 @@ const UtenzeComponent = () => {
                                                 </Col>
                                             </Row>
                                         </>
-
-
-                                    )
-                                }
-
-                                {
-                                    // SEZIONE DI RICERCA PER NUMERO FATTURA
-                                    ricercaNumeroFatturaFlag && (
-                                        <Row className={ 'pt-2' }>
-                                            <Col className={ 'd-flex' } xs={ 12 }>
-                                                <Col
-                                                    style={ {
-                                                        fontSize : '1.5em' ,
-                                                        fontWeight : 'bold'
-                                                    } }
-                                                    className={ 'd-flex align-items-end' }>
-                                                    Inserisci numero fattura
-                                                </Col>
-                                                <Col>
-                                                    <TextField
-                                                        value={ numeroFattura }
-                                                        onChange={ (e) => setNumeroFattura ( e.target.value ) }
-                                                        type="number"
-                                                        label="N. Fattura"
-                                                        id="outlined-basic"
-                                                        variant="outlined"/>
-                                                </Col>
-                                            </Col>
-                                            <Row className={ 'pt-3' }>
-                                                <Col>
-                                                    <Button
-                                                        onClick={ () => {
-                                                            fetchRicercaNumeroFattura ( numeroFattura , user.id , user.token )
-                                                        } }
-                                                        variant={ 'contained' }
-                                                        color={ "primary" }
-                                                        aria-label="add">
-                                                        <SearchIcon/>Ricerca
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                        </Row>
                                     )
                                 }
                             </Card>
@@ -793,6 +728,8 @@ const UtenzeComponent = () => {
                                         lg={ 6 }
                                         key={ index }>
                                         <CardUtenzaComponent
+                                            handleClickEliminazione={handleClickEliminazione}
+                                            handleClickError={handleClickError}
                                             bolletta={ bolletta }
                                             index={ index }
                                             bollettaList={ filtroBySwitch ( bolletteList ) }

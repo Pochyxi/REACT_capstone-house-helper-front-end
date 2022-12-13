@@ -48,6 +48,7 @@ const StatistichePostitComponent = () => {
             arrOfTotalMonthsNotComplete : [] ,
             arrOfTotalMonthsComplete : [] ,
             arrOfHeightsOfTabs : [] ,
+            arrOfObj: []
         }
 
         for (let i = 1; i <= 12; i++) {
@@ -61,9 +62,11 @@ const StatistichePostitComponent = () => {
 
             // PER OGNI MESE CONTROLLO QUANTI POSTIT SCADONO E MEMORIZZO IL NUMERO DI POSTIT TROVATI
             let monthTotal = arr.filter ( el => el.scadenza.split ( '-' )[1] === index.toString () ).length
+            let monthTotalObj = arr.filter ( el => el.scadenza.split ( '-' )[1] === index.toString () )
             obj[monthGenerator ( i ) + "TotalExpNumber"] = monthTotal
             // ARRAY CON 12 ELEMENTI OGNI ELEMENTO E' IL NUMERO DI POSTIT PER OGNI MESE
             obj.arrOfTotalMonths = [ ...obj.arrOfTotalMonths , monthTotal ]
+            obj.arrOfObj = [...obj.arrOfObj, ...monthTotalObj]
 
             // PER OGNI MESE CONTROLLO QUANTI POSTIT SCADONO E CONTROLLO SE SONO STATI COMPLETATI
             // NON COMPLETATI

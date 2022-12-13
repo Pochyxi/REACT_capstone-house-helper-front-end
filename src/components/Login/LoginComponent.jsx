@@ -1,20 +1,32 @@
 import React , { useEffect , useState } from "react";
-import { Form , Button , Row , Col } from "react-bootstrap";
+import { Form , Row , Col , Container } from "react-bootstrap";
 import { Link , useNavigate } from "react-router-dom"
 import { useDispatch , useSelector } from "react-redux";
 import { logIn } from "../../redux/actions/actions";
 import GoogleLogin from "react-google-login";
 import { gapi } from 'gapi-script'
+import Card from "@mui/material/Card";
+import { Alert , Button } from "@mui/material";
+import HouseHelper from '../../img/HHlogo.png'
 
 
 function LoginComponent() {
-    const clientId = "758134819894-o0vdr2qjvmbfsa3qe4oakl06781r14d8.apps.googleusercontent.com";
+    const clientId = process.env.REACT_APP_CLIENT_ID;
 
     const user = useSelector ( state => state.user.user )
+
+    const loginFlag = useSelector(state => state.user.loginFlag)
 
     const dispatch = useDispatch ()// REDUX
 
     const navigate = useNavigate ()
+
+    useEffect ( () => {
+        if ( user.token ) {
+            navigate ( "/" );
+        }
+
+    } , [ user.token ] );
 
     useEffect ( () => {
 
@@ -99,76 +111,85 @@ function LoginComponent() {
     };
 
     return (
-        <div style={
-            {
-                borderRadius : "5px" ,
-                fontSize : "1.5em" ,
-                minHeight : "100vh"
-            }
-        }>
-            <Form
-                style={{
-                    margin: "0 auto",
-                    borderLeft: "5px solid black",
-                    padding: "10px",
-                }}
-                onSubmit={ (e) => {
-                e.preventDefault ()
-                dispatch ( logIn ( formObj ) )
-                console.log ( user )
-            } }>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Nome utente</Form.Label>
-                    <Form.Control
-                        value={ formObj.username }
-                        onChange={ (e) => handleForm ( "username" , e.target.value ) }
-                        type="text"
-                        autoComplete="current-password"
-                        placeholder="Inserisci il nome utente scelto in fase di registrazione"/>
-                    <Form.Text className="text-muted">
-                        Non condividere mai la password con nessuno.
-                    </Form.Text>
-                </Form.Group>
+            <Row className={'mt-5 justify-content-center h-100'}>
+                <Col xs={12} md={8} lg={6}>
+                    <Row className={'align-items-center justify-content-center'}>
+                        <Col>
+                            <img
+                                style={{
+                                    width : "30%",
+                                    height : "30%"
+                                }}
+                                src={HouseHelper}
+                                alt="logo"/>
+                        </Col>
+                    </Row>
+                    <Card style={{boxShadow: '2px 2px 2px royalblue'}}>
+                        <Form
+                            style={{
+                                margin: "0 auto",
+                                borderLeft: "5px solid royalblue",
+                                padding: "10px",
+                            }}
+                            onSubmit={ (e) => {
+                                e.preventDefault ()
+                                dispatch ( logIn ( formObj ) )
+                                console.log ( user )
+                            } }>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Nome utente</Form.Label>
+                                <Form.Control
+                                    required
+                                    value={ formObj.username }
+                                    onChange={ (e) => handleForm ( "username" , e.target.value ) }
+                                    type="text"
+                                    autoComplete="current-password"
+                                    placeholder="Inserisci il nome utente scelto in fase di registrazione"/>
+                                <Form.Text className="text-muted">
+                                    Non condividere mai la password con nessuno.
+                                </Form.Text>
+                            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        value={ formObj.password }
-                        onChange={ (e) => handleForm ( "password" , e.target.value ) }
-                        type="password"
-                        autoComplete="current-password"
-                        placeholder="Inserisci la tua password"/>
-                </Form.Group>
-                <Row className={'justify-content-center text-center'}>
-                    <Col>
-                        <Button className={ "" } variant="primary" type="submit">
-                            ACCEDI
-                        </Button>
-                    </Col>
-                    <Col>
-                        <GoogleLogin
-                            clientId={ clientId }
-                            onSuccess={ onSuccess }
-                            onFailure={ onFailure }
-                            cookiePolicy={ "single_host_policy" }
-                        />
-                    </Col>
-                    <Col>
-                        <Link to="/signup">
-                            <p className={ "w-50 d-block text-center mx-auto my-2" }>Registrati</p>
-                        </Link>
-                    </Col>
-                </Row>
-
-
-                <div className='btn d-block m-auto'>
-
-                </div>
-            </Form>
-
-
-
-        </div>
+                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    required
+                                    value={ formObj.password }
+                                    onChange={ (e) => handleForm ( "password" , e.target.value ) }
+                                    type="password"
+                                    autoComplete="current-password"
+                                    placeholder="Inserisci la tua password"/>
+                                {
+                                    loginFlag && (
+                                        <Alert severity="error">Nome utente o password errata</Alert>
+                                    )
+                                }
+                            </Form.Group>
+                            <Row className={'justify-content-center flex-column text-center'}>
+                                <Col>
+                                    <Button className={ "w-75" } variant="contained" type="submit">
+                                        ACCEDI
+                                    </Button>
+                                </Col>
+                                <Col>
+                                    <GoogleLogin
+                                        className={'w-75 my-3'}
+                                        clientId={ clientId }
+                                        onSuccess={ onSuccess }
+                                        onFailure={ onFailure }
+                                        cookiePolicy={ "single_host_policy" }
+                                    />
+                                </Col>
+                                <Col>
+                                    <Link to="/signup">
+                                        <Button variant={'outlined'} className={ "w-75 d-block text-center mx-auto" }>Registrati</Button>
+                                    </Link>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Card>
+                </Col>
+            </Row>
     );
 }
 

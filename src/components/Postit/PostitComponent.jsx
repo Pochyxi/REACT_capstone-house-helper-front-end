@@ -3,24 +3,22 @@ import { Col , Container , Form , Offcanvas , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
 import { useDispatch , useSelector } from "react-redux";
 import { getPostitList } from "../../redux/actions/actions";
-import DoneAllIcon from '@mui/icons-material/DoneAll';
 import {
-    Button ,
-    FormControlLabel , FormGroup ,
+    Button , FormGroup ,
     IconButton ,
-    MenuItem ,
-    Paper ,
     Switch ,
     TextField ,
-    Typography
+
 } from "@mui/material";
-import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import FormControl from "@mui/material/FormControl";
-import { Add , Delete } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import CancelIcon from '@mui/icons-material/Cancel';
-import BackspaceIcon from '@mui/icons-material/Backspace';
 import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
+import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
+import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
+import { addPostit } from "./api/api";
+import CardPostitComponent from "./api/CardPostitComponent";
 
 
 const PostitComponent = () => {
@@ -44,16 +42,14 @@ const PostitComponent = () => {
     }
 
     const postitListFilter = (arr) => {
-        console.log ( "questo è arr" )
-        console.log ( arr )
+
         let arrN = []
         if ( formControlLabelValue ) {
             arrN = arr.filter ( el => el.stato === true )
         } else {
             arrN = arr.filter ( el => el.stato === false )
         }
-        console.log ( "questo e arrN prima del return" )
-        console.log ( arrN )
+
         return arrN
     }
 
@@ -66,79 +62,6 @@ const PostitComponent = () => {
         console.log ( postitList )
     } , [] );
 
-    const addPostit = async (obj , key) => {
-        const baseEndpoint = `http://localhost:8080/api/postit/new`
-        const header = {
-            'Content-Type' : 'application/json' ,
-            'Authorization' : 'Bearer ' + key
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'POST' ,
-                headers : header ,
-                body : JSON.stringify ( obj )
-            } )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                console.log ( data )
-                dispatch ( getPostitList ( user.token , user.id ) )
-            }
-
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
-    const setPostitDone = async (postit , key) => {
-        const baseEndpoint = `http://localhost:8080/api/postit/update/${ postit.id }`
-        const header = {
-            'Content-Type' : 'application/json' ,
-            'Authorization' : 'Bearer ' + key
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'PUT' ,
-                headers : header ,
-                body : JSON.stringify ( {
-                    stato : !postit.stato
-                } )
-            } )
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                console.log ( data )
-                dispatch ( getPostitList ( user.token , user.id ) )
-            }
-
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
-    const deletePostit = async (postitId , key) => {
-        const baseEndpoint = `http://localhost:8080/api/postit/delete/${ postitId }`
-        const header = {
-            'Authorization' : 'Bearer ' + key
-        }
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : 'DELETE' ,
-                headers : header ,
-            } )
-
-            if ( response.ok ) {
-                dispatch ( getPostitList ( user.token , user.id ) )
-            }
-
-        } catch ( e ) {
-            console.log ( e )
-        }
-    }
-
     // OFFCANVAS //
     //////////////
     const [ show , setShow ] = useState ( false );
@@ -149,8 +72,84 @@ const PostitComponent = () => {
     ////////////////////
     // FINE OFFCANVAS //
 
+    // SNACKBARS //
+    // questa è la flag che compare all'aggiunta di un postit
+    const [ snackAddPostitFlag , setSnackAddPostitFlag ] = useState ( false );
+
+    const handleClickPostit = () => {
+        setSnackAddPostitFlag ( true );
+    };
+
+    const handleClosePostit = () => {
+        setSnackAddPostitFlag ( false );
+    };
+    //
+
+    // questa è la flag che compare se qualche fetch va in errore
+    const [ snackErrorFlag , setSnackErrorFlag ] = useState ( false );
+
+    const handleClickError = () => {
+        setSnackErrorFlag ( true );
+    };
+
+    const handleCloseError = () => {
+        setSnackErrorFlag ( false );
+    };
+    //
+
+    // questa è la flag che compare all'eliminazione di un postit
+    const [ snackDeletePostitFlag , setSnackDeletePostitFlag ] = useState ( false );
+
+    const handleClickDelete = () => {
+        setSnackDeletePostitFlag ( true );
+    };
+
+    const handleCloseDelete = () => {
+        setSnackDeletePostitFlag ( false );
+    };
+    //
+
+    // questa è la flag che compare all'aggiornamento dello
+    // stato di un postit
+    const [ snackUpdatePostitFlag , setSnackUpdatePostitFlag ] = useState ( false );
+
+    const handleClickUpdate = () => {
+        setSnackUpdatePostitFlag ( true );
+    };
+
+    const handleCloseUpdate = () => {
+        setSnackUpdatePostitFlag ( false );
+    };
+    //
+
+
     return (
         <Container fluid>
+            <SnackbarSuccessComponent
+                openFlag={ snackAddPostitFlag }
+                closeFunction={ handleClosePostit }
+                message={ 'Postit aggiunto con successo!' }
+            />
+            <SnackbarErrorComponent
+                openFlag={ snackErrorFlag }
+                closeFunction={ handleCloseError }
+                message={ 'Purtroppo qualcosa è andato storto' }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackUpdatePostitFlag }
+                closeFunction={ handleCloseUpdate }
+                message={ 'Stato postit aggiornato con successo' }
+            />
+            <SnackbarErrorComponent
+                openFlag={ snackErrorFlag }
+                closeFunction={ handleCloseError }
+                message={ 'Purtroppo qualcosa è andato storto' }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackDeletePostitFlag }
+                closeFunction={ handleCloseDelete }
+                message={ 'Postit eliminato con successo' }
+            />
             <Row className={ "justify-content-center flex-column" }>
                 <Offcanvas className={ 'p-0' } show={ show } onHide={ handleClose }>
                     <Offcanvas.Header closeButton>
@@ -164,16 +163,15 @@ const PostitComponent = () => {
                         } }
                         className={ "text-center" }
                     >
-                        <Row className={'justify-content-end'}>
-                            <Col xs={2}>
+                        <Row className={ 'justify-content-end' }>
+                            <Col xs={ 2 }>
                                 <IconButton
-                                    color={'error'}
-                                    onClick={() => handleClose()}
+                                    onClick={ () => handleClose () }
                                     aria-label="delete">
                                     <CloseIcon
-                                        style={{
+                                        style={ {
                                             fontSize : '2rem'
-                                        }}/>
+                                        } }/>
                                 </IconButton>
                             </Col>
                         </Row>
@@ -199,7 +197,15 @@ const PostitComponent = () => {
                                         formPostitFlag && (
                                             <Form onSubmit={ (e) => {
                                                 e.preventDefault ()
-                                                addPostit ( formPostitObj , user.token )
+                                                addPostit ( formPostitObj , user.token ).then ( (r) => {
+                                                    if ( r === 'success' ) {
+                                                        console.log ( r )
+                                                        dispatch ( getPostitList ( user.token , user.id ) )
+                                                        handleClickPostit ()
+                                                    } else {
+                                                        handleClickError ()
+                                                    }
+                                                } )
                                                 setFormPostitObj ( {
                                                     contenuto : "" ,
                                                     scadenza : "" ,
@@ -284,70 +290,19 @@ const PostitComponent = () => {
                         {
                             postitListFilter ( postitList ).map ( (postit , i) => {
                                 return (
-                                    <Col xs={ 6 } key={ i } className={ "mt-3" }>
-                                        <Paper
-                                            sx={ {
-                                                minHeight : 200 + "px" ,
-                                                backgroundColor : postit.stato ? "#a5e39f" : "#f1f58f" ,
-                                                padding : "20px" , color : postit.stato ? 'royalblue' : 'black' ,
-                                                overflow : 'hidden'
-                                            } }
-                                            elevation={ 20 }>
-                                            <Row className={ "justify-content-start" }>
-                                                <Col xs={ 3 }>
-                                                    <IconButton
-                                                        onClick={ () => {
-                                                            deletePostit ( postit.id , user.token )
-                                                        } }
-                                                        color={ 'warning' }
-                                                        sx={ {
-                                                            position : "relative" ,
-                                                            right : '30px' ,
-                                                            bottom : '30px' ,
-                                                            border : "1px solid black" ,
-                                                            borderTop : "none" ,
-                                                            borderLeft : "none" ,
-                                                            height : '50px' ,
-                                                            width : '50px' ,
-                                                            backgroundColor : postit.stato ? "#f1f58f" : "#a5e39f"
-                                                        } }
-                                                        aria-label="delete">
-                                                        <h4 className={ 'text-start' }><BackspaceIcon/></h4>
-                                                    </IconButton>
-                                                </Col>
-                                            </Row>
-                                            <Row className={ "justify-content-between" }>
-                                                <Col xs={ 7 }>
-                                                    <b>{ postit.scadenza }</b>
-                                                </Col>
-                                                {
-                                                    postit.stato ? (
-                                                        <Col className={ "d-flex justify-content-end" } xs={ 5 }>
-                                                            <DoNotDisturbOnIcon sx={ {cursor : "pointer"} }
-                                                                                onClick={ () => {
-                                                                                    setPostitDone ( postit , user.token )
-                                                                                } } color={ "error" }/> da fare
-                                                        </Col>
-                                                    ) : (
-                                                        <Col className={ "d-flex justify-content-end" } xs={ 5 }>
-                                                            <DoneAllIcon sx={ {cursor : "pointer"} } onClick={ () => {
-                                                                setPostitDone ( postit , user.token )
-                                                            } } color={ 'primary' }/> fatto
-                                                        </Col>
-
-                                                    )
-                                                }
-                                            </Row>
-                                            <Row>
-                                                <Col className={ 'mt-5' }>
-                                                    <Typography variant={ 'h5' } sx={ {wordWrap : 'break-word'} }
-                                                                className={ "text-center" }>{ postit.contenuto }</Typography>
-                                                </Col>
-                                            </Row>
-
-                                        </Paper>
-                                    </Col>
-
+                                    <CardPostitComponent
+                                        key={ i }
+                                        postit={ postit }
+                                        snackUpdatePostitFlag={ snackUpdatePostitFlag }
+                                        handleCloseUpdate={ handleCloseUpdate }
+                                        snackErrorFlag={ snackErrorFlag }
+                                        handleCloseError={ handleCloseError }
+                                        snackDeletePostitFlag={ snackDeletePostitFlag }
+                                        handleCloseDelete={ handleCloseDelete }
+                                        handleClickDelete={ handleClickDelete }
+                                        handleClickError={ handleClickError }
+                                        handleClickUpdate={ handleClickUpdate }
+                                    />
                                 )
                             } )
                         }

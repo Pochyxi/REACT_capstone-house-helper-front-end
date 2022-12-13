@@ -57,7 +57,6 @@ const StatisticheComponent = () => {
                         <Row className={'justify-content-end'}>
                             <Col xs={2}>
                                 <IconButton
-                                    color={'error'}
                                     onClick={() => handleClose()}
                                     aria-label="delete">
                                     <CloseIcon

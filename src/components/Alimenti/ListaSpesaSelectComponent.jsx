@@ -41,7 +41,7 @@ const ListaSpesaSelectComponent = ({spesaListaNome, setSpesaListaNome}) => {
 
         setSpesaListaNome(
             // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
+            typeof value === 'string' ? value.split(',') : value
         );
     };
 

@@ -9,7 +9,7 @@ const ChartPostitComponent = ({arrOfTotal , arrOfHeightsOfTabs , monthGenerator 
     return (
         <Card id="my-chart">
             {
-                arrOfHeightsOfTabs[0] ? (
+                statisticGeneratorObj.arrOfObj.length > 0 ? (
                     <table className="charts-css column data-spacing-10 show-heading">
                         <caption> Statistiche { nomeStatistica } mese per mese</caption>
 
