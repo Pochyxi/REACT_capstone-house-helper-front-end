@@ -7,10 +7,11 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { getBolletteList , getPostitList , getSpeseList } from "../../redux/actions/actions";
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
-import { List , ListItem , ListItemButton , ListItemIcon } from "@mui/material";
+import { List , ListItem , ListItemButton , ListItemIcon , Skeleton } from "@mui/material";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import MapComponent from "./MapComponent";
 import { fetchBollettaScadenzaRange } from "./api/api";
+import { setPostit_LOADFlagFalse , setPostit_LOADFlagTrue } from "../../redux/actions/utilsActions";
 
 
 const HomeComponent = () => {
@@ -21,12 +22,22 @@ const HomeComponent = () => {
     const spesaList = useSelector ( state => state.fetch.spesaList )
     const [ postit5Giorni , setPostit5Giorni ] = useState ( [] )
 
+    const loadBollette = useSelector ( state => state.util.bollette_Load_Flag)
+    const loadPostit = useSelector ( state => state.util.postit_Load_Flag)
+    const loadSpese = useSelector ( state => state.util.spese_Load_Flag)
+
     const dispatch = useDispatch ()
     const navigate = useNavigate ()
 
     useEffect ( () => {
+        dispatch ( setPostit_LOADFlagTrue () )
         fetchBollettaScadenzaRange ( range5DaysGenerator ().today , range5DaysGenerator ().todayPlus5 , user.id , user.token )
-            .then ( r => setPostit5Giorni ( r ) )
+            .then ( r => {
+                setPostit5Giorni ( r )
+                setTimeout ( () => {
+                    dispatch ( setPostit_LOADFlagFalse )
+                } , 1000 )
+            } )
         dispatch ( getBolletteList ( user.token , user.id ) )
         dispatch ( getPostitList ( user.token , user.id ) )
         dispatch ( getSpeseList ( user.token , user.id ) )
@@ -66,120 +77,193 @@ const HomeComponent = () => {
                         <h4>Bentornato { user.email }</h4>
                     </Row>
                     <Row className={ 'mt-3 justify-content-center' }>
+
                         <Row>
                             <h2 style={ {
-                                borderBottom : '5px solid royalblue'
+                                borderRight : '5px solid #6610f2' ,
+                                boxShadow : '0 0 5px #6610f2'
                             } }>Numeri</h2>
                         </Row>
 
-                            <Row className={ 'justify-content-start text-center align-items-start flex-column' }>
-                                <Col xs={ 6 }>
-                                    <Card>
-                                        <Row>
-                                            <Col>
+                        {
+                            loadSpese &&
+                            loadBollette &&
+                            loadPostit ? (
+                                <Row
+                                    style={ {
+                                        borderLeft : '5px solid #6610f2' ,
+                                        borderBottom : '1px solid gainsboro'
+                                    } }
+                                    className={ 'p-2 justify-content-center text-center align-items-center' }
+                                >
+                                    <Col xs={ 6 }>
+                                        <Skeleton variant="rectangular" width={ '100%'} height={ 70 }/>
+                                    </Col>
+                                    <Col xs={ 6 }>
+                                        <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
+                                    </Col>
+                                    <Col xs={ 6 } className={'mt-2'}>
+                                        <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
+                                    </Col>
+                                </Row>
+                            ) : (
+                                <Row
+                                    style={ {
+                                        borderLeft : '5px solid #6610f2' ,
+                                        borderBottom : '1px solid gainsboro'
+                                    } }
+                                    className={ 'p-2 justify-content-center text-center align-items-center' }
+                                >
+                                    <Col xs={ 6 }>
+                                        <Card style={ {backgroundColor : 'royalblue' , color : "whitesmoke"} }>
+                                            <Row>
                                                 <Col>
-                                                    <ReceiptLongIcon style={ {
-                                                        fontSize : '3em' ,
-                                                        color : 'royalblue',
-                                                    } }
-                                                    />
+                                                    <Col>
+                                                        <ReceiptLongIcon style={ {
+                                                            fontSize : '3em' ,
+                                                        } }
+                                                        />
+                                                    </Col>
+                                                    <b>BOLLETTE</b>
                                                 </Col>
-                                                <b style={ {color : "royalblue"} }>BOLLETTE</b>
-                                            </Col>
-                                            <Col className={'d-flex align-items-center'}>
+                                                <Col className={ 'd-flex align-items-center' }>
+                                                    <Col>
+                                                        <b>{ bolletteList.length }</b>
+                                                    </Col>
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    </Col>
+                                    <Col className={ 'my-2' } xs={ 6 }>
+                                        <Card style={ {backgroundColor : '#f1f58f' , color : "grey"} }>
+                                            <Row>
                                                 <Col>
-                                                    <b>{ bolletteList.length }</b>
+                                                    <Col>
+                                                        <CardMembershipIcon style={ {
+                                                            fontSize : '3em' ,
+                                                        } }/>
+                                                    </Col>
+                                                    <b>POSTIT</b>
                                                 </Col>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                </Col>
-                                <Col className={ 'my-2' } xs={ 6 }>
-                                    <Card>
-                                        <Row>
-                                            <Col>
+                                                <Col className={ 'd-flex align-items-center' }>
+                                                    <Col>
+                                                        <b>{ postitList.length }</b>
+                                                    </Col>
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    </Col>
+                                    <Col xs={ 6 }>
+                                        <Card style={ {backgroundColor : 'dodgerblue' , color : "whitesmoke"} }>
+                                            <Row>
                                                 <Col>
-                                                    <CardMembershipIcon style={ {
-                                                        fontSize : '3em',
-                                                        color: 'darkgoldenrod'
-                                                    } }/>
+                                                    <Col>
+                                                        <ShoppingCartCheckoutIcon style={ {
+                                                            fontSize : '3em' ,
+                                                        } }/>
+                                                    </Col>
+                                                    <b>SPESE</b>
                                                 </Col>
-                                                <b style={ {color : "darkgoldenrod"} }>POSTIT</b>
-                                            </Col>
-                                            <Col className={ 'd-flex align-items-center' }>
-                                                <Col>
-                                                    <b>{ postitList.length }</b>
+                                                <Col className={ 'd-flex align-items-center' }>
+                                                    <Col>
+                                                        <b>{ spesaList.length }</b>
+                                                    </Col>
                                                 </Col>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                </Col>
-                                <Col xs={ 6 }>
-                                    <Card>
-                                        <Row>
-                                            <Col>
-                                                <Col>
-                                                    <ShoppingCartCheckoutIcon style={ {
-                                                        fontSize : '3em',
-                                                        color: 'dodgerblue'
-                                                    } }/>
-                                                </Col>
-                                                <b style={ {color : "dodgerblue"} }>SPESE</b>
-                                            </Col>
-                                            <Col className={ 'd-flex align-items-center' }>
-                                                <Col>
-                                                    <b>{ spesaList.length }</b>
-                                                </Col>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                </Col>
-                            </Row>
+                                            </Row>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                            )
+                        }
                     </Row>
 
-                    <Row className={ 'mt-3 justify-content-center' }>
+                    <Row className={ 'mt-5 justify-content-center' }>
                         <Row>
                             <h2 style={ {
-                                borderBottom : '5px solid royalblue'
+                                borderRight : '5px solid #6610f2' ,
+                                boxShadow : '0 0 5px #6610f2'
                             } }>Scadenze nei prossimi 5 giorni</h2>
                         </Row>
-                        <Card>
+                        <Row style={ {
+                            borderLeft : '5px solid #6610f2' ,
+                        } }
+                             className={ 'p-0' }
+                        >
+                            <Card>
+                                {
+                                    loadPostit ? (
+                                        <Row>
+                                            <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
+                                        </Row>
+                                    ) : (
+                                        <Row>
+                                            <Col>
+                                                <List>
+                                                    {
+                                                        postit5Giorni.length > 0 ? (
+                                                            <>
+                                                                {
+                                                                    postit5Giorni.map ( (postit , index) => {
+                                                                        return (
+                                                                            <ListItem key={ index } disablePadding>
+                                                                                <ListItemButton
+                                                                                    onClick={ () => navigate ( '/postit' ) }>
+                                                                                    <ListItemIcon>
+                                                                                        <CardMembershipIcon style={ {
+                                                                                            fontSize : '3em'
+                                                                                        } }/>
+                                                                                    </ListItemIcon>
+                                                                                    { postit.scadenza } <ArrowRightAltIcon/>
+                                                                                    <b>{ postit.contenuto }</b>
+                                                                                </ListItemButton>
+                                                                            </ListItem>
+                                                                        )
+                                                                    } )
+                                                                }
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <h6>Non ci sono scadenze nei prossimi 5 giorni!</h6>
+                                                                <p>Potresti controllare nella sezione
+                                                                    <span style={ {
+                                                                        color : 'royalblue' ,
+                                                                        fontWeight : "bold" ,
+                                                                        cursor : 'pointer'
+                                                                    } }
+                                                                          onClick={ () => navigate ( '/utenze' ) }
+                                                                    > BOLLETTE </span>
+                                                                    se ci sono scadenze non registrate</p>
+                                                            </>
 
-                            <Row>
-                                <Col>
-                                    <List>
-                                        {
-                                            postit5Giorni.map ( (postit , index) => {
-                                                return (
-                                                    <ListItem key={ index } disablePadding>
-                                                        <ListItemButton onClick={ () => navigate ( '/postit' ) }>
-                                                            <ListItemIcon>
-                                                                <CardMembershipIcon style={ {
-                                                                    fontSize : '3em'
-                                                                } }/>
-                                                            </ListItemIcon>
-                                                            { postit.scadenza } <ArrowRightAltIcon/>
-                                                            <b>{ postit.contenuto }</b>
-                                                        </ListItemButton>
-                                                    </ListItem>
-                                                )
-                                            } )
-                                        }
+                                                        )
+                                                    }
 
-                                    </List>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Row>
-                    <Row className={'mt-3 justify-content-center'}>
-                        <Row>
-                            <h2
-                                style={{
-                                    borderBottom: '5px solid royalblue'
-                                }}>Luoghi di interesse intorno a te</h2>
+
+                                                </List>
+                                            </Col>
+                                        </Row>
+                                    )
+                                }
+
+                            </Card>
                         </Row>
                     </Row>
-                    <MapComponent/>
+                    <Row className={ 'mt-5 justify-content-center' }>
+                        <Row>
+                            <h2
+                                style={ {
+                                    borderRight : '5px solid #6610f2' ,
+                                    boxShadow : '0 0 5px #6610f2'
+                                } }>Luoghi di interesse intorno a te</h2>
+                        </Row>
+                    </Row>
+                    <Row className={ 'p-0 justify-content-center' }
+                    >
+                        <Row>
+                            <MapComponent/>
+                        </Row>
+                    </Row>
+
                 </Row>
             </Container>
 

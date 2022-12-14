@@ -26,7 +26,7 @@ const CardPostitComponent = (props) => {
     };
 
     return (
-        <Col xs={ 12 } lg={ 6 } className={ "mt-3" }>
+        <Col xs={ 12 } sm={10} md={6} lg={ 4 } xxl={3} className={ "mt-3" }>
             <Paper
                 sx={ {
                     minHeight : 200 + "px" ,

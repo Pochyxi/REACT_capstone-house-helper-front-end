@@ -47,9 +47,9 @@ const StatisticheComponent = () => {
                     </Offcanvas.Header>
                     <Offcanvas.Body
                         style={ {
-                            backgroundColor : "#0d6efd" ,
-                            borderRight : "2px solid royalblue" ,
-                            boxShadow : "1px 1px 2px gray" ,
+                            backgroundColor : "black" ,
+                            borderRight : "2px solid black" ,
+                            boxShadow : "1px 1px 2px black" ,
                             minHeight : '100%'
                         } }
                             className={ "text-center" }

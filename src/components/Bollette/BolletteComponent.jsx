@@ -9,7 +9,7 @@ import GasMeterIcon from '@mui/icons-material/GasMeter';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import GradingIcon from '@mui/icons-material/Grading';
-import CardUtenzaComponent from "./CardUtenzaComponent";
+import CardBollettaComponent from "./CardBollettaComponent";
 import { Add , Delete } from "@mui/icons-material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import FormControl from "@mui/material/FormControl";
@@ -25,8 +25,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { addBolletta , fetchRicercaEmissioneRange , fetchRicercaScadenzaRange } from "./api/api";
 import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
 import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
-const UtenzeComponent = () => {
+const BolletteComponent = () => {
     const user = useSelector ( state => state.user.user )
     const dispatch = useDispatch ()
     const navigate = useNavigate ()
@@ -245,9 +247,9 @@ const UtenzeComponent = () => {
                     </Offcanvas.Header>
                     <Offcanvas.Body
                         style={ {
-                            backgroundColor : "#0d6efd" ,
+                            backgroundColor : "royalblue" ,
                             borderRight : "2px solid royalblue" ,
-                            boxShadow : "1px 1px 2px gray" ,
+                            boxShadow : "1px 1px 2px royalblue" ,
                             minHeight : '100%'
                         } }
                         className={ "text-center" }
@@ -716,30 +718,42 @@ const UtenzeComponent = () => {
                             </Col>
                         </Col>
                     </Row>
-                    <Row className={ "justify-content-center" }>
-                        {
-                            // LE CARD BOLLETTA
-                            filtroBySwitch ( bolletteList ).map ( (bolletta , index) => {
-                                return (
-                                    <Col
-                                        className={ 'mt-3' }
-                                        xs={ 12 }
-                                        md={ 8 }
-                                        lg={ 6 }
-                                        key={ index }>
-                                        <CardUtenzaComponent
-                                            handleClickEliminazione={handleClickEliminazione}
-                                            handleClickError={handleClickError}
-                                            bolletta={ bolletta }
-                                            index={ index }
-                                            bollettaList={ filtroBySwitch ( bolletteList ) }
-                                        />
-                                    </Col>
-                                )
-                            } )
-                        }
+                    {
+                        bolletteList.length > 0 ? (
+                            <Row className={ "justify-content-center" }>
+                                {
+                                    // LE CARD BOLLETTA
+                                    filtroBySwitch ( bolletteList ).map ( (bolletta , index) => {
+                                        return (
+                                            <Col
+                                                className={ 'mt-3' }
+                                                xs={ 12 }
+                                                sm={ 10 }
+                                                md={ 6 }
+                                                xxl={ 4 }
+                                                key={ index }>
+                                                <CardBollettaComponent
+                                                    handleClickEliminazione={handleClickEliminazione}
+                                                    handleClickError={handleClickError}
+                                                    bolletta={ bolletta }
+                                                    index={ index }
+                                                    bollettaList={ filtroBySwitch ( bolletteList ) }
+                                                />
+                                            </Col>
+                                        )
+                                    } )
+                                }
+                            </Row>
+                        ) : (
+                            <Row className={ "justify-content-center text-center" }>
+                                <Col>
+                                    <TipsAndUpdatesIcon style={ {fontSize : '5em' , color : 'royalblue'} }/>
+                                </Col>
+                                <h3>Nessuna bolletta trovata, aggiungine una per iniziare</h3>
+                            </Row>
+                        )
+                    }
 
-                    </Row>
                 </Col>
             </Row>
         </Container>
@@ -747,4 +761,4 @@ const UtenzeComponent = () => {
 
 };
 
-export default UtenzeComponent;
+export default BolletteComponent;
