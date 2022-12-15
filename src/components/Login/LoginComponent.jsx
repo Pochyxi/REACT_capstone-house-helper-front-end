@@ -1,31 +1,35 @@
 import React , { useEffect , useState } from "react";
-import { Form , Row , Col , Container } from "react-bootstrap";
+import { Form , Row , Col } from "react-bootstrap";
 import { Link , useNavigate } from "react-router-dom"
 import { useDispatch , useSelector } from "react-redux";
-import { logIn , setLoginFlagTrue } from "../../redux/actions/actions";
+import { logIn } from "../../redux/actions/actions";
 import GoogleLogin from "react-google-login";
 import { gapi } from 'gapi-script'
 import Card from "@mui/material/Card";
-import { Alert , Backdrop , Button , CircularProgress } from "@mui/material";
+import { Alert , Button } from "@mui/material";
 import HouseHelper from '../../img/HHlogo.png'
-import { setLogin_LOADFlagTrue } from "../../redux/actions/utilsActions";
 import BackDropComponent from "../FeedBackComponents/backDropComponent";
 import { signUp } from "../Signup/api/api";
 
 
 function LoginComponent() {
+    // Chiave segreta per l'autenticazione google
     const clientId = process.env.REACT_APP_CLIENT_ID;
 
+    // Oggetto utente
     const user = useSelector ( state => state.user.user )
 
+    // flag del login
     const loginFlag = useSelector ( state => state.user.loginFlag )
 
+    // flag del loader
     const loginLoad = useSelector ( state => state.util.login_LOAD_Flag )
 
-    const dispatch = useDispatch ()// REDUX
+    const dispatch = useDispatch () // REDUX
 
-    const navigate = useNavigate ()
+    const navigate = useNavigate () // router
 
+    // se l'oggetto utente viene compilato manda alla home
     useEffect ( () => {
         if ( user.token ) {
             navigate ( "/" );
@@ -33,6 +37,10 @@ function LoginComponent() {
 
     } , [ user.token ] );
 
+    // GOOGLE AUTH API //
+    /////////////////////
+
+    // Google auth
     useEffect ( () => {
 
         const start = () => {
@@ -43,6 +51,9 @@ function LoginComponent() {
         gapi.load ( "client:auth2" , start )
     } , [] );
 
+    // Nel caso il login con google abbia successo
+    // creo una copia nel database e provo
+    // ad effettuare il login
     const onSuccess = (response) => {
 
         const userDataSignup = {
@@ -68,16 +79,23 @@ function LoginComponent() {
 
     }
 
+    // semplice console log se fallisce l'auth
     const onFailure = () => {
         console.log ( "Something went wrong" )
     }
 
+    // FINE GOOGLE AUTH API //
+    /////////////////////////
 
+    // LOGIN FORM //
+    ////////////////
+    // oggetto del form
     const [ formObj , setFormObj ] = useState ( { // oggetto per la compilazione del form
         username : '' ,
         password : ''
     } )
 
+    // funzione per modificare il form
     const handleForm = (key , value) => {// setta l'oggetto del form
         setFormObj ( form => {
             return {
@@ -88,6 +106,9 @@ function LoginComponent() {
         } )
     }
 
+    // FINE LOGIN FORM //
+    /////////////////////
+
     return (
         <>
             {
@@ -95,9 +116,9 @@ function LoginComponent() {
                     <BackDropComponent load={ loginLoad }/>
                 ) : (
                     <Row className={ 'mt-5 justify-content-center h-100' }>
-
                         <Col xs={ 12 } md={ 8 } lg={ 6 }>
                             <Row className={ 'align-items-center justify-content-center' }>
+                                {/*LOGO*/ }
                                 <Col>
                                     <img
                                         style={ {
@@ -109,6 +130,8 @@ function LoginComponent() {
                                 </Col>
                             </Row>
                             <Card style={ {boxShadow : '2px 2px 2px royalblue'} }>
+
+                                {/*FORM DEL LOGIN*/}
                                 <Form
                                     style={ {
                                         margin : "0 auto" ,
@@ -120,6 +143,8 @@ function LoginComponent() {
                                         dispatch ( logIn ( formObj ) )
                                         console.log ( user )
                                     } }>
+
+                                    {/*NOME UTENTE*/}
                                     <Form.Group className="mb-3" controlId="formBasicEmail">
                                         <Form.Label>Nome utente</Form.Label>
                                         <Form.Control
@@ -134,6 +159,7 @@ function LoginComponent() {
                                         </Form.Text>
                                     </Form.Group>
 
+                                    {/*PASSWORD*/}
                                     <Form.Group className="mb-3" controlId="formBasicPassword">
                                         <Form.Label>Password</Form.Label>
                                         <Form.Control
@@ -150,11 +176,14 @@ function LoginComponent() {
                                         }
                                     </Form.Group>
                                     <Row className={ 'justify-content-center flex-column text-center' }>
+                                              {/*PULSANTE ACCEDI*/}
                                         <Col>
                                             <Button className={ "w-75" } variant="contained" type="submit">
                                                 ACCEDI
                                             </Button>
                                         </Col>
+
+                                        {/*PULSANTE GOOGLE*/}
                                         <Col>
                                             <GoogleLogin
                                                 className={ 'w-75 my-3' }
@@ -164,6 +193,8 @@ function LoginComponent() {
                                                 cookiePolicy={ "single_host_policy" }
                                             />
                                         </Col>
+
+                                        {/*VAI ALLA SEZIONE SIGNUP*/}
                                         <Col>
                                             <Link to="/signup">
                                                 <Button variant={ 'outlined' }

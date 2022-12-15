@@ -14,12 +14,14 @@ function SignUpComponent() {
 
     const loginLoad = useSelector ( state => state.util.login_LOAD_Flag )
 
-    console.log (loginLoad)
-
     const user = useSelector ( state => state.user.user )
 
     const dispatch = useDispatch ()
 
+    // SIGNUP FORM //
+    ////////////////
+
+    // oggetto del form
     const [ formObj , setFormObj ] = useState ( {
         // oggetto per la compilazione del form
         nomeCompleto : "" ,
@@ -28,19 +30,16 @@ function SignUpComponent() {
         password : "" ,
     } );
 
+    // ripeti password
     const [ ripetiPassword , setRipetiPassword ] = useState ( "" )
     const [ checkPassword , setCheckPassword ] = useState ( false )
 
-    useEffect ( () => {
-        if ( user.token ) {
-                navigate ( '/' )
-        }
-    } , [ user.token ] )
-
+    // controlla se le password corrispondono
     useEffect ( () => {
         if ( formObj.password === ripetiPassword ) setCheckPassword ( false )
     } , [ formObj.password , ripetiPassword ] )
 
+    // funzione per modificare il form
     const handleForm = (key , value) => {
         // setta l'oggetto del form
         setFormObj ( (form) => {
@@ -51,7 +50,16 @@ function SignUpComponent() {
         } );
     };
 
+    // FINE SIGNUP FORM //
+    /////////////////////
 
+
+    // se il token esiste rimanda alla home
+    useEffect ( () => {
+        if ( user.token ) {
+            navigate ( '/' )
+        }
+    } , [ user.token ] )
 
     return (
         <Container fluid style={
@@ -68,6 +76,8 @@ function SignUpComponent() {
                     <Row className={ 'mt-5 justify-content-center' }>
                         <Col xs={ 12 } md={ 8 } lg={ 6 }>
                             <Row className={ 'align-items-center justify-content-center' }>
+
+                                {/*LOGO*/}
                                 <Col>
                                     <img
                                         style={ {
@@ -79,6 +89,8 @@ function SignUpComponent() {
                                 </Col>
                             </Row>
                             <Card style={ {boxShadow : '2px 2px 2px royalblue'} }>
+
+                                {/*FORM DEL SIGNUP*/}
                                 <Form
                                     style={ {
                                         margin : "0 auto" ,
@@ -101,17 +113,15 @@ function SignUpComponent() {
                                                         email : "" ,
                                                         password : "" ,
                                                     })
-                                                } else {
-
                                                 }
                                             } )
-
                                         } else {
                                             setCheckPassword ( true )
                                         }
-
                                     } }
                                 >
+
+                                    {/*NOME E COGNOME*/}
                                     <Form.Group className="mb-3" controlId="formBasicNomeCompleto">
                                         <Form.Label>Nome e cognome</Form.Label>
                                         <Form.Control
@@ -123,6 +133,7 @@ function SignUpComponent() {
                                         />
                                     </Form.Group>
 
+                                    {/*NOME UTENTE*/}
                                     <Form.Group className="mb-3" controlId="formBasicUsername">
                                         <Form.Label>Nome utente</Form.Label>
                                         <Form.Control
@@ -135,6 +146,7 @@ function SignUpComponent() {
                                         />
                                     </Form.Group>
 
+                                    {/*EMAIL*/}
                                     <Form.Group className="mb-3" controlId="formBasicEmail">
                                         <Form.Label>Indirizzo email</Form.Label>
                                         <Form.Control
@@ -147,6 +159,7 @@ function SignUpComponent() {
                                         />
                                     </Form.Group>
 
+                                    {/*PASSWORD*/}
                                     <Form.Group className="mb-3" controlId="formBasicPassword">
                                         <Form.Label>Password</Form.Label>
                                         <Form.Control
@@ -158,6 +171,8 @@ function SignUpComponent() {
                                             autoComplete="current-password"
                                         />
                                     </Form.Group>
+
+                                    {/*RIPETI PASSWORD*/}
                                     <Form.Group className="mb-3" controlId="formBasicPassword2">
                                         <Form.Label>Ripeti password</Form.Label>
                                         <Form.Control
@@ -175,6 +190,7 @@ function SignUpComponent() {
                                         )
                                     }
 
+                                    {/*PULSANTE PER REGISTRARSI*/}
                                     <Button color={ 'success' } variant={ "outlined" }
                                             className={ "w-50 d-block mx-auto my-2" } type="submit">
                                         REGISTRATI
