@@ -10,6 +10,7 @@ import { Alert , Backdrop , Button , CircularProgress } from "@mui/material";
 import HouseHelper from '../../img/HHlogo.png'
 import { setLogin_LOADFlagTrue } from "../../redux/actions/utilsActions";
 import BackDropComponent from "../FeedBackComponents/backDropComponent";
+import { signUp } from "../Signup/api/api";
 
 
 function LoginComponent() {
@@ -58,6 +59,7 @@ function LoginComponent() {
                     password : response.profileObj.googleId
                 }
                 dispatch ( logIn ( userDataLogin ) )
+                navigate ( "/login" );
             } )
         } catch ( e ) {
             console.log ( "ok" )
@@ -85,32 +87,6 @@ function LoginComponent() {
 
         } )
     }
-
-    const signUp = async (obj) => {
-        const baseEndpoint = "http://localhost:8080/api/users/new-raw";
-
-        const header = {
-            "Content-type" : "application/json" ,
-        };
-
-        try {
-            const response = await fetch ( baseEndpoint , {
-                method : "POST" ,
-                headers : header ,
-                body : JSON.stringify ( obj ) ,
-            } );
-
-            if ( response.ok ) {
-                const data = await response.json ();
-                console.log ( data );
-                navigate ( "/login" );
-            } else {
-                alert ( "Error fetching results" );
-            }
-        } catch ( error ) {
-            console.log ( error );
-        }
-    };
 
     return (
         <>

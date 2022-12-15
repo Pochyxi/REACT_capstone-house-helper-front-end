@@ -94,7 +94,7 @@ const HomeComponent = () => {
                                         borderLeft : '5px solid #6610f2' ,
                                         borderBottom : '1px solid gainsboro'
                                     } }
-                                    className={ 'p-2 justify-content-center text-center align-items-center' }
+                                    className={ 'p-2 justify-content-start text-center align-items-center' }
                                 >
                                     <Col xs={ 6 }>
                                         <Skeleton variant="rectangular" width={ '100%'} height={ 70 }/>
@@ -112,7 +112,7 @@ const HomeComponent = () => {
                                         borderLeft : '5px solid #6610f2' ,
                                         borderBottom : '1px solid gainsboro'
                                     } }
-                                    className={ 'p-2 justify-content-center text-center align-items-center' }
+                                    className={ 'p-2 justify-content-start text-center align-items-center' }
                                 >
                                     <Col xs={ 6 }>
                                         <Card style={ {backgroundColor : 'royalblue' , color : "whitesmoke"} }>
@@ -257,7 +257,7 @@ const HomeComponent = () => {
                                 } }>Luoghi di interesse intorno a te</h2>
                         </Row>
                     </Row>
-                    <Row className={ 'p-0 justify-content-center' }
+                    <Row style={{minHeight: '50vh'}} className={ 'p-0 justify-content-center' }
                     >
                         <Row>
                             <MapComponent/>

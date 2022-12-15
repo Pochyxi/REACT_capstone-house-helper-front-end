@@ -233,7 +233,6 @@ const CardSpesaList = ({
                                     style={ {
                                         borderRight : '4px solid dodgerblue' ,
                                         borderBottom: '4px solid dodgerblue',
-                                        borderLeft: '4px solid dodgerblue',
                                         height : '20vh' ,
                                         overflow : 'scroll'
                                     } }

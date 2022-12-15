@@ -206,7 +206,6 @@ const MapComponent = () => {
                 borderLeft : '5px solid #6610f2' ,
             } }
             className={ 'w-100 overflow-hidden p-2' }>
-
             <Row>
                 <Col xs={ 12 } md={ 6 }>
                     <Card className={ 'p-2' }>
@@ -268,68 +267,61 @@ const MapComponent = () => {
                 </Col>
 
                 <Col xs={ 12 } md={ 6 }>
-                    {
-                        isLoaded ? (
-                            <Card>
-                                <Row className={ 'justify-content-center' }>
-                                    {
-                                        myCords && (
-                                            <GoogleMap
-                                                id="map"
-                                                mapContainerStyle={ mapContainerStyle }
-                                                zoom={ 16 }
-                                                center={ myCords }
-                                                options={ options }
-                                                // onClick={ onMapClick } // al click della mappa verà aggiunto un marker
-                                                onLoad={ onMapLoad }
-                                            >
-                                                { markers.map ( (marker) => (
-                                                    <Marker
-                                                        key={ `${ marker.lat }-${ marker.lng }` }
-                                                        position={ {lat : marker.lat , lng : marker.lng} }
-                                                        onClick={ () => {
-                                                            setSelected ( marker );
-                                                        } }
-                                                        // icon={{
-                                                        //     // url : '',
-                                                        //     scaledSize: new window.google.maps.Size(30,30)
-                                                        // origin: new window.google.maps.Point(0,0)
-                                                        // anchor: new window.google.maps.Point(15,15)
-                                                        // }}
-                                                    />
-                                                ) ) }
 
-                                                { selected ? (
-                                                    <InfoWindow
-                                                        position={ {lat : selected.lat , lng : selected.lng} }
-                                                        onCloseClick={ () => {
-                                                            setSelected ( null );
-                                                        } }
-                                                    >
-                                                        <div>
-                                                            <h2>
-                                                                Luogo selezionato
-                                                            </h2>
-                                                            <p>{ formatRelative ( selected.time , new Date () ) }</p>
-                                                        </div>
-                                                    </InfoWindow>
-                                                ) : null
-                                                }
-                                            </GoogleMap>
-                                        )
-                                    }
-                                </Row>
-                            </Card>
-                        ) : (
-                            <Card>
-                                <Row>
-                                    <Skeleton variant="circular" width={ 40 } height={ 40 }/>
-                                </Row>
-                            </Card>
-                        )
-                    }
+                    <Card>
+                        <Row className={ 'justify-content-center' }>
+                            {
+                                myCords && (
+                                    <GoogleMap
+                                        id="map"
+                                        mapContainerStyle={ mapContainerStyle }
+                                        zoom={ 16 }
+                                        center={ myCords }
+                                        options={ options }
+                                        // onClick={ onMapClick } // al click della mappa verà aggiunto un marker
+                                        onLoad={ onMapLoad }
+                                    >
+                                        { markers.map ( (marker) => (
+                                            <Marker
+                                                key={ `${ marker.lat }-${ marker.lng }` }
+                                                position={ {lat : marker.lat , lng : marker.lng} }
+                                                onClick={ () => {
+                                                    setSelected ( marker );
+                                                } }
+                                                // icon={{
+                                                //     // url : '',
+                                                //     scaledSize: new window.google.maps.Size(30,30)
+                                                // origin: new window.google.maps.Point(0,0)
+                                                // anchor: new window.google.maps.Point(15,15)
+                                                // }}
+                                            />
+                                        ) ) }
+
+                                        { selected ? (
+                                            <InfoWindow
+                                                position={ {lat : selected.lat , lng : selected.lng} }
+                                                onCloseClick={ () => {
+                                                    setSelected ( null );
+                                                } }
+                                            >
+                                                <div>
+                                                    <h2>
+                                                        Luogo selezionato
+                                                    </h2>
+                                                    <p>{ formatRelative ( selected.time , new Date () ) }</p>
+                                                </div>
+                                            </InfoWindow>
+                                        ) : null
+                                        }
+                                    </GoogleMap>
+                                )
+                            }
+                        </Row>
+                    </Card>
                 </Col>
             </Row>
+
+
         </Card>
     );
 };
