@@ -8,18 +8,12 @@ import {
     DialogTitle ,
     Slide
 } from "@mui/material";
-import { useDispatch , useSelector } from "react-redux";
-import { getPostitList } from "../../redux/actions/actions";
 
 const Transition = React.forwardRef ( function Transition(props , ref) {
     return <Slide direction="up" ref={ ref } { ...props } />;
 } );
 
 const DialogDeleteComponent = (props) => {
-    const user = useSelector ( state => state.user.user )
-
-    const dispatch = useDispatch ()
-
 
     return (
         <Dialog

@@ -1,3 +1,12 @@
+import {
+    setBollette_LOADFlagFalse ,
+    setBollette_LOADFlagTrue ,
+    setLogin_LOADFlagFalse ,
+    setLogin_LOADFlagTrue , setPostit_LOADFlagFalse , setPostit_LOADFlagTrue ,
+    setSpese_LOADFlagFalse ,
+    setSpese_LOADFlagTrue
+} from "./utilsActions";
+
 export const SET_USER = "SET_USER";
 export const LOG_OUT = "LOG_OUT";
 
@@ -56,6 +65,7 @@ export const logIn = (obj) => {
 
     return async (dispatch , getState) => {
         try {
+            dispatch(setLogin_LOADFlagTrue())
             const response = await fetch ( baseEndpoint , {
                 method : "POST" ,
                 headers : header ,
@@ -64,16 +74,24 @@ export const logIn = (obj) => {
 
             if ( response.ok ) {
                 const data = await response.json ();
+                setTimeout(() => {
+                    dispatch ( setUser ( data ) );
+                    dispatch(setLoginFlagFalse())
+                    dispatch(setLogin_LOADFlagFalse())
+                }, 1000)
 
-                dispatch ( setUser ( data ) );
-
-                dispatch(setLoginFlagFalse())
             } else {
-                dispatch(setLoginFlagTrue())
-                console.log ( "username o password errata" );
+                setTimeout(() => {
+                    dispatch(setLoginFlagTrue())
+                    dispatch(setLogin_LOADFlagFalse())
+                })
+
             }
         } catch ( error ) {
-            console.log ( error );
+            setTimeout(() => {
+                dispatch(setLogin_LOADFlagFalse())
+                console.log ( error );
+            })
         }
     };
 };
@@ -88,6 +106,7 @@ export const getSpeseList = (key, userId) => {
 
     return async (dispatch , getState) => {
         try {
+            dispatch(setSpese_LOADFlagTrue())
             const response = await fetch ( baseEndpoint , {
                 method : "GET" ,
                 headers : header
@@ -96,14 +115,23 @@ export const getSpeseList = (key, userId) => {
             if ( response.ok ) {
                 const data = await response.json ();
 
-                dispatch ( setSpeseList ( data ) );
+                setTimeout(() => {
+                    dispatch ( setSpeseList ( data ) );
 
-                console.log ( data );
+                    dispatch(setSpese_LOADFlagFalse())
+                },1000)
+
             } else {
                 console.log ( "Error" );
+                setTimeout(() => {
+                    dispatch(setSpese_LOADFlagFalse())
+                },1000)
             }
         } catch ( error ) {
             console.log ( error );
+            setTimeout(() => {
+                dispatch(setSpese_LOADFlagFalse())
+            },1000)
         }
     };
 };
@@ -127,8 +155,6 @@ export const getProdottiList = (key, userId) => {
                 const data = await response.json ();
 
                 dispatch ( setProdottiList ( data ) );
-
-                console.log ( data );
             } else {
                 console.log ( "Error" );
             }
@@ -148,6 +174,7 @@ export const getPostitList = (key, userId) => {
 
     return async (dispatch , getState) => {
         try {
+            dispatch(setPostit_LOADFlagTrue())
             const response = await fetch ( baseEndpoint , {
                 method : "GET" ,
                 headers : header
@@ -156,14 +183,22 @@ export const getPostitList = (key, userId) => {
             if ( response.ok ) {
                 const data = await response.json ();
 
-                dispatch ( setPostitList( data ) );
+                setTimeout(() => {
+                    dispatch ( setPostitList( data ) );
+                    dispatch( setPostit_LOADFlagFalse())
+                },1000)
 
-                console.log ( data );
             } else {
                 console.log ( "Error" );
+                setTimeout(() => {
+                    dispatch( setPostit_LOADFlagFalse())
+                },1000)
             }
         } catch ( error ) {
             console.log ( error );
+            setTimeout(() => {
+                dispatch( setPostit_LOADFlagFalse())
+            },1000)
         }
     };
 };
@@ -177,6 +212,7 @@ export const getBolletteList = (key, userId) => {
 
     return async (dispatch , getState) => {
         try {
+            dispatch(setBollette_LOADFlagTrue())
             const response = await fetch ( baseEndpoint , {
                 method : "GET" ,
                 headers : header
@@ -185,14 +221,22 @@ export const getBolletteList = (key, userId) => {
             if ( response.ok ) {
                 const data = await response.json ();
 
-                dispatch ( setBolletteList ( data ) );
+                setTimeout(() => {
+                    dispatch ( setBolletteList ( data ) );
+                    dispatch(setBollette_LOADFlagFalse())
+                },1000)
 
-                console.log ( data );
             } else {
                 console.log ( "Error" );
+                setTimeout(() => {
+                    dispatch(setBollette_LOADFlagFalse())
+                },1000)
             }
         } catch ( error ) {
             console.log ( error );
+            setTimeout(() => {
+                dispatch(setBollette_LOADFlagFalse())
+            },1000)
         }
     };
 };

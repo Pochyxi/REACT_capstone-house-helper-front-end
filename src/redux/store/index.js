@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import { encryptTransform } from "redux-persist-transform-encrypt";
 import userReducer from "../reducers/userReducer";
 import fetchReducer from "../reducers/FetchReducer";
+import utilReducer from "../reducers/utilReducer";
 
 const persistConfig = {
   // 3
@@ -19,7 +20,8 @@ const persistConfig = {
 
 const mergedReducers = combineReducers({
   user: userReducer,
-  fetch: fetchReducer
+  fetch: fetchReducer,
+  util: utilReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, mergedReducers);

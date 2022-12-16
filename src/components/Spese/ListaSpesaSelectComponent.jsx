@@ -1,11 +1,11 @@
 import React from 'react';
-import { Theme, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select  from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 import { useSelector } from "react-redux";
 import { Container , Row } from "react-bootstrap";
@@ -60,7 +60,7 @@ const ListaSpesaSelectComponent = ({spesaListaNome, setSpesaListaNome}) => {
                         renderValue={(selected) => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (
-                                    <Chip key={value} label={value} />
+                                    <Chip key={value} label={value.split(' ')[1]} />
                                 ))}
                             </Box>
                         )}

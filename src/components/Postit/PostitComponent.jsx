@@ -5,7 +5,7 @@ import { useDispatch , useSelector } from "react-redux";
 import { getPostitList } from "../../redux/actions/actions";
 import {
     Button , FormGroup ,
-    IconButton ,
+    IconButton , Skeleton , Stack ,
     Switch ,
     TextField ,
 
@@ -19,13 +19,14 @@ import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessCompo
 import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
 import { addPostit } from "./api/api";
 import CardPostitComponent from "./api/CardPostitComponent";
-
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
 const PostitComponent = () => {
     const user = useSelector ( state => state.user.user )
 
     const [ formControlLabelValue , setFormControlLabelValue ] = useState ( false );
     const postitList = useSelector ( state => state.fetch.postitList )
+    const postitLoad = useSelector(state => state.util.postit_Load_Flag)
     const dispatch = useDispatch ()
     const [ formPostitObj , setFormPostitObj ] = useState ( {
         contenuto : "" ,
@@ -59,7 +60,6 @@ const PostitComponent = () => {
 
     useEffect ( () => {
         dispatch ( getPostitList ( user.token , user.id ) )
-        console.log ( postitList )
     } , [] );
 
     // OFFCANVAS //
@@ -156,9 +156,9 @@ const PostitComponent = () => {
                     </Offcanvas.Header>
                     <Offcanvas.Body
                         style={ {
-                            backgroundColor : "#0d6efd" ,
-                            borderRight : "2px solid royalblue" ,
-                            boxShadow : "1px 1px 2px gray" ,
+                            backgroundColor : "#f1f58f" ,
+                            borderRight : "2px solid #f1f58f" ,
+                            boxShadow : "1px 1px 2px #f1f58f" ,
                             minHeight : '100%' ,
                         } }
                         className={ "text-center" }
@@ -284,30 +284,77 @@ const PostitComponent = () => {
                         control={ <Switch defaultChecked/> }
                     />
                 </Col>
-                <Col>
-                    <Row className={ "justify-content-center" }>
 
-                        {
-                            postitListFilter ( postitList ).map ( (postit , i) => {
-                                return (
-                                    <CardPostitComponent
-                                        key={ i }
-                                        postit={ postit }
-                                        snackUpdatePostitFlag={ snackUpdatePostitFlag }
-                                        handleCloseUpdate={ handleCloseUpdate }
-                                        snackErrorFlag={ snackErrorFlag }
-                                        handleCloseError={ handleCloseError }
-                                        snackDeletePostitFlag={ snackDeletePostitFlag }
-                                        handleCloseDelete={ handleCloseDelete }
-                                        handleClickDelete={ handleClickDelete }
-                                        handleClickError={ handleClickError }
-                                        handleClickUpdate={ handleClickUpdate }
-                                    />
+                {
+                    postitLoad ? (
+                        <Col>
+                            <Stack  spacing={1}>
+                                <Row className={'flex-column flex-md-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
+                            <Stack className={'mt-3'}  spacing={1}>
+                                <Row className={'flex-column flex-md-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
+
+                        </Col>
+                    ) : (
+                        <Col>
+                            {
+                                postitList.length > 0 ? (
+                                    <Row className={ "justify-content-center" }>
+
+                                        {
+                                            postitListFilter ( postitList ).map ( (postit , i) => {
+                                                return (
+                                                    <CardPostitComponent
+                                                        key={ i }
+                                                        postit={ postit }
+                                                        snackUpdatePostitFlag={ snackUpdatePostitFlag }
+                                                        handleCloseUpdate={ handleCloseUpdate }
+                                                        snackErrorFlag={ snackErrorFlag }
+                                                        handleCloseError={ handleCloseError }
+                                                        snackDeletePostitFlag={ snackDeletePostitFlag }
+                                                        handleCloseDelete={ handleCloseDelete }
+                                                        handleClickDelete={ handleClickDelete }
+                                                        handleClickError={ handleClickError }
+                                                        handleClickUpdate={ handleClickUpdate }
+                                                    />
+                                                )
+                                            } )
+                                        }
+                                    </Row>
+                                ) : (
+                                    <Row className={ "justify-content-center text-center" }>
+                                        <Col>
+                                            <TipsAndUpdatesIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
+                                        </Col>
+                                        <h3>Nessun Postit trovato, aggiungine uno per iniziare</h3>
+                                    </Row>
                                 )
-                            } )
-                        }
-                    </Row>
-                </Col>
+                            }
+
+                        </Col>
+                    )
+                }
             </Row>
         </Container>
     );

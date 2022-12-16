@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
 import { deleteBolletta } from "./api/api";
 
-const CardUtenzaComponent = ({bolletta, handleClickEliminazione, handleClickError}) => {
+const CardBollettaComponent = ({bolletta, handleClickEliminazione, handleClickError}) => {
     const user = useSelector ( state => state.user.user )
     const dispatch = useDispatch ()
     const navigate = useNavigate ()
@@ -26,6 +26,7 @@ const CardUtenzaComponent = ({bolletta, handleClickEliminazione, handleClickErro
     };
     const handleClose = () => {
         setDialogEliminazioneFlag(false);
+        dispatch(getBolletteList(user.token, user.id))
     };
 
     //IN BASE ALLA STRINGA RITORNERA' UN'ICONA DIVERSA
@@ -218,4 +219,4 @@ const CardUtenzaComponent = ({bolletta, handleClickEliminazione, handleClickErro
     );
 };
 
-export default CardUtenzaComponent;
+export default CardBollettaComponent;

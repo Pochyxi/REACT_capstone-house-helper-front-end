@@ -10,7 +10,7 @@ import {
     List ,
     ListItem ,
     ListItemButton ,
-    ListItemText ,
+    ListItemText , Skeleton , Stack ,
     Switch ,
     TextField
 } from "@mui/material";
@@ -19,16 +19,16 @@ import Card from "@mui/material/Card";
 import SearchIcon from '@mui/icons-material/Search';
 import { styled , alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
-import { useNavigate } from "react-router-dom";
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { addListaSpesa , removeProdottoFromDatabase } from "./api/api";
 import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
 import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
 import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import CardPostitComponent from "../Postit/api/CardPostitComponent";
 
 const Search = styled ( 'div' ) ( ({theme}) => ({
     position : 'relative' ,
@@ -72,12 +72,11 @@ const StyledInputBase = styled ( InputBase ) ( ({theme}) => ({
     } ,
 }) );
 
-const AlimentiComponent = () => {
+const SpeseComponent = () => {
     const spesaList = useSelector ( state => state.fetch.spesaList )
-    const navigate = useNavigate ()
+    const spesaLoad = useSelector ( state => state.util.spese_Load_Flag )
     const prodottiList = useSelector ( state => state.fetch.productList )
     const user = useSelector ( state => state.user.user )
-    const [ deleteProdottiFlag , setDeleteProdottiFlag ] = useState ( false );
     const dispatch = useDispatch ()
     const [ formFlag , setFormFlag ] = useState ( false );
     const [ formObj , setFormObj ] = useState ( {
@@ -151,22 +150,43 @@ const AlimentiComponent = () => {
     const [ snackElProdottoFlag , setSnackElProdottoFlag ] = useState ( false )
 
     const handleClickProdotto = () => {
-        dispatch(getProdottiList(user.token, user.id))
+        dispatch ( getProdottiList ( user.token , user.id ) )
         setSnackElProdottoFlag ( true )
     }
     const handleCloseProdotto = () => setSnackElProdottoFlag ( false )
     //
 
+    // aggiunta di un prodotto nel database //
+    const [ snackAddProdData , setSnackAddProdData ] = useState ( false )
+
+    const handleClickProdData = () => setSnackAddProdData ( true )
+    const handleCloseProdData = () => setSnackAddProdData ( false )
+    //
+
+    // aggiunta di un prodotto gia esistente alla lista //
+    const [ snackAddProdottoList , setSnackAddProdottoList ] = useState ( false )
+
+    const handleClickAddProdottoList = () => setSnackAddProdottoList ( true )
+    const handleCloseAddProdottoList = () => setSnackAddProdottoList ( false )
+
+    // eliminazione di un prodotto dalla lista //
+    const [ snackElProdottoListFlag , setSnackElProdottoListFlag ] = useState ( false )
+
+    const handleClickProdottoList = () => setSnackElProdottoListFlag ( true )
+    const handleCloseProdottoList = () => setSnackElProdottoListFlag ( false )
+    //
+
+    // eliminazione di una lista //
+    const [ snackDelLista , setSnackDelLista ] = useState ( false )
+
+    const handleClickDelLista = () => setSnackDelLista ( true )
+    const handleCloseDelLista = () => setSnackDelLista ( false )
+
     // errore generico //
     const [ snackErrorFlag , setSnackErrorFlag ] = useState ( false );
 
-    const handleClickError = () => {
-        setSnackErrorFlag ( true );
-    };
-
-    const handleCloseError = () => {
-        setSnackErrorFlag ( false );
-    };
+    const handleClickError = () => setSnackErrorFlag ( true );
+    const handleCloseError = () => setSnackErrorFlag ( false )
     //
 
     // DIALOGS //
@@ -201,6 +221,27 @@ const AlimentiComponent = () => {
                 closeFunction={ handleCloseProdotto }
                 message={ "Prodotto eliminato con successo!" }
             />
+            <SnackbarSuccessComponent
+                openFlag={ snackElProdottoListFlag }
+                closeFunction={ handleCloseProdottoList }
+                message={ "Prodotto rimosso dalla lista con successo!" }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackAddProdottoList }
+                closeFunction={ handleCloseAddProdottoList }
+                message={ "Prodotto aggiunto" }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackAddProdData }
+                closeFunction={ handleCloseProdData }
+                message={ "Prodotto aggiunto al database e alla lista, il prodotto è ora disponibile per l'aggiunta automatica" }
+            />
+            <SnackbarSuccessComponent
+                openFlag={ snackDelLista }
+                closeFunction={ handleCloseDelLista }
+                message={ "Lista della spesa eliminata" }
+            />
+
             <Row className={ "justify-content-center align-items-center flex-column" }>
 
                 <Offcanvas className={ 'p-0' } show={ show } onHide={ handleClose }>
@@ -208,9 +249,9 @@ const AlimentiComponent = () => {
                     </Offcanvas.Header>
                     <Offcanvas.Body
                         style={ {
-                            backgroundColor : "#0d6efd" ,
-                            borderRight : "2px solid royalblue" ,
-                            boxShadow : "1px 1px 2px gray" ,
+                            backgroundColor : "dodgerblue" ,
+                            borderRight : "2px solid dodgerblue" ,
+                            boxShadow : "1px 1px 2px dodgerblue" ,
                             minHeight : '100%' ,
                         } }
                         className={ "text-center" }
@@ -275,8 +316,8 @@ const AlimentiComponent = () => {
                                                     />
                                                 </FormControl>
                                                 <Col>
-                                                    <Button type={ "submit" } className={ "mt-2" } variant="outlined"
-                                                            color="success">
+                                                    <Button type={ "submit" } className={ "mt-2" } variant="contained"
+                                                            color="primary">
                                                         Aggiungi
                                                     </Button>
                                                 </Col>
@@ -302,19 +343,13 @@ const AlimentiComponent = () => {
                                 } ,
                                 padding : 1 + "em"
                             } }>
-                                <h5>Gestione prodotti ({prodottiList.length})</h5>
+                                <h5>Gestione prodotti ({ prodottiList.length })</h5>
                                 <h6>Seleziona prodotto per eliminarlo dal database</h6>
                                 <Search>
                                     <SearchIconWrapper>
                                         <SearchIcon/>
                                     </SearchIconWrapper>
                                     <StyledInputBase
-                                        onFocus={ () => setDeleteProdottiFlag ( true ) }
-                                        onBlur={ () => {
-                                            setTimeout ( () => {
-                                                setDeleteProdottiFlag ( false )
-                                            } , 1000 )
-                                        } }
                                         value={ searchObj.search }
                                         onChange={ (e) => {
                                             handleSearch ( "search" , e.target.value )
@@ -366,35 +401,78 @@ const AlimentiComponent = () => {
                         control={ <Switch defaultChecked/> }
                     />
                 </Col>
-                <Col xs={ 11 }>
-                    {
-                        spesaListaNome.length > 0 ? (
-                            <Row className={ "justify-content-center" }>
-                                {
-                                    spesaListaNome.map ( (list , i) => {
-                                        return (
-                                            <Col key={ i } xs={ 12 } sm={ 8 } xl={ 6 } xxl={ 4 }>
-                                                <CardSpesaList setSpesaListaNome={ setSpesaListaNome } list={ list }
-                                                               spesaList={ spesaList } index={ i }/>
-                                            </Col>
-                                        )
-                                    } )
-                                }
-                            </Row>
-                        ) : (
-                            <Row className={ "justify-content-center mt-5" }>
-                                <Col className={ 'mt-4' }>
-                                    <KeyboardDoubleArrowLeftIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
-                                </Col>
-                                <h3>Seleziona una lista per iniziare</h3>
-                            </Row>
+                {
+                    spesaLoad ? (
+                        <Col>
+                            <Stack  spacing={1}>
+                                <Row className={'flex-column flex-xl-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
+                            <Stack className={'mt-3'}  spacing={1}>
+                                <Row className={'flex-column flex-xl-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
 
-                        )
-                    }
-                </Col>
+                        </Col>
+                    ) : (
+                        <Col xs={ 11 }>
+                            {
+                                spesaListaNome.length > 0 ? (
+                                    <Row className={ "justify-content-center justify-content-xl-start" }>
+                                        {
+                                            spesaListaNome.map ( (list , i) => {
+                                                return (
+                                                    <Col key={ i } xs={ 12 } sm={ 10 } lg={8} xl={ 6 } xxl={ 4 }>
+                                                        <CardSpesaList
+                                                            handleClickDelLista={ handleClickDelLista }
+                                                            handleClickAddProdData={ handleClickProdData }
+                                                            handleClickAddProdottoList={ handleClickAddProdottoList }
+                                                            handleClickProdottoList={ handleClickProdottoList }
+                                                            setSpesaListaNome={ setSpesaListaNome }
+                                                            list={ list }
+                                                            spesaList={ spesaList }
+                                                            index={ i }
+                                                            handleClickError={ handleClickError }
+                                                        />
+                                                    </Col>
+                                                )
+                                            } )
+                                        }
+                                    </Row>
+                                ) : (
+                                    <Row className={ "justify-content-center text-center" }>
+                                        <Col>
+                                            <TipsAndUpdatesIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
+                                        </Col>
+                                        <h3>Nessuna lista trovata, aggiungine una per iniziare</h3>
+                                    </Row>
+                                )
+                            }
+                        </Col>
+                    )
+                }
+
             </Row>
         </Container>
     );
 };
 
-export default AlimentiComponent;
+export default SpeseComponent;
