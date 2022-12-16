@@ -5,7 +5,7 @@ import { Col , Container , Offcanvas , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
 import StatisticheBolletteComponent from "./Grafici/StatisticheBolletteComponent";
 import DescriptionIcon from '@mui/icons-material/Description';
-import { Button , IconButton , Switch } from "@mui/material";
+import { Button , IconButton , Skeleton , Stack , Switch } from "@mui/material";
 import MailIcon from '@mui/icons-material/Mail';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StatistichePostitComponent from "./Grafici/StatistichePostitComponent";
@@ -13,6 +13,7 @@ import StatisticheSpeseComponent from "./Grafici/StatisticheSpeseComponent";
 import ChartBolletteComponent from "./ChartComponent/ChartBolletteComponent";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
+import { getBolletteList , getPostitList , getSpeseList } from "../../redux/actions/actions";
 
 const StatisticheComponent = () => {
     const navigate = useNavigate ()
@@ -23,11 +24,21 @@ const StatisticheComponent = () => {
     const prodottiList = useSelector ( state => state.fetch.productList )
     const postitList = useSelector ( state => state.fetch.postitList )
 
+    const loadBollette = useSelector ( state => state.util.bollette_Load_Flag)
+    const loadPostit = useSelector ( state => state.util.postit_Load_Flag)
+    const loadSpese = useSelector ( state => state.util.spese_Load_Flag)
+
     const [ bolletteFlag , setBolletteFlag ] = useState ( true );
 
     const [ postitFlag , setPostitFlag ] = useState ( false );
 
     const [ speseFlag , setSpeseFlag ] = useState ( false );
+
+    useEffect(() => {
+        dispatch(getSpeseList(user.token, user.id))
+        dispatch(getPostitList(user.token, user.id))
+        dispatch(getBolletteList(user.token, user.id))
+    }, [])
 
     // OFFCANVAS //
     //////////////
@@ -128,30 +139,47 @@ const StatisticheComponent = () => {
                     fontSize : '.7em'
                 } } className={ 'justify-content-center mt-3' } xs={ 12 }>
                     <Row className={ 'text-center' }>
-                        <Col xs={12}>
-                            {
-                                bolletteFlag &&
-                                !postitFlag &&
-                                !speseFlag && (
-                                    <StatisticheBolletteComponent/>
-                                )
-                            }
-                            {
-                                !bolletteFlag &&
-                                !speseFlag &&
-                                postitFlag && (
-                                    <StatistichePostitComponent/>
-                                )
-                            }
+                        {
+                            loadSpese &&
+                            loadBollette &&
+                            loadPostit ? (
+                                <Col xs={ 12 }>
+                                    <Stack  spacing={1}>
+                                        <Row className={'flex-column flex-md-row'}>
+                                            <Col>
+                                                <Skeleton variant="rectangular" width={'100%'} height={'100vh'} />
+                                            </Col>
+                                        </Row>
+                                    </Stack>
+                                </Col>
+                            ) : (
+                                <Col xs={12}>
+                                    {
+                                        bolletteFlag &&
+                                        !postitFlag &&
+                                        !speseFlag && (
+                                            <StatisticheBolletteComponent/>
+                                        )
+                                    }
+                                    {
+                                        !bolletteFlag &&
+                                        !speseFlag &&
+                                        postitFlag && (
+                                            <StatistichePostitComponent/>
+                                        )
+                                    }
 
-                            {
-                                !bolletteFlag &&
-                                !postitFlag &&
-                                speseFlag && (
-                                    <StatisticheSpeseComponent/>
-                                )
-                            }
-                        </Col>
+                                    {
+                                        !bolletteFlag &&
+                                        !postitFlag &&
+                                        speseFlag && (
+                                            <StatisticheSpeseComponent/>
+                                        )
+                                    }
+                                </Col>
+                            )
+                        }
+
                     </Row>
                 </Col>
             </Row>

@@ -201,16 +201,15 @@ const MapComponent = () => {
     }
 
     return (
-        <Card
-            style={ {
-                borderLeft : '5px solid #6610f2' ,
-            } }
-            className={ 'w-100 overflow-hidden p-2' }>
-            <Row>
+        <Row style={ {
+            borderLeft : '5px solid #6610f2' ,
+            borderBottom: '1px solid #6610f2'
+        } }>
+            <Row >
                 <Col xs={ 12 } md={ 6 }>
-                    <Card className={ 'p-2' }>
-                        <Row className={ 'justify-content-center text-center mb-3' }>
-                            <Col>
+                    {/*<Card className={ 'p-2' }>*/}
+                        <Row className={ 'justify-content-between text-start mb-3 text-nowrap' }>
+                            <Col className={'mt-2'} xs={4} md={6}>
                                 <ShoppingCartOutlinedIcon
                                     style={ {
                                         backgroundColor : "royalblue" ,
@@ -221,7 +220,7 @@ const MapComponent = () => {
                                     fontSize={ 'large' }
                                 /> Supermercati
                             </Col>
-                            <Col>
+                            <Col className={'mt-2'} xs={4} md={6}>
                                 <EmailOutlinedIcon
                                     style={ {
                                         backgroundColor : "darkgrey" ,
@@ -232,7 +231,7 @@ const MapComponent = () => {
                                     fontSize={ 'large' }
                                 /> Poste
                             </Col>
-                            <Col>
+                            <Col className={'mt-2'} xs={4} md={6}>
                                 <RestaurantOutlinedIcon
                                     style={ {
                                         backgroundColor : "orange" ,
@@ -243,7 +242,7 @@ const MapComponent = () => {
                                     fontSize={ 'large' }
                                 /> Ristoranti
                             </Col>
-                            <Col>
+                            <Col className={'mt-2'} xs={4} md={6}>
                                 <LocalMallOutlinedIcon
                                     style={ {
                                         backgroundColor : "dodgerblue" ,
@@ -263,7 +262,7 @@ const MapComponent = () => {
                                 <Locate panTo={ panTo }/>
                             </Col>
                         </Row>
-                    </Card>
+                    {/*</Card>*/}
                 </Col>
 
                 <Col xs={ 12 } md={ 6 }>
@@ -321,8 +320,8 @@ const MapComponent = () => {
                 </Col>
             </Row>
 
+        </Row>
 
-        </Card>
     );
 };
 

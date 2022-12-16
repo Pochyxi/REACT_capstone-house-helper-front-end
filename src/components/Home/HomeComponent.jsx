@@ -74,15 +74,27 @@ const HomeComponent = () => {
             <Container fluid>
                 <Row className={ "justify-content-center" }>
                     <Row className={ 'my-3' }>
-                        <h4>Bentornato { user.email }</h4>
+                        <h4
+                            style={{
+                                fontFamily: 'monospace',
+                                fontWeight: 'bolder',
+                                fontSize: '1.5rem'
+                            }}
+                            className={'text-center'}
+                        >
+                            Bentornato { user.email }
+                        </h4>
                     </Row>
                     <Row className={ 'mt-3 justify-content-center' }>
 
                         <Row>
-                            <h2 style={ {
-                                borderRight : '5px solid #6610f2' ,
+                            <Card style={ {
+                                borderTop : '5px solid #6610f2' ,
                                 boxShadow : '0 0 5px #6610f2'
-                            } }>Numeri</h2>
+                            } }>
+
+                            </Card>
+                            <h2 >Numeri</h2>
                         </Row>
 
                         {
@@ -179,20 +191,25 @@ const HomeComponent = () => {
 
                     <Row className={ 'mt-5 justify-content-center' }>
                         <Row>
-                            <h2 style={ {
-                                borderRight : '5px solid #6610f2' ,
+                            <Card style={ {
+                                borderTop : '5px solid #6610f2' ,
                                 boxShadow : '0 0 5px #6610f2'
-                            } }>Scadenze nei prossimi 5 giorni</h2>
+                            } }>
+
+                            </Card>
+                            <h2>Scadenze Postit nei prossimi 5 giorni</h2>
                         </Row>
                         <Row style={ {
                             borderLeft : '5px solid #6610f2' ,
+                            borderBottom : '1px solid gainsboro'
                         } }
                              className={ 'p-0' }
                         >
-                            <Card>
+
                                 {
                                     loadPostit ? (
                                         <Row>
+                                            <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
                                             <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
                                         </Row>
                                     ) : (
@@ -205,12 +222,18 @@ const HomeComponent = () => {
                                                                 {
                                                                     postit5Giorni.map ( (postit , index) => {
                                                                         return (
-                                                                            <ListItem key={ index } disablePadding>
+                                                                            <ListItem
+                                                                                style={{
+                                                                                    backgroundColor: 'rgba(241,245,143,0.48)',
+                                                                                    marginTop: '10px',
+                                                                                }}
+                                                                                key={ index }
+                                                                                disablePadding>
                                                                                 <ListItemButton
                                                                                     onClick={ () => navigate ( '/postit' ) }>
                                                                                     <ListItemIcon>
                                                                                         <CardMembershipIcon style={ {
-                                                                                            fontSize : '3em'
+                                                                                            fontSize : '3em',
                                                                                         } }/>
                                                                                     </ListItemIcon>
                                                                                     { postit.scadenza } <ArrowRightAltIcon/>
@@ -245,25 +268,21 @@ const HomeComponent = () => {
                                     )
                                 }
 
-                            </Card>
                         </Row>
                     </Row>
                     <Row className={ 'mt-5 justify-content-center' }>
                         <Row>
-                            <h2
-                                style={ {
-                                    borderRight : '5px solid #6610f2' ,
-                                    boxShadow : '0 0 5px #6610f2'
-                                } }>Luoghi di interesse intorno a te</h2>
-                        </Row>
-                    </Row>
-                    <Row style={{minHeight: '50vh'}} className={ 'p-0 justify-content-center' }
-                    >
-                        <Row>
-                            <MapComponent/>
-                        </Row>
-                    </Row>
+                            <Card style={ {
+                                borderTop : '5px solid #6610f2' ,
+                                boxShadow : '0 0 5px #6610f2'
+                            } }>
 
+                            </Card>
+                            <h2
+                                >Luoghi di interesse intorno a te</h2>
+                        </Row>
+                        <MapComponent/>
+                    </Row>
                 </Row>
             </Container>
 

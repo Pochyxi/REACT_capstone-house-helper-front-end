@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getBolletteList , getPostitList , setBolletteList } from "../../redux/actions/actions";
 import { Col , Container , Form , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
-import { Alert , Button , IconButton , Paper , Switch , TextField } from "@mui/material";
+import { Alert , Button , IconButton , Paper , Skeleton , Stack , Switch , TextField } from "@mui/material";
 import GasMeterIcon from '@mui/icons-material/GasMeter';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -32,6 +32,7 @@ const BolletteComponent = () => {
     const user = useSelector ( state => state.user.user )
     const dispatch = useDispatch ()
     const navigate = useNavigate ()
+    const bolletteLoad = useSelector ( state => state.util.bollette_Load_Flag )
 
     //LISTA DELLE BOLLETTE CHE ARRIVANO DALLA FETCH
     const bolletteList = useSelector ( state => state.fetch.bollettaList )
@@ -676,85 +677,120 @@ const BolletteComponent = () => {
                         control={ <Switch defaultChecked/> }
                     />
                 </Col>
-                <Col
-                    style={ {
-                        fontSize : '.7em'
-                    } }
-                    xs={ 12 }>
-                    <Row className={ 'mt-4 text-center justify-content-between' }>
+                {
+                    bolletteLoad ? (
+                        <Col xs={ 12 }>
+                            <Stack  spacing={1}>
+                                <Row className={'flex-column flex-md-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
+                            <Stack className={'mt-3'}  spacing={1}>
+                                <Row className={'flex-column flex-md-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
 
-                        <Col className={ 'd-flex justify-content-center' }>
-
-                            <Col>
-                                <GasMeterIcon style={ {color : 'royalblue' , fontSize : '3em'} }/>
-                                <Switch
-                                    checked={ gasFlag }
-                                    onChange={ handleGas }
-                                    control={ <Switch defaultChecked/> }
-                                />
-                            </Col>
-                            <Col>
-                                <LightbulbIcon style={ {color : 'darkgoldenrod' , fontSize : '3em'} }/>
-                                <Switch
-                                    checked={ luceFlag }
-                                    onChange={ handleLuce }
-                                    control={ <Switch defaultChecked/> }
-                                />
-                            </Col>
-                            <Col>
-                                <OpacityIcon style={ {color : 'dodgerblue' , fontSize : '3em'} }/>
-                                <Switch checked={ acquaFlag }
-                                        onChange={ handleAcqua }
-                                        control={ <Switch defaultChecked/> }
-                                />
-                            </Col>
-                            <Col>
-                                <GradingIcon style={ {color : 'darkgray' , fontSize : '3em'} }/>
-                                <Switch
-                                    checked={ altroFlag }
-                                    onChange={ handleAltro }
-                                    control={ <Switch defaultChecked/> }
-                                />
-                            </Col>
                         </Col>
-                    </Row>
-                    {
-                        bolletteList.length > 0 ? (
-                            <Row className={ "justify-content-center" }>
-                                {
-                                    // LE CARD BOLLETTA
-                                    filtroBySwitch ( bolletteList ).map ( (bolletta , index) => {
-                                        return (
-                                            <Col
-                                                className={ 'mt-3' }
-                                                xs={ 12 }
-                                                sm={ 10 }
-                                                md={ 6 }
-                                                xxl={ 4 }
-                                                key={ index }>
-                                                <CardBollettaComponent
-                                                    handleClickEliminazione={handleClickEliminazione}
-                                                    handleClickError={handleClickError}
-                                                    bolletta={ bolletta }
-                                                    index={ index }
-                                                    bollettaList={ filtroBySwitch ( bolletteList ) }
-                                                />
-                                            </Col>
-                                        )
-                                    } )
-                                }
-                            </Row>
-                        ) : (
-                            <Row className={ "justify-content-center text-center" }>
-                                <Col>
-                                    <TipsAndUpdatesIcon style={ {fontSize : '5em' , color : 'royalblue'} }/>
-                                </Col>
-                                <h3>Nessuna bolletta trovata, aggiungine una per iniziare</h3>
-                            </Row>
-                        )
-                    }
+                    ) : (
+                        <Col
+                            style={ {
+                                fontSize : '.7em'
+                            } }
+                            xs={ 12 }>
+                            <Row className={ 'mt-4 text-center justify-content-between' }>
 
-                </Col>
+                                <Col className={ 'd-flex justify-content-center' }>
+
+                                    <Col>
+                                        <GasMeterIcon style={ {color : 'royalblue' , fontSize : '3em'} }/>
+                                        <Switch
+                                            checked={ gasFlag }
+                                            onChange={ handleGas }
+                                            control={ <Switch defaultChecked/> }
+                                        />
+                                    </Col>
+                                    <Col>
+                                        <LightbulbIcon style={ {color : 'darkgoldenrod' , fontSize : '3em'} }/>
+                                        <Switch
+                                            checked={ luceFlag }
+                                            onChange={ handleLuce }
+                                            control={ <Switch defaultChecked/> }
+                                        />
+                                    </Col>
+                                    <Col>
+                                        <OpacityIcon style={ {color : 'dodgerblue' , fontSize : '3em'} }/>
+                                        <Switch checked={ acquaFlag }
+                                                onChange={ handleAcqua }
+                                                control={ <Switch defaultChecked/> }
+                                        />
+                                    </Col>
+                                    <Col>
+                                        <GradingIcon style={ {color : 'darkgray' , fontSize : '3em'} }/>
+                                        <Switch
+                                            checked={ altroFlag }
+                                            onChange={ handleAltro }
+                                            control={ <Switch defaultChecked/> }
+                                        />
+                                    </Col>
+                                </Col>
+                            </Row>
+                            {
+                                bolletteList.length > 0 ? (
+                                    <Row className={ "justify-content-center" }>
+                                        {
+                                            // LE CARD BOLLETTA
+                                            filtroBySwitch ( bolletteList ).map ( (bolletta , index) => {
+                                                return (
+                                                    <Col
+                                                        className={ 'mt-3' }
+                                                        xs={ 12 }
+                                                        sm={ 10 }
+                                                        md={ 6 }
+                                                        xxl={ 4 }
+                                                        key={ index }>
+                                                        <CardBollettaComponent
+                                                            handleClickEliminazione={handleClickEliminazione}
+                                                            handleClickError={handleClickError}
+                                                            bolletta={ bolletta }
+                                                            index={ index }
+                                                            bollettaList={ filtroBySwitch ( bolletteList ) }
+                                                        />
+                                                    </Col>
+                                                )
+                                            } )
+                                        }
+                                    </Row>
+                                ) : (
+                                    <Row className={ "justify-content-center text-center" }>
+                                        <Col>
+                                            <TipsAndUpdatesIcon style={ {fontSize : '5em' , color : 'royalblue'} }/>
+                                        </Col>
+                                        <h3>Nessuna bolletta trovata, aggiungine una per iniziare</h3>
+                                    </Row>
+                                )
+                            }
+
+                        </Col>
+                    )
+                }
+
             </Row>
         </Container>
     );

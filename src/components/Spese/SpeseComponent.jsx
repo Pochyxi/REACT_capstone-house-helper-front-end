@@ -10,7 +10,7 @@ import {
     List ,
     ListItem ,
     ListItemButton ,
-    ListItemText ,
+    ListItemText , Skeleton , Stack ,
     Switch ,
     TextField
 } from "@mui/material";
@@ -28,6 +28,7 @@ import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessCompo
 import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
 import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import CardPostitComponent from "../Postit/api/CardPostitComponent";
 
 const Search = styled ( 'div' ) ( ({theme}) => ({
     position : 'relative' ,
@@ -73,6 +74,7 @@ const StyledInputBase = styled ( InputBase ) ( ({theme}) => ({
 
 const SpeseComponent = () => {
     const spesaList = useSelector ( state => state.fetch.spesaList )
+    const spesaLoad = useSelector ( state => state.util.spese_Load_Flag )
     const prodottiList = useSelector ( state => state.fetch.productList )
     const user = useSelector ( state => state.user.user )
     const dispatch = useDispatch ()
@@ -399,40 +401,75 @@ const SpeseComponent = () => {
                         control={ <Switch defaultChecked/> }
                     />
                 </Col>
-                <Col xs={ 11 }>
-                    {
-                        spesaListaNome.length > 0 ? (
-                            <Row className={ "justify-content-start" }>
-                                {
-                                    spesaListaNome.map ( (list , i) => {
-                                        return (
-                                            <Col key={ i } xs={ 12 } sm={ 8 } xl={ 6 } xxl={ 4 }>
-                                                <CardSpesaList
-                                                    handleClickDelLista={ handleClickDelLista }
-                                                    handleClickAddProdData={ handleClickProdData }
-                                                    handleClickAddProdottoList={ handleClickAddProdottoList }
-                                                    handleClickProdottoList={ handleClickProdottoList }
-                                                    setSpesaListaNome={ setSpesaListaNome }
-                                                    list={ list }
-                                                    spesaList={ spesaList }
-                                                    index={ i }
-                                                    handleClickError={ handleClickError }
-                                                />
-                                            </Col>
-                                        )
-                                    } )
-                                }
-                            </Row>
-                        ) : (
-                            <Row className={ "justify-content-center text-center" }>
-                                <Col>
-                                    <TipsAndUpdatesIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
-                                </Col>
-                                <h3>Nessuna lista trovata, aggiungine una per iniziare</h3>
-                            </Row>
-                        )
-                    }
-                </Col>
+                {
+                    spesaLoad ? (
+                        <Col>
+                            <Stack  spacing={1}>
+                                <Row className={'flex-column flex-xl-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
+                            <Stack className={'mt-3'}  spacing={1}>
+                                <Row className={'flex-column flex-xl-row'}>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
+                                    </Col>
+                                    <Col>
+                                        <Skeleton variant="rounded" width={'100%'} height={200} />
+                                    </Col>
+                                </Row>
+                            </Stack>
+
+                        </Col>
+                    ) : (
+                        <Col xs={ 11 }>
+                            {
+                                spesaListaNome.length > 0 ? (
+                                    <Row className={ "justify-content-center justify-content-xl-start" }>
+                                        {
+                                            spesaListaNome.map ( (list , i) => {
+                                                return (
+                                                    <Col key={ i } xs={ 12 } sm={ 10 } lg={8} xl={ 6 } xxl={ 4 }>
+                                                        <CardSpesaList
+                                                            handleClickDelLista={ handleClickDelLista }
+                                                            handleClickAddProdData={ handleClickProdData }
+                                                            handleClickAddProdottoList={ handleClickAddProdottoList }
+                                                            handleClickProdottoList={ handleClickProdottoList }
+                                                            setSpesaListaNome={ setSpesaListaNome }
+                                                            list={ list }
+                                                            spesaList={ spesaList }
+                                                            index={ i }
+                                                            handleClickError={ handleClickError }
+                                                        />
+                                                    </Col>
+                                                )
+                                            } )
+                                        }
+                                    </Row>
+                                ) : (
+                                    <Row className={ "justify-content-center text-center" }>
+                                        <Col>
+                                            <TipsAndUpdatesIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
+                                        </Col>
+                                        <h3>Nessuna lista trovata, aggiungine una per iniziare</h3>
+                                    </Row>
+                                )
+                            }
+                        </Col>
+                    )
+                }
+
             </Row>
         </Container>
     );
