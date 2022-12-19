@@ -26,8 +26,8 @@ import { logout } from "../../redux/actions/actions";
 import LogoutIcon from '@mui/icons-material/Logout';
 import MapComponent from "../Home/MapComponent";
 import ChartBolletteComponent from "../Statistiche/ChartComponent/ChartBolletteComponent";
-import LoginMaterialComponent from "../Login/LoginMaterialComponent";
 import HouseHelper from '../../img/HHlogo.png'
+import SpeseV2Component from "../SpeseV2/SpeseV2Component";
 
 const drawerWidth = 240;
 
@@ -117,7 +117,6 @@ const ResponsiveAppBar = (props) => {
         }
 
     } , [ user.token ] );
-
 
     const {window} = props;
     const [ mobileOpen , setMobileOpen ] = React.useState ( false );
@@ -271,9 +270,10 @@ const ResponsiveAppBar = (props) => {
                     </IconButton>
                     <IconButton
                         aria-label="open drawer"
+                        className={'d-sm-none'}
                         edge="start"
                         onClick={ handleDrawerToggle }
-                        sx={ {mr : 2 , display : {sm : 'none'}, color: 'black'} }>
+                        sx={ {mr : 2 , color: 'black'} }>
                         <Col>
                             <img
                                 style={ {
@@ -444,7 +444,7 @@ const ResponsiveAppBar = (props) => {
                             <Route path="/login" element={ <LoginComponent/> }/>
                             <Route path="/signup" element={ <SignUpComponent/> }/>
                             <Route path="/" element={ <HomeComponent/> }/>
-                            <Route path="/alimenti" element={ <SpeseComponent/> }/>
+                            <Route path="/alimenti" element={ <SpeseV2Component/> }/>
                             <Route path="/postit" element={ <PostitComponent/> }/>
                             <Route path="/utenze" element={ <BolletteComponent/> }/>
                             <Route path="/statistiche" element={ <StatisticheComponent/> }/>

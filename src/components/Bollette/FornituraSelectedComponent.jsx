@@ -16,7 +16,7 @@ const FornituraSelectedComponent = (props) => {
             case '':
                 return (
                     <>
-                        <h6>Seleziona la fornitura</h6>
+                        <h6>Seleziona la <b style={{color: "royalblue"}}>fornitura</b></h6>
                         <Row>
                             <Col>
                                 <IconButton

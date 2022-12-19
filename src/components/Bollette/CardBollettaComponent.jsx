@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React , { useEffect , useState } from 'react';
 import { IconButton , Paper } from "@mui/material";
 import { Col , Row } from "react-bootstrap";
 import GasMeterIcon from '@mui/icons-material/GasMeter';
@@ -9,25 +9,56 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
 import EuroIcon from '@mui/icons-material/Euro';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { getBolletteList } from "../../redux/actions/actions";
 import { useDispatch , useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
 import { deleteBolletta } from "./api/api";
+import { Add } from "@mui/icons-material";
+import { addPostit } from "../Postit/api/api";
+import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import ErrorIcon from '@mui/icons-material/Error';
+import { getPostitList } from "../../redux/actions/actions";
+import BeenhereIcon from '@mui/icons-material/Beenhere';
+import Card from "@mui/material/Card";
 
-const CardBollettaComponent = ({bolletta, handleClickEliminazione, handleClickError}) => {
+const CardBollettaComponent = ({bolletta , handleClickEliminazione , handleClickError}) => {
     const user = useSelector ( state => state.user.user )
+    const postitList = useSelector ( state => state.fetch.postitList )
     const dispatch = useDispatch ()
-    const navigate = useNavigate ()
 
-    const [ dialogEliminazioneFlag , setDialogEliminazioneFlag ] = useState (false);
+    const checkCollegamento = (arrOfPostit , bolletta) => {
+        let obj = {
+            check: false,
+            postitObj: {}
+        }
+
+
+        arrOfPostit.map ( post => {
+
+            if ( parseInt ( post.contenuto.split ( ' ' )[0] ) === bolletta.id ) {
+                obj.check = true
+                obj.postitObj = post
+            }
+
+        } )
+        return obj
+    }
+
+    useEffect ( () => {
+        (checkCollegamento ( postitList , bolletta ))
+    } , [ postitList ] )
+
+
+    // DIALOG ELIMINAZIONE
+    const [ dialogEliminazioneFlag , setDialogEliminazioneFlag ] = useState ( false );
     const handleClickOpen = () => {
-        setDialogEliminazioneFlag(true);
+        setDialogEliminazioneFlag ( true );
     };
+
     const handleClose = () => {
-        setDialogEliminazioneFlag(false);
-        dispatch(getBolletteList(user.token, user.id))
+        setDialogEliminazioneFlag ( false );
     };
+    //
 
     //IN BASE ALLA STRINGA RITORNERA' UN'ICONA DIVERSA
     const determinaIcona = (string) => {
@@ -51,14 +82,33 @@ const CardBollettaComponent = ({bolletta, handleClickEliminazione, handleClickEr
         }
     }
 
+    // SNACKBARS //
+    // questa è la flag che compare all'aggiunta di un postit
+    const [ snackAddPostitFlag , setSnackAddPostitFlag ] = useState ( false );
+
+    const handleClickPostit = () => {
+        setSnackAddPostitFlag ( true );
+    };
+
+    const handleClosePostit = () => {
+        setSnackAddPostitFlag ( false );
+    };
+    //
+
 
     return (
         <Paper>
             {/*CONTENITORE ESTERNO*/ }
-            <Row className={ 'd-flex justify-content-center pb-2' }>
+            <Row className={ 'd-flex justify-content-center' }>
+                {/*SNACKBARS*/ }
+                <SnackbarSuccessComponent
+                    openFlag={ snackAddPostitFlag }
+                    closeFunction={ handleClosePostit }
+                    message={ 'Postit aggiunto con successo!' }
+                />
                 <Col>
                     <IconButton
-                        onClick={handleClickOpen}
+                        onClick={ handleClickOpen }
                         style={ {
                             color : 'red'
                         } }
@@ -66,11 +116,11 @@ const CardBollettaComponent = ({bolletta, handleClickEliminazione, handleClickEr
                         <BackspaceIcon/>
                     </IconButton>
                     <DialogDeleteComponent
-                        dialogEliminazioneFlag={dialogEliminazioneFlag}
-                        handleClose={handleClose}
-                        fetchToDelete={deleteBolletta}
-                        item={bolletta}
-                        user={user}
+                        dialogEliminazioneFlag={ dialogEliminazioneFlag }
+                        handleClose={ handleClose }
+                        fetchToDelete={ deleteBolletta }
+                        item={ bolletta }
+                        user={ user }
                         openSuccess={ handleClickEliminazione }
                         openError={ handleClickError }
                     />
@@ -213,6 +263,65 @@ const CardBollettaComponent = ({bolletta, handleClickEliminazione, handleClickEr
                             </Row>
                         </Col>
                     </Col>
+                </Col>
+                <Col>
+                    <Card
+                        className={'py-2'}
+                        style={{
+                            backgroundColor :"#f1f58f" ,
+                            color: "royalblue"
+                        }}>
+                        {
+                            checkCollegamento(postitList, bolletta).check ? (
+                                <Col className={'d-flex p-2'}>
+                                    <Col className={'text-center'}>
+                                        <NoteAddIcon style={{color: "royalblue"}} /> Postit aggiunto
+                                    </Col>
+
+                                    {
+                                        !checkCollegamento(postitList, bolletta).postitObj?.stato ? (
+                                            <Col className={'text-center'}>
+                                                <ErrorIcon style={{color: 'red'}} /> Non pagata
+                                            </Col>
+                                        ) : (
+                                            <Col className={'text-center'}>
+                                                <BeenhereIcon style={{color: "green"}} /> Pagata
+                                            </Col>
+                                        )
+                                    }
+                                </Col>
+                            ) : (
+                                <Col
+                                    style={{
+                                        fontSize: '1.2rem'
+                                    }}
+                                    className={'d-flex justify-content-center align-items-center'}>
+                                    <IconButton
+                                        onClick={ () => {
+                                            addPostit ( {
+                                                contenuto : bolletta.id + ' Pagare bolletta ' + bolletta.fornitura +
+                                                    ', emessa il ' + bolletta.emissione + ' con un totale da pagare di ' +
+                                                    bolletta.totale + ' €' ,
+                                                scadenza : bolletta.scadenza ,
+                                                userId : user.id
+                                            } , user.token ).then ( (r) => {
+                                                if ( r === 'success' ) {
+                                                    console.log ( r )
+                                                    dispatch ( getPostitList ( user.token , user.id ) )
+                                                    handleClickPostit ()
+                                                } else {
+                                                    handleClickError ()
+                                                }
+                                            } )
+                                        } }
+                                        aria-label="add">
+                                        <Add/>
+                                    </IconButton>
+                                    Collega postit
+                                </Col>
+                            )
+                        }
+                    </Card>
                 </Col>
             </Row>
         </Paper>

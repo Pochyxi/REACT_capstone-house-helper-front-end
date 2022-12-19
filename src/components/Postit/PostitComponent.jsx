@@ -5,7 +5,7 @@ import { useDispatch , useSelector } from "react-redux";
 import { getPostitList } from "../../redux/actions/actions";
 import {
     Button , FormGroup ,
-    IconButton , Skeleton , Stack ,
+    IconButton ,
     Switch ,
     TextField ,
 
@@ -18,8 +18,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
 import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
 import { addPostit } from "./api/api";
-import CardPostitComponent from "./api/CardPostitComponent";
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import BackDropComponent from "../FeedBackComponents/backDropComponent";
+import CardPostitComponent from "./CardPostitComponent";
 
 const PostitComponent = () => {
     const user = useSelector ( state => state.user.user )
@@ -62,6 +63,11 @@ const PostitComponent = () => {
         dispatch ( getPostitList ( user.token , user.id ) )
     } , [] );
 
+    // partire sempre dal top della pagina
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     // OFFCANVAS //
     //////////////
     const [ show , setShow ] = useState ( false );
@@ -101,6 +107,7 @@ const PostitComponent = () => {
     const [ snackDeletePostitFlag , setSnackDeletePostitFlag ] = useState ( false );
 
     const handleClickDelete = () => {
+        dispatch ( getPostitList ( user.token , user.id ) )
         setSnackDeletePostitFlag ( true );
     };
 
@@ -121,10 +128,13 @@ const PostitComponent = () => {
         setSnackUpdatePostitFlag ( false );
     };
     //
+    // FINE SNACKBARS //
 
 
     return (
         <Container fluid>
+
+            {/*SNACKBARS*/}
             <SnackbarSuccessComponent
                 openFlag={ snackAddPostitFlag }
                 closeFunction={ handleClosePostit }
@@ -151,6 +161,8 @@ const PostitComponent = () => {
                 message={ 'Postit eliminato con successo' }
             />
             <Row className={ "justify-content-center flex-column" }>
+
+                {/*SEZIONE LATERALE*/}
                 <Offcanvas className={ 'p-0' } show={ show } onHide={ handleClose }>
                     <Offcanvas.Header closeButton>
                     </Offcanvas.Header>
@@ -197,7 +209,12 @@ const PostitComponent = () => {
                                         formPostitFlag && (
                                             <Form onSubmit={ (e) => {
                                                 e.preventDefault ()
-                                                addPostit ( formPostitObj , user.token ).then ( (r) => {
+                                                addPostit ( {
+                                                        contenuto : '00 ' + formPostitObj.contenuto ,
+                                                        scadenza : formPostitObj.scadenza ,
+                                                        userId : user.id ,
+                                                    }
+                                                 , user.token ).then ( (r) => {
                                                     if ( r === 'success' ) {
                                                         console.log ( r )
                                                         dispatch ( getPostitList ( user.token , user.id ) )
@@ -276,6 +293,8 @@ const PostitComponent = () => {
                         </Row>
                     </Offcanvas.Body>
                 </Offcanvas>
+
+                {/*SWITCH DELLA SEZIONE LATERALE*/}
                 <Col>
                     <SettingsIcon style={ {color : 'gray' , fontSize : '3em'} }/>
                     <Switch
@@ -285,38 +304,16 @@ const PostitComponent = () => {
                     />
                 </Col>
 
+                {/*SKELETONS*/}
                 {
-                    postitLoad ? (
+                    postitLoad && (
                         <Col>
-                            <Stack  spacing={1}>
-                                <Row className={'flex-column flex-md-row'}>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rounded" width={'100%'} height={200} />
-                                    </Col>
-                                </Row>
-                            </Stack>
-                            <Stack className={'mt-3'}  spacing={1}>
-                                <Row className={'flex-column flex-md-row'}>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rounded" width={'100%'} height={200} />
-                                    </Col>
-                                </Row>
-                            </Stack>
-
+                            <BackDropComponent load={ postitLoad }/>
                         </Col>
-                    ) : (
+                    )
+                }
+
+                         {/*CARDS DEI POSTIT*/}
                         <Col>
                             {
                                 postitList.length > 0 ? (
@@ -343,6 +340,8 @@ const PostitComponent = () => {
                                         }
                                     </Row>
                                 ) : (
+
+                                    // SE IL NUMERO DI POSTIT E' PARI A 0
                                     <Row className={ "justify-content-center text-center" }>
                                         <Col>
                                             <TipsAndUpdatesIcon style={ {fontSize : '3em' , color : 'royalblue'} }/>
@@ -353,8 +352,6 @@ const PostitComponent = () => {
                             }
 
                         </Col>
-                    )
-                }
             </Row>
         </Container>
     );
