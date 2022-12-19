@@ -21,13 +21,20 @@ const HomeComponent = () => {
     const postitList = useSelector ( state => state.fetch.postitList )
     const spesaList = useSelector ( state => state.fetch.spesaList )
     const [ postit5Giorni , setPostit5Giorni ] = useState ( [] )
+    const dispatch = useDispatch ()
+    const navigate = useNavigate ()
 
+    // FLAG DELLE FETCH //
     const loadBollette = useSelector ( state => state.util.bollette_Load_Flag)
     const loadPostit = useSelector ( state => state.util.postit_Load_Flag)
     const loadSpese = useSelector ( state => state.util.spese_Load_Flag)
+    //
 
-    const dispatch = useDispatch ()
-    const navigate = useNavigate ()
+    // partire sempre dal top della pagina
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
 
     useEffect ( () => {
         dispatch ( setPostit_LOADFlagTrue () )
@@ -43,10 +50,12 @@ const HomeComponent = () => {
         dispatch ( getSpeseList ( user.token , user.id ) )
     } , [] )
 
+    // FUNZIONE CHE RITORNA LA DATA DI OGGI E QUELLA TRA 5 GIORNI
     const range5DaysGenerator = () => {
         //DATA DI OGGI
         let today = new Date ()
         let todayPlus5 = new Date ()
+        // 432000000 equivalgono a 5 giorni
         todayPlus5.setMilliseconds ( todayPlus5.getMilliseconds () + 432000000 )
 
         let todayYear = today.getUTCFullYear () + '-'
@@ -57,21 +66,26 @@ const HomeComponent = () => {
         let todayPlus5Month = todayPlus5.getMonth () + 1 + '-'
         let todayPlus5Day = todayPlus5.getUTCDate ()
 
+        // qui modifico il mese se è < 10 allora sara 01 se no 10/11/12
         const parser = (number) => {
             if ( number < 10 ) return '0' + number
             else return number
         }
 
+        // ritorno un oggetto con la data di oggi e quella tra 5 giorni
         return {
             today : todayYear + parser ( todayMonth ) + parser ( todayDay ) ,
             todayPlus5 : todayPlus5Year + parser ( todayPlus5Month ) + parser ( todayPlus5Day )
         }
     }
+    //
 
 
     return (
         <>
             <Container fluid>
+
+                {/*SEZIONE BENTORNATO*/}
                 <Row className={ "justify-content-center" }>
                     <Row className={ 'my-3' }>
                         <h4
@@ -85,6 +99,8 @@ const HomeComponent = () => {
                             Bentornato { user.email }
                         </h4>
                     </Row>
+
+                    {/*SEZIONE DEI NUMERI*/}
                     <Row className={ 'mt-3 justify-content-center' }>
 
                         <Row>
@@ -189,6 +205,7 @@ const HomeComponent = () => {
                         }
                     </Row>
 
+                    {/*SEZIONE SCADENZE A 5 GIORNI*/}
                     <Row className={ 'mt-5 justify-content-center' }>
                         <Row>
                             <Card style={ {
@@ -206,70 +223,70 @@ const HomeComponent = () => {
                              className={ 'p-0' }
                         >
 
-                                {
-                                    loadPostit ? (
-                                        <Row>
-                                            <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
-                                            <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
-                                        </Row>
-                                    ) : (
-                                        <Row>
-                                            <Col>
-                                                <List>
-                                                    {
-                                                        postit5Giorni.length > 0 ? (
-                                                            <>
-                                                                {
-                                                                    postit5Giorni.map ( (postit , index) => {
-                                                                        return (
-                                                                            <ListItem
-                                                                                style={{
-                                                                                    backgroundColor: 'rgba(241,245,143,0.48)',
-                                                                                    marginTop: '10px',
-                                                                                }}
-                                                                                key={ index }
-                                                                                disablePadding>
-                                                                                <ListItemButton
-                                                                                    onClick={ () => navigate ( '/postit' ) }>
-                                                                                    <ListItemIcon>
-                                                                                        <CardMembershipIcon style={ {
-                                                                                            fontSize : '3em',
-                                                                                        } }/>
-                                                                                    </ListItemIcon>
-                                                                                    { postit.scadenza } <ArrowRightAltIcon/>
-                                                                                    <b>{ postit.contenuto }</b>
-                                                                                </ListItemButton>
-                                                                            </ListItem>
-                                                                        )
-                                                                    } )
-                                                                }
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <h6>Non ci sono scadenze nei prossimi 5 giorni!</h6>
-                                                                <p>Potresti controllare nella sezione
-                                                                    <span style={ {
-                                                                        color : 'royalblue' ,
-                                                                        fontWeight : "bold" ,
-                                                                        cursor : 'pointer'
-                                                                    } }
-                                                                          onClick={ () => navigate ( '/utenze' ) }
-                                                                    > BOLLETTE </span>
-                                                                    se ci sono scadenze non registrate</p>
-                                                            </>
+                            {
+                                loadPostit ? (
+                                    <Row>
+                                        <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
+                                        <Skeleton variant="rectangular" width={ '100%' } height={ 70 }/>
+                                    </Row>
+                                ) : (
+                                    <Row>
+                                        <Col>
+                                            <List>
+                                                {
+                                                    postit5Giorni.length > 0 ? (
+                                                        <>
+                                                            {
+                                                                postit5Giorni.map ( (postit , index) => {
+                                                                    return (
+                                                                        <ListItem
+                                                                            style={{
+                                                                                backgroundColor: 'rgba(241,245,143,0.48)',
+                                                                                marginTop: '10px',
+                                                                            }}
+                                                                            key={ index }
+                                                                            disablePadding>
+                                                                            <ListItemButton
+                                                                                onClick={ () => navigate ( '/postit' ) }>
+                                                                                <ListItemIcon>
+                                                                                    <CardMembershipIcon style={ {
+                                                                                        fontSize : '3em',
+                                                                                    } }/>
+                                                                                </ListItemIcon>
+                                                                                { postit.scadenza } <ArrowRightAltIcon/>
+                                                                                <b>{ postit.contenuto.split(' ').slice(1, postit.contenuto.length).join(' ') }</b>
+                                                                            </ListItemButton>
+                                                                        </ListItem>
+                                                                    )
+                                                                } )
+                                                            }
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <h6>Non ci sono scadenze nei prossimi 5 giorni!</h6>
+                                                            <p>Potresti controllare nella sezione
+                                                                <span style={ {
+                                                                    color : 'royalblue' ,
+                                                                    fontWeight : "bold" ,
+                                                                    cursor : 'pointer'
+                                                                } }
+                                                                      onClick={ () => navigate ( '/utenze' ) }
+                                                                > BOLLETTE </span>
+                                                                se ci sono scadenze non registrate</p>
+                                                        </>
 
-                                                        )
-                                                    }
-
-
-                                                </List>
-                                            </Col>
-                                        </Row>
-                                    )
-                                }
+                                                    )
+                                                }
+                                            </List>
+                                        </Col>
+                                    </Row>
+                                )
+                            }
 
                         </Row>
                     </Row>
+
+                    {/*SEZIONE DELLA MAPPA*/}
                     <Row className={ 'mt-5 justify-content-center' }>
                         <Row>
                             <Card style={ {
@@ -279,7 +296,7 @@ const HomeComponent = () => {
 
                             </Card>
                             <h2
-                                >Luoghi di interesse intorno a te</h2>
+                            >Luoghi di interesse intorno a te</h2>
                         </Row>
                         <MapComponent/>
                     </Row>

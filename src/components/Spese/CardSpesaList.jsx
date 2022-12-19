@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Col , Form , Row } from "react-bootstrap";
-import ProdottiSelectComponent from "./ProdottiSelectComponent";
+import ProdottiSelectComponent from "./selects/ProdottiSelectComponent";
 import { getProdottiList , getSpeseList } from "../../redux/actions/actions";
 import { useDispatch , useSelector } from "react-redux";
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
@@ -24,7 +24,6 @@ import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
 const CardSpesaList = ({
                            spesaList ,
                            list ,
-                           setSpesaListaNome ,
                            handleClickError ,
                            handleClickProdottoList ,
                            handleClickAddProdottoList ,
@@ -33,18 +32,39 @@ const CardSpesaList = ({
                        }) => {
         const user = useSelector ( state => state.user.user )
         const dispatch = useDispatch ()
+
+        // ARRAY DI STRINGHE UTILE ALLA LISTA SELECT COMPONENT
         const [ productName , setProductName ] = React.useState ( [] );
-        const [ formProdottiFlag , setFormProdottiFlag ] = useState ( true );
+
+
+        // FORM PER L'AGGIUNTA DI UN NUOVO PRODOTTO
         const [ formObj , setFormObj ] = useState ( {
             nome : "" ,
             prezzo : "" ,
             userId : user.id
         } );
 
+        //flag che apre la sezione del form
+        const [ formProdottiFlag , setFormProdottiFlag ] = useState ( true );
 
+        // funzione che serve a modificare i valori del form
+        const handleForm = (key , value) => {
+            setFormObj ( {
+                ...formObj ,
+                [key] : value
+            } )
+        }
+
+        // l'id della lista
         const idList = list.split ( ' ' )[0]
+
+        //l'id del prodotto
         const idProduct = productName[0]?.split ( ' ' )[0]
 
+        // nel caso in cui viene selezionato un prodotto viene eseguita la fetch di aggiunta
+        // successivamente vengono aggiornate le liste spese ed i prodotti
+        // svuoto l'array
+        // dò feedback dell'avvenuta aggiunta
         useEffect ( () => {
             if ( productName.length > 0 ) {
                 addProductOnList ( idList , idProduct , user.token ).then ( () => {
@@ -58,6 +78,7 @@ const CardSpesaList = ({
         } , [ productName ] )
 
 
+        // questa funzione calcola il totale del prezzo dei prodotti all'interno di una lista
         const calculateTotal = (id , listArr) => {
             const initialValue = 0
 
@@ -69,12 +90,6 @@ const CardSpesaList = ({
             return price.split ( '.' )
         }
 
-        const handleForm = (key , value) => {
-            setFormObj ( {
-                ...formObj ,
-                [key] : value
-            } )
-        }
 
         // DIALOGS //
         ////////////
@@ -82,34 +97,36 @@ const CardSpesaList = ({
 
         const handleOpenDialog = () => setDialogEliminazioneListaFlag ( true )
         const handleCloseDialog = () => {
-            dispatch ( getSpeseList ( user.token , user.id ) );
             setDialogEliminazioneListaFlag ( false )
-            setSpesaListaNome([])
         }
-
-
         // FINE DIALOGS //
         /////////////////
 
-    console.log (list)
 
         return (
             <>
                 { spesaList && (
                     <>
+
+                        {/*DIALOG DI ELIMINAZIONE DI UN PRODOTTO*/ }
                         <DialogDeleteComponent
                             dialogEliminazioneFlag={ dialogEliminazioneListaFlag }
                             handleClose={ handleCloseDialog }
                             fetchToDelete={ removeLista }
                             item={ {
-                                id: list.split(' ')[0]
+                                id : list.split ( ' ' )[0]
                             } }
                             user={ user }
                             openSuccess={ handleClickDelLista }
                             openError={ handleClickError }
                         />
+
+                        {/*CARD LISTA DELLA SPESA*/ }
                         <Card sx={ {minWidth : "100%" , margin : "20px auto"} }>
+
                             <CardContent>
+
+                                {/*SEZIONE TITOLO E PULSANTE DI ELIMINAZIONE*/ }
                                 <Row className={ "d-flex align-items-center justify-content-center" }>
                                     <Col xs={ 6 }>
                                         <Typography style={ {textAlign : "start"} } variant="h5" component="div">
@@ -122,7 +139,7 @@ const CardSpesaList = ({
                                         <Typography style={ {textAlign : "end"} } variant="h6" component="div">
 
                                             <Button onClick={ () => {
-                                                handleOpenDialog()
+                                                handleOpenDialog ()
                                             } }>
                                                 <RemoveCircleIcon style={ {
                                                     fontSize : "30px" ,
@@ -137,6 +154,7 @@ const CardSpesaList = ({
                                 <Row className={ "justify-content-center align-items-center mb-3" }>
                                     <Row className={ "bg-light p-0" }>
                                         {
+                                            // AGGIUNTA MANUALE DI UN PRODOTTO
                                             !formProdottiFlag && (
                                                 <Col>
                                                     <Form onSubmit={ (e) => {
@@ -232,7 +250,7 @@ const CardSpesaList = ({
                                 <Row
                                     style={ {
                                         borderRight : '4px solid dodgerblue' ,
-                                        borderBottom: '4px solid dodgerblue',
+                                        borderBottom : '4px solid dodgerblue' ,
                                         height : '20vh' ,
                                         overflow : 'scroll'
                                     } }
@@ -323,9 +341,6 @@ const CardSpesaList = ({
                                         </Typography>
                                     </Col>
                                 </Row>
-
-
-
                             </CardContent>
                         </Card>
                     </>

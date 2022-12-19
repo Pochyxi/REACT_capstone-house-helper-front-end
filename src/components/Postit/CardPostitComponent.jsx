@@ -1,13 +1,14 @@
-import React , { useState } from 'react';
+import React , { useEffect , useState } from 'react';
 import { IconButton , Paper , Typography } from "@mui/material";
 import { Col , Row } from "react-bootstrap";
 import BackspaceIcon from "@mui/icons-material/Backspace";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
-import { deletePostit , setPostitDone } from "./api";
+import { deletePostit , setPostitDone } from "./api/api";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import { getPostitList } from "../../../redux/actions/actions";
+import { getPostitList } from "../../redux/actions/actions";
 import { useDispatch , useSelector } from "react-redux";
-import DialogDeleteComponent from "../../FeedBackComponents/DialogDeleteComponent";
+import DialogDeleteComponent from "../FeedBackComponents/DialogDeleteComponent";
+import { controlloPostitScadutiNonCompletati } from "./utils/utils";
 
 const CardPostitComponent = (props) => {
     const user = useSelector ( state => state.user.user )
@@ -25,6 +26,7 @@ const CardPostitComponent = (props) => {
         setDialogFlag ( true );
     };
 
+
     return (
         <Col xs={ 12 } sm={10} md={6} lg={ 4 } xxl={3} className={ "mt-3" }>
             <Paper
@@ -32,7 +34,8 @@ const CardPostitComponent = (props) => {
                     minHeight : 200 + "px" ,
                     backgroundColor : props.postit.stato ? "#a5e39f" : "#f1f58f" ,
                     padding : "20px" , color : props.postit.stato ? 'royalblue' : 'black' ,
-                    overflow : 'hidden'
+                    overflow : 'hidden',
+                    borderBottom: controlloPostitScadutiNonCompletati(props.postit) ? '5px solid red' : 'none',
                 } }
                 elevation={ 20 }>
                 <Row className={ "justify-content-start" }>
@@ -52,16 +55,15 @@ const CardPostitComponent = (props) => {
                             sx={ {
                                 position : "relative" ,
                                 right : '30px' ,
-                                bottom : '30px' ,
-                                border : "1px solid black" ,
+                                bottom : '25px' ,
                                 borderTop : "none" ,
                                 borderLeft : "none" ,
                                 height : '50px' ,
                                 width : '50px' ,
-                                backgroundColor : props.postit.stato ? "#f1f58f" : "#a5e39f"
+                                backgroundColor : props.postit.stato ? "#f1f58f" : "#a5e39f",
                             } }
                             aria-label="delete">
-                            <h4 className={ 'text-start' }><BackspaceIcon/></h4>
+                            <h4 className={ 'text-start' }><BackspaceIcon style={{color: 'red'}}/></h4>
                         </IconButton>
                     </Col>
                 </Row>
@@ -108,7 +110,7 @@ const CardPostitComponent = (props) => {
                 <Row>
                     <Col className={ 'mt-5' }>
                         <Typography variant={ 'h5' } sx={ {wordWrap : 'break-word'} }
-                                    className={ "text-center" }>{ props.postit.contenuto }</Typography>
+                                    className={ "text-center" }>{ props.postit.contenuto.split(' ').slice(1, props.postit.contenuto.length).join(' ') }</Typography>
                     </Col>
                 </Row>
 

@@ -1,10 +1,9 @@
 import React , { useEffect , useState } from 'react';
 import { useDispatch , useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { getBolletteList , getPostitList , setBolletteList } from "../../redux/actions/actions";
+import { getBolletteList , getPostitList , getSpeseList , setBolletteList } from "../../redux/actions/actions";
 import { Col , Container , Form , Row } from "react-bootstrap";
 import Card from "@mui/material/Card";
-import { Alert , Button , IconButton , Paper , Skeleton , Stack , Switch , TextField } from "@mui/material";
+import { Alert , Button , IconButton , Switch , TextField } from "@mui/material";
 import GasMeterIcon from '@mui/icons-material/GasMeter';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -16,7 +15,6 @@ import FormControl from "@mui/material/FormControl";
 import FornituraSelectedComponent from "./FornituraSelectedComponent";
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import DateRangeIcon from '@mui/icons-material/DateRange';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import SearchIcon from '@mui/icons-material/Search';
 import AlarmIcon from '@mui/icons-material/Alarm';
 import Offcanvas from 'react-bootstrap/Offcanvas';
@@ -25,14 +23,21 @@ import CloseIcon from '@mui/icons-material/Close';
 import { addBolletta , fetchRicercaEmissioneRange , fetchRicercaScadenzaRange } from "./api/api";
 import SnackbarSuccessComponent from "../FeedBackComponents/SnackbarSuccessComponent";
 import SnackbarErrorComponent from "../FeedBackComponents/SnackbarErrorComponent";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import BackDropComponent from "../FeedBackComponents/backDropComponent";
 
 const BolletteComponent = () => {
     const user = useSelector ( state => state.user.user )
     const dispatch = useDispatch ()
-    const navigate = useNavigate ()
     const bolletteLoad = useSelector ( state => state.util.bollette_Load_Flag )
+    const speseLoad = useSelector ( state => state.util.spese_Load_Flag )
+    const postitLoad = useSelector ( state => state.util.postit_Load_Flag )
+
+    useEffect ( () => {
+        dispatch ( getBolletteList ( user.token , user.id ) )
+        dispatch ( getSpeseList ( user.token , user.id ) )
+        dispatch ( getPostitList ( user.token , user.id ) )
+    } , [] )
 
     //LISTA DELLE BOLLETTE CHE ARRIVANO DALLA FETCH
     const bolletteList = useSelector ( state => state.fetch.bollettaList )
@@ -136,7 +141,10 @@ const BolletteComponent = () => {
     // ALL'AVVIO DELLA PAGINA FAREMO LA FETCH DELLE BOLLETTE_LIST
     useEffect ( () => {
         dispatch ( getBolletteList ( user.token , user.id ) )
-        console.log ( bolletteList )
+        // partire sempre dal top della pagina
+
+        window.scrollTo ( 0 , 0 );
+
     } , [] )
     //
 
@@ -177,43 +185,47 @@ const BolletteComponent = () => {
     ///////////////
 
     // aggiunta nuova bolletta //
-    const [snackAddBollettaFlag, setSnackAddBollettaFlag] = useState ( false );
+    const [ snackAddBollettaFlag , setSnackAddBollettaFlag ] = useState ( false );
 
     const handleClickAddBollettaFlag = () => setSnackAddBollettaFlag ( true );
-    const handleCloseAddBollettaFlag = () => setSnackAddBollettaFlag(false);
+    const handleCloseAddBollettaFlag = () => setSnackAddBollettaFlag ( false );
     //
 
     // errore generico //
-    const [snackErrorFlag, setSnackErrorFlag] = useState ( false );
+    const [ snackErrorFlag , setSnackErrorFlag ] = useState ( false );
 
-    const handleClickError = () => setSnackErrorFlag (true)
-    const handleCloseError = () => setSnackErrorFlag(false)
+    const handleClickError = () => setSnackErrorFlag ( true )
+    const handleCloseError = () => setSnackErrorFlag ( false )
     //
 
     // ricerca range di emissione //
-    const [snackEmissioneFlag, setSnackEmissioneFlag] = useState (false)
+    const [ snackEmissioneFlag , setSnackEmissioneFlag ] = useState ( false )
 
-    const handleClickEmissione = () => setSnackEmissioneFlag (true)
-    const handleCloseEmissione = () => setSnackEmissioneFlag (false)
+    const handleClickEmissione = () => setSnackEmissioneFlag ( true )
+    const handleCloseEmissione = () => setSnackEmissioneFlag ( false )
     //
 
     // ricerca range di scadenza //
-    const [snackScadenzaFlag, setSnackScadenzaFlag] = useState (false)
+    const [ snackScadenzaFlag , setSnackScadenzaFlag ] = useState ( false )
 
-    const handleClickScadenza = () => setSnackScadenzaFlag(true)
-    const handleCloseScadenza = () => setSnackScadenzaFlag(false)
+    const handleClickScadenza = () => setSnackScadenzaFlag ( true )
+    const handleCloseScadenza = () => setSnackScadenzaFlag ( false )
     //
 
     // eliminazione di una bolletta //
-    const [snackEliminazioneFlag, setSnackEliminazioneFlag] = useState (false)
+    const [ snackEliminazioneFlag , setSnackEliminazioneFlag ] = useState ( false )
 
-    const handleClickEliminazione = () => setSnackEliminazioneFlag(true)
-    const handleCloseEliminazione = () => setSnackEliminazioneFlag(false)
+    const handleClickEliminazione = () => {
+        setSnackEliminazioneFlag ( true )
+        dispatch ( getBolletteList ( user.token , user.id ) )
+    }
+    const handleCloseEliminazione = () => {
+        setSnackEliminazioneFlag ( false )
+    }
 
     // FINE SNACKBARS //
     ////////////////////
 
-    console.log (typeof dataInizioRange)
 
     return (
         <Container fluid>
@@ -230,7 +242,8 @@ const BolletteComponent = () => {
             <SnackbarSuccessComponent
                 openFlag={ snackScadenzaFlag }
                 closeFunction={ handleCloseScadenza }
-                message={ "Bollette filtrate per range di scadenza dal " + dataInizioRangeScadenza + " al " + dataFineRangeScadenza }
+                message={ "Bollette filtrate per range di scadenza dal " + dataInizioRangeScadenza + " al " +
+                    dataFineRangeScadenza }
             />
             <SnackbarSuccessComponent
                 openFlag={ snackEliminazioneFlag }
@@ -251,7 +264,7 @@ const BolletteComponent = () => {
                             backgroundColor : "royalblue" ,
                             borderRight : "2px solid royalblue" ,
                             boxShadow : "1px 1px 2px royalblue" ,
-                            minHeight : '100%'
+                            minHeight : '100%',
                         } }
                         className={ "text-center" }
                     >
@@ -300,13 +313,13 @@ const BolletteComponent = () => {
                                                     setErrorFornituraFlag ( true )
                                                 } else {
                                                     addBolletta ( formBollettaObj , user.token ).then ( (r) => {
-                                                        if (r) {
+                                                        if ( r ) {
                                                             setFormUtenzaFlag ( false )
                                                             dispatch ( getBolletteList ( user.token , user.id ) )
                                                             setFornituraState ( '' )
-                                                            handleClickAddBollettaFlag()
+                                                            handleClickAddBollettaFlag ()
                                                         } else {
-                                                            handleClickError()
+                                                            handleClickError ()
                                                         }
 
                                                     } );
@@ -338,7 +351,7 @@ const BolletteComponent = () => {
                                                     }
                                                 </Row>
                                                 <Row className={ "p-2" }>
-                                                    <h6>Numero Bolletta</h6>
+                                                    <h6><b style={{color: "royalblue"}}>Numero</b> Bolletta</h6>
                                                     <FormControl>
                                                         <TextField
                                                             required
@@ -354,7 +367,7 @@ const BolletteComponent = () => {
 
                                                 </Row>
                                                 <Row className={ "p-2" }>
-                                                    <h6>Totale dovuto</h6>
+                                                    <h6><b style={{color: "royalblue"}}>Totale</b> dovuto</h6>
                                                     <FormControl>
                                                         <TextField
                                                             type="number"
@@ -368,7 +381,7 @@ const BolletteComponent = () => {
                                                     </FormControl>
                                                 </Row>
                                                 <Row className={ "p-2" }>
-                                                    <h6>Inserisci data di emissione</h6>
+                                                    <h6>Inserisci data di <b style={{color: "royalblue"}}>emissione</b></h6>
                                                     <FormControl>
                                                         <TextField
                                                             type="date"
@@ -381,7 +394,7 @@ const BolletteComponent = () => {
                                                     </FormControl>
                                                 </Row>
                                                 <Row className={ "p-2" }>
-                                                    <h6>Inserisci periodo iniziale</h6>
+                                                    <h6>Inserisci periodo di <b style={{color: "royalblue"}}>conteggio iniziale</b></h6>
                                                     <FormControl>
                                                         <TextField
                                                             type="date"
@@ -394,7 +407,7 @@ const BolletteComponent = () => {
                                                     </FormControl>
                                                 </Row>
                                                 <Row className={ "p-2" }>
-                                                    <h6>Inserisci periodo di fine</h6>
+                                                    <h6>Inserisci periodo di <b style={{color: "royalblue"}}>conteggio finale</b></h6>
                                                     <FormControl>
                                                         <TextField
                                                             type="date"
@@ -407,7 +420,7 @@ const BolletteComponent = () => {
                                                     </FormControl>
                                                 </Row>
                                                 <Row className={ "p-2" }>
-                                                    <h6>Scadenza pagamento</h6>
+                                                    <h6><b style={{color: "royalblue"}}>Scadenza</b> pagamento</h6>
                                                     <FormControl>
                                                         <TextField
                                                             type="date"
@@ -435,7 +448,8 @@ const BolletteComponent = () => {
                                 '&::-webkit-scrollbar' : {
                                     display : "none"
                                 } ,
-                                padding : 1 + "em"
+                                padding : 1 + "em",
+                                marginBottom: '50px'
                             } }>
                                 <h6>Vuoi effettuare una ricerca?</h6>
                                 {/*BOTTONE CHE FA COMPARIRE IL FORM*/ }
@@ -574,10 +588,10 @@ const BolletteComponent = () => {
                                                             ).then ( r => {
                                                                 if ( r ) {
                                                                     dispatch ( setBolletteList ( r ) )
-                                                                    handleClickScadenza()
+                                                                    handleClickScadenza ()
                                                                 } else {
                                                                     console.log ( 'error' )
-                                                                    handleClickError()
+                                                                    handleClickError ()
                                                                 }
                                                             } )
                                                         } }
@@ -648,7 +662,7 @@ const BolletteComponent = () => {
                                                             ).then ( r => {
                                                                 if ( r ) {
                                                                     dispatch ( setBolletteList ( r ) )
-                                                                    handleClickEmissione()
+                                                                    handleClickEmissione ()
                                                                 } else {
                                                                     console.log ( 'error' )
                                                                 }
@@ -668,7 +682,6 @@ const BolletteComponent = () => {
                         </Row>
                     </Offcanvas.Body>
                 </Offcanvas>
-
                 <Col>
                     <SettingsIcon style={ {color : 'gray' , fontSize : '3em'} }/>
                     <Switch
@@ -678,42 +691,19 @@ const BolletteComponent = () => {
                     />
                 </Col>
                 {
-                    bolletteLoad ? (
-                        <Col xs={ 12 }>
-                            <Stack  spacing={1}>
-                                <Row className={'flex-column flex-md-row'}>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rounded" width={'100%'} height={200} />
-                                    </Col>
-                                </Row>
-                            </Stack>
-                            <Stack className={'mt-3'}  spacing={1}>
-                                <Row className={'flex-column flex-md-row'}>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rectangular" width={'100%'} height={200} />
-                                    </Col>
-                                    <Col>
-                                        <Skeleton variant="rounded" width={'100%'} height={200} />
-                                    </Col>
-                                </Row>
-                            </Stack>
-
-                        </Col>
-                    ) : (
+                    bolletteLoad &&
+                    speseLoad &&
+                    postitLoad && (
+                        <BackDropComponent load={ true }/>
+                    )
+                }
                         <Col
                             style={ {
                                 fontSize : '.7em'
                             } }
                             xs={ 12 }>
+
+                            {/*SEZIONE DEGLI SWITCH PER FILTRARE LE BOLLETTE PER FORNITURA*/ }
                             <Row className={ 'mt-4 text-center justify-content-between' }>
 
                                 <Col className={ 'd-flex justify-content-center' }>
@@ -753,6 +743,8 @@ const BolletteComponent = () => {
                             </Row>
                             {
                                 bolletteList.length > 0 ? (
+
+                                    // CARDS DELLE BOLLETTE
                                     <Row className={ "justify-content-center" }>
                                         {
                                             // LE CARD BOLLETTA
@@ -766,8 +758,8 @@ const BolletteComponent = () => {
                                                         xxl={ 4 }
                                                         key={ index }>
                                                         <CardBollettaComponent
-                                                            handleClickEliminazione={handleClickEliminazione}
-                                                            handleClickError={handleClickError}
+                                                            handleClickEliminazione={ handleClickEliminazione }
+                                                            handleClickError={ handleClickError }
                                                             bolletta={ bolletta }
                                                             index={ index }
                                                             bollettaList={ filtroBySwitch ( bolletteList ) }
@@ -786,10 +778,7 @@ const BolletteComponent = () => {
                                     </Row>
                                 )
                             }
-
                         </Col>
-                    )
-                }
 
             </Row>
         </Container>

@@ -201,15 +201,17 @@ const MapComponent = () => {
     }
 
     return (
-        <Row style={ {
+        <Row
+            className={'justify-content-center align-items-center p-0'}
+            style={ {
             borderLeft : '5px solid #6610f2' ,
             borderBottom: '1px solid #6610f2'
         } }>
-            <Row >
+            <Row className={'p-0'}>
                 <Col xs={ 12 } md={ 6 }>
                     {/*<Card className={ 'p-2' }>*/}
                         <Row className={ 'justify-content-between text-start mb-3 text-nowrap' }>
-                            <Col className={'mt-2'} xs={4} md={6}>
+                            <Col className={'mt-2'} xs={6} md={4}>
                                 <ShoppingCartOutlinedIcon
                                     style={ {
                                         backgroundColor : "royalblue" ,
@@ -220,7 +222,7 @@ const MapComponent = () => {
                                     fontSize={ 'large' }
                                 /> Supermercati
                             </Col>
-                            <Col className={'mt-2'} xs={4} md={6}>
+                            <Col className={'mt-2'} xs={6} md={4}>
                                 <EmailOutlinedIcon
                                     style={ {
                                         backgroundColor : "darkgrey" ,
@@ -231,7 +233,7 @@ const MapComponent = () => {
                                     fontSize={ 'large' }
                                 /> Poste
                             </Col>
-                            <Col className={'mt-2'} xs={4} md={6}>
+                            <Col className={'mt-2'} xs={6} md={4}>
                                 <RestaurantOutlinedIcon
                                     style={ {
                                         backgroundColor : "orange" ,
@@ -242,7 +244,7 @@ const MapComponent = () => {
                                     fontSize={ 'large' }
                                 /> Ristoranti
                             </Col>
-                            <Col className={'mt-2'} xs={4} md={6}>
+                            <Col className={'mt-2'} xs={6} md={4}>
                                 <LocalMallOutlinedIcon
                                     style={ {
                                         backgroundColor : "dodgerblue" ,
@@ -266,7 +268,6 @@ const MapComponent = () => {
                 </Col>
 
                 <Col xs={ 12 } md={ 6 }>
-
                     <Card>
                         <Row className={ 'justify-content-center' }>
                             {
