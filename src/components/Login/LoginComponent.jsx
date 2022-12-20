@@ -129,6 +129,9 @@ function LoginComponent() {
                                         alt="logo"/>
                                 </Col>
                             </Row>
+                            <Row className={'text-center'}>
+                                <Col><h2>HOUSE HELPER</h2></Col>
+                            </Row>
                             <Card style={ {boxShadow : '2px 2px 2px royalblue'} }>
 
                                 {/*FORM DEL LOGIN*/}

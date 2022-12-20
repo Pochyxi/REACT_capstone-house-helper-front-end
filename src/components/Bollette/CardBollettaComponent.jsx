@@ -155,13 +155,13 @@ const CardBollettaComponent = ({bolletta , handleClickEliminazione , handleClick
                         style={ {
                             borderLeft : '3px solid black' ,
                         } }
-                        className={ 'p-3' }>
+                        className={ 'p-1 mb-1' }>
                         {/*DATI BOLLETTA*/ }
                         <Row style={ {
                             position : 'relative' ,
                             bottom : '20px'
                         } }>
-                            <b style={ {color : 'royalblue'} } className={ 'p-0' }><ReceiptLongIcon/> DATI BOLLETTA</b>
+                            <b style={ {color : 'royalblue'} } className={ 'p-2' }><ReceiptLongIcon/> DATI BOLLETTA</b>
                         </Row>
                         {/*FORNITURA*/ }
                         <Row className={ 'px-2 mt-1' }>
@@ -195,7 +195,7 @@ const CardBollettaComponent = ({bolletta , handleClickEliminazione , handleClick
                     <Col
                         xs={ 12 }
                         md={ 6 }
-                        className={ 'p-3 d-flex flex-column justify-content-between' }
+                        className={ 'p-1 mb-1 d-flex flex-column justify-content-between' }
                         style={ {
                             color : 'royalblue' ,
                             borderLeft : '3px solid black'
@@ -205,7 +205,7 @@ const CardBollettaComponent = ({bolletta , handleClickEliminazione , handleClick
                             position : 'relative' ,
                             bottom : '20px'
                         } }>
-                            <b style={ {color : 'royalblue'} } className={ 'p-0' }><EuroIcon/> TOTALE DA PAGARE</b>
+                            <b style={ {color : 'royalblue'} } className={ 'p-2' }><EuroIcon/> TOTALE DA PAGARE</b>
                         </Row>
                         <Row className={ 'flex-column align-items-end' }>
                             <Col
@@ -275,7 +275,7 @@ const CardBollettaComponent = ({bolletta , handleClickEliminazione , handleClick
                             checkCollegamento(postitList, bolletta).check ? (
                                 <Col className={'d-flex p-2'}>
                                     <Col className={'text-center'}>
-                                        <NoteAddIcon style={{color: "royalblue"}} /> Postit aggiunto
+                                        <NoteAddIcon style={{color: "royalblue"}} /> Postit collegato
                                     </Col>
 
                                     {
