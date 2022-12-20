@@ -94,7 +94,7 @@ const HomeComponent = () => {
                                 fontWeight: 'bolder',
                                 fontSize: '1.5rem'
                             }}
-                            className={'text-center'}
+                            className={'text-start'}
                         >
                             Bentornato { user.email }
                         </h4>

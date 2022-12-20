@@ -22,7 +22,7 @@ const CardSpesaComponentV2 = ({
                                   i ,
                                   spesaList ,
                                   handleClickDelLista ,
-                                  handleClickError,
+                                  handleClickError ,
                                   handleClickProdData ,
                                   handleClickAddProdottoList ,
                                   handleClickProdottoList
@@ -136,49 +136,53 @@ const CardSpesaComponentV2 = ({
                             openError={ handleClickError }
                         />
                     </Col>
+                    <Col className={ 'text-end d-flex justify-content-start align-items-center' }>
+                        <Col className={'d-flex justify-content-end align-items-center'}>
+                            <CalendarMonthIcon style={ {fontSize : '1.5rem'} }/>
+                            <h6 style={ {display : 'inline' , margin : 0} }>{ spesa.dataCreazione }</h6>
+                        </Col>
+                    </Col>
                 </Row>
-                <Row className={ 'align-items-center' }>
-                    <Col>
-                        <Col className={ 'text-end d-flex justify-content-start align-items-center' }>
+                <Row className={ 'align-items-center justify-content-center' }>
+                    <Col xs={12}>
+                        <Col className={ 'text-start d-flex justify-content-start align-items-center text-nowrap' }>
                             <h4 style={ {display : 'inline' , margin : 0} }><ShoppingBagIcon
                                 style={ {fontSize : '2rem'} }/></h4>
                             <h4 style={ {display : 'inline' , margin : 0} }>{ spesa.nome }</h4>
                         </Col>
                     </Col>
-                    <Col className={ 'text-end d-flex justify-content-end align-items-center' }>
-                        <h4 style={ {display : 'inline' , margin : 0} }><CalendarMonthIcon
-                            style={ {fontSize : '2rem'} }/></h4>
-                        <h4 style={ {display : 'inline' , margin : 0} }>{ spesa.dataCreazione }</h4>
+                    <Col
+                        xs={12}
+                        className={ 'text-end d-flex justify-content-end' }>
+                        <h6 className={ 'd-inline m-0' }>
+                            { ordinaProdotti ( spesaList[i].prodotti ).prodottoUnico.length + ' ' }PRODOTTI
+                        </h6>
                     </Col>
                 </Row>
                 <Row
-                    style={{
+                    style={ {} }
+                    className={ 'text-center my-2' }>
 
-                    }}
-                    className={'text-center my-2'}>
-                    <h4 className={'w-75 m-auto'}>
-                        {ordinaProdotti ( spesaList[i].prodotti ).prodottoUnico.length + ' '}PRODOTTI
-                    </h4>
-                    <Col xs={12}>
+                    <Col xs={ 12 }>
                         <Card
-                            style={{
-                            borderBottom: '2px solid dodgerblue',
-                                boxShadow: '0 0 5px dodgerblue'
-                        }}>
+                            style={ {
+                                borderBottom : '2px solid dodgerblue' ,
+                                boxShadow : '0 0 5px dodgerblue'
+                            } }>
 
                         </Card>
                     </Col>
                 </Row>
                 <Row
-                    style={{
-                        height: '30vh',
-                        overflow: 'auto'
-                    }}
+                    style={ {
+                        height : '30vh' ,
+                        overflow : 'auto'
+                    } }
                     className={ 'justify-content-center align-items-start' }>
                     {
                         ordinaProdotti ( spesaList[i].prodotti ).prodottoUnico.length > 0 ? (
                             <>
-                                { ordinaProdotti ( spesaList[i].prodotti ).prodottoUnico.sort().reverse().map ( (prodotto , index) => {
+                                { ordinaProdotti ( spesaList[i].prodotti ).prodottoUnico.sort ().reverse ().map ( (prodotto , index) => {
 
                                     return (
                                         <Row
@@ -218,7 +222,7 @@ const CardSpesaComponentV2 = ({
                                                             } )
                                                         } }
                                                         aria-label="add">
-                                                        <Add style={{color: 'dodgerblue'}}/>
+                                                        <Add style={ {color : 'dodgerblue'} }/>
                                                     </IconButton>
                                                 </Col>
 
@@ -233,10 +237,10 @@ const CardSpesaComponentV2 = ({
                                                 </Col>
                                             </Row>
                                             <Row className={ 'my-2' }>
-                                                <Card style={{
-                                                     backgroundImage : 'linear-gradient(to right, royalblue, dodgerblue)' ,
-                                                     color : 'whitesmoke'
-                                                }}>
+                                                <Card style={ {
+                                                    backgroundImage : 'linear-gradient(to right, royalblue, dodgerblue)' ,
+                                                    color : 'whitesmoke'
+                                                } }>
                                                     <Col
 
                                                         className={ 'text-end' }>
@@ -262,26 +266,26 @@ const CardSpesaComponentV2 = ({
 
                 </Row>
                 <Row>
-                    <Col xs={12}>
+                    <Col xs={ 12 }>
                         <Card
-                            style={{
-                                borderBottom: '2px solid dodgerblue',
-                                boxShadow: '0 0 5px dodgerblue'
-                            }}>
+                            style={ {
+                                borderBottom : '2px solid dodgerblue' ,
+                                boxShadow : '0 0 5px dodgerblue'
+                            } }>
 
                         </Card>
                     </Col>
                 </Row>
                 <Row>
                     <Col
-                        className={ "d-flex align-items-center justify-content-end mt-2" }>
+                        className={ "d-flex align-items-center justify-content-center mt-2" }>
                         <Typography
                             style={ {
                                 textAlign : "center" ,
                                 backgroundImage : 'linear-gradient(to right, royalblue, dodgerblue)' ,
-                                color : 'whitesmoke',
-                                borderRadius : '5px',
-                                boxShadow: '0 0 5px 2px dodgerblue'
+                                color : 'whitesmoke' ,
+                                borderRadius : '5px' ,
+                                boxShadow : '0 0 5px 2px dodgerblue'
                             } }
                             variant="h5" component="div">
                             Totale { rettificaPrezzo ( (ordinaProdotti ( spesaList[i].prodotti ).totalPriceList).toString () ) } €
@@ -290,7 +294,8 @@ const CardSpesaComponentV2 = ({
                 </Row>
                 <Row className={ 'justify-content-center text-center mt-4' }>
                     { // AGGIUNTA MANUALE DI UN PRODOTTO
-                        !formProdottiFlag && (<Col>
+                        !formProdottiFlag && (
+                            <Col xs={12}>
                             <Form onSubmit={ (e) => {
                                 e.preventDefault ();
                                 addProduct ( formObj , user.token ).then ( r => {
@@ -342,12 +347,12 @@ const CardSpesaComponentV2 = ({
                         <Col xs={ 6 }>
                             <ProdottiSelectComponentV2
                                 idList={ spesa.id }
-                                handleClickAddProdottoList={handleClickAddProdottoList}
+                                handleClickAddProdottoList={ handleClickAddProdottoList }
                             />
                         </Col>
                     ) }
 
-                    <Col className={ "d-flex align-items-center" }>
+                    <Col className={ "d-flex align-items-center justify-content-end" }>
                         <ChangeCircleIcon
                             onClick={ () => {
                                 setFormProdottiFlag ( !formProdottiFlag )
@@ -362,9 +367,9 @@ const CardSpesaComponentV2 = ({
                             } }/>
                         {
                             formProdottiFlag ? (
-                                <h6 className={ "d-inline" }>Inserisci manualmente</h6>
+                                <h6 className={ "d-inline" }>Inserimento manuale</h6>
                             ) : (
-                                <h6 className={ "d-inline" }>Inserisci automaticamente</h6>
+                                <h6 className={ "d-inline" }>Inserimento automatico</h6>
                             )
                         }
 
