@@ -168,7 +168,7 @@ const BolletteComponent = () => {
         if ( acquaFlag ) arrFiltered.push ( ...arr.filter ( e => e.fornitura === 'ACQUA' ) )
         if ( altroFlag ) arrFiltered.push ( ...arr.filter ( e => e.fornitura === 'ALTRO' ) )
 
-        return arrFiltered
+        return arrFiltered.reverse()
     }
 
     // OFFCANVAS //

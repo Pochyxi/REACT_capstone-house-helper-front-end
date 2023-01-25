@@ -29,6 +29,7 @@ import ChartBolletteComponent from "../Statistiche/ChartComponent/ChartBolletteC
 import HouseHelper from '../../img/HHlogo.png'
 import SpeseV2Component from "../SpeseV2/SpeseV2Component";
 import FooterComponent from "../Footer/FooterComponent";
+import StatisticheBolletteComponentV2 from "../Statistiche/ChartComponent/StatisticheV2/StatisticheBolletteComponentV2";
 
 const drawerWidth = 240;
 
@@ -450,7 +451,7 @@ const ResponsiveAppBar = (props) => {
                             <Route path="/utenze" element={ <BolletteComponent/> }/>
                             <Route path="/statistiche" element={ <StatisticheComponent/> }/>
                             <Route path="/map" element={ <MapComponent/> }/>
-                            <Route path="/chart" element={ <ChartBolletteComponent/> }/>
+                            <Route path="/chart" element={ <StatisticheBolletteComponentV2/> }/>
                         </Routes>
                     </Row>
                     <FooterComponent />

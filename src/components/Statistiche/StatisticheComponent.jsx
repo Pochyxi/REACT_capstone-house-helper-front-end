@@ -15,7 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import BackDropComponent from "../FeedBackComponents/backDropComponent";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
-import StatisticheBolletteComponentV2 from "./Grafici/StatisticheBolletteComponentV2";
+import StatisticheBolletteComponentV2 from "./ChartComponent/StatisticheV2/StatisticheBolletteComponentV2";
 
 const StatisticheComponent = () => {
 

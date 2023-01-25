@@ -68,9 +68,10 @@ const HomeComponent = () => {
 
         // qui modifico il mese se è < 10 allora sara 01 se no 10/11/12
         const parser = (number) => {
-            if ( number < 10 ) return '0' + number
+            if ( parseInt(number) < 10 ) return '0' + number
             else return number
         }
+        console.log (parser ( todayPlus5Month ))
 
         // ritorno un oggetto con la data di oggi e quella tra 5 giorni
         return {
@@ -156,7 +157,7 @@ const HomeComponent = () => {
                                                 </Col>
                                                 <Col className={ 'd-flex align-items-center' }>
                                                     <Col>
-                                                        <b>{ bolletteList.length }</b>
+                                                        <b>{ bolletteList?.length }</b>
                                                     </Col>
                                                 </Col>
                                             </Row>
@@ -175,7 +176,7 @@ const HomeComponent = () => {
                                                 </Col>
                                                 <Col className={ 'd-flex align-items-center' }>
                                                     <Col>
-                                                        <b>{ postitList.length }</b>
+                                                        <b>{ postitList?.length }</b>
                                                     </Col>
                                                 </Col>
                                             </Row>
@@ -194,7 +195,7 @@ const HomeComponent = () => {
                                                 </Col>
                                                 <Col className={ 'd-flex align-items-center' }>
                                                     <Col>
-                                                        <b>{ spesaList.length }</b>
+                                                        <b>{ spesaList?.length }</b>
                                                     </Col>
                                                 </Col>
                                             </Row>
@@ -234,7 +235,7 @@ const HomeComponent = () => {
                                         <Col>
                                             <List>
                                                 {
-                                                    postit5Giorni.length > 0 ? (
+                                                    postit5Giorni?.length > 0 ? (
                                                         <>
                                                             {
                                                                 postit5Giorni.map ( (postit , index) => {
