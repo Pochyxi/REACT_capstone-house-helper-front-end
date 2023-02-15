@@ -6,6 +6,7 @@ import {
     setSpese_LOADFlagFalse ,
     setSpese_LOADFlagTrue
 } from "./utilsActions";
+import {dynamicPort} from "../port";
 
 export const SET_USER = "SET_USER";
 export const LOG_OUT = "LOG_OUT";
@@ -57,7 +58,7 @@ export const setBolletteList = (bolletteList) => ({
 })
 
 export const logIn = (obj) => {
-    const baseEndpoint = "http://localhost:8080/auth/login";
+    const baseEndpoint = `http://localhost:${dynamicPort}/auth/login`;
 
     const header = {
         "Content-type" : "application/json" ,
@@ -95,7 +96,7 @@ export const logIn = (obj) => {
 };
 
 export const getSpeseList = (key , userId) => {
-    const baseEndpoint = `http://localhost:8080/api/lista/userId/${ userId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/lista/userId/${ userId }`;
 
     const header = {
         "Content-type" : "application/json" ,
@@ -133,7 +134,7 @@ export const getSpeseList = (key , userId) => {
 };
 
 export const getProdottiList = (key , userId) => {
-    const baseEndpoint = `http://localhost:8080/api/prodotto/user/${ userId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/prodotto/user/${ userId }`;
 
     const header = {
         "Content-type" : "application/json" ,
@@ -161,7 +162,7 @@ export const getProdottiList = (key , userId) => {
 };
 
 export const getPostitList = (key , userId) => {
-    const baseEndpoint = `http://localhost:8080/api/postit/userId/${ userId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/postit/userId/${ userId }`;
 
     const header = {
         "Content-type" : "application/json" ,
@@ -198,7 +199,7 @@ export const getPostitList = (key , userId) => {
 };
 
 export const getBolletteList = (key , userId) => {
-    const baseEndpoint = `http://localhost:8080/api/bolletta/userId/${ userId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/bolletta/userId/${ userId }`;
 
     const header = {
         "Authorization" : `Bearer ${ key }`

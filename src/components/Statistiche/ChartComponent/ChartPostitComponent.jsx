@@ -21,7 +21,8 @@ const ChartPostitComponent = ({arrOfTotal , arrOfHeightsOfTabs , monthGenerator 
                                         <td style={ {
                                             "--size" :
                                                 (((arrOfHeightsOfTabs[i] * 100) / 500) / 100) === 0 ? 0.01 :
-                                                    (((arrOfHeightsOfTabs[i] * 100) / 500) / 100)
+                                                    (((arrOfHeightsOfTabs[i] * 100) / 500) / 100),
+                                            maxHeight: '90%'
                                         } }> { monthGenerator ( i + 1 ) }
                                             <span className="tooltip">
                                         Postit { statisticGeneratorObj[monthGenerator ( i + 1 ) +

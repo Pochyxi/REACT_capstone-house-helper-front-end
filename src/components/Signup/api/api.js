@@ -1,6 +1,8 @@
 // FETCH PER LA REGISTRAZIONE DI UN NUOVO UTENTE
+import {dynamicPort} from "../../../redux/port";
+
 export const signUp = async (obj) => {
-    const baseEndpoint = "http://localhost:8080/api/users/new-raw";
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/users/new-raw`;
 
     const header = {
         "Content-type" : "application/json" ,

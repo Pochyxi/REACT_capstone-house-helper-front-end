@@ -1,8 +1,9 @@
 // FETCH PER AGGIUNGERE UNA NUOVA LISTA DELLA SPESA
 import { getProdottiList , getSpeseList } from "../../../redux/actions/actions";
+import {dynamicPort} from "../../../redux/port";
 
 export const addListaSpesa = async (obj , token) => {
-    const baseEndpoint = `http://localhost:8080/api/lista/new`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/lista/new`
     const header = {
         'Content-Type' : 'application/json' ,
         'Authorization' : 'Bearer ' + token
@@ -27,7 +28,7 @@ export const addListaSpesa = async (obj , token) => {
 
 // FETCH PER L'ELIMINAZIONE DI UN PRODOTTO
 export const removeProdottoFromDatabase = async (prodottoId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/prodotto/delete/${ prodottoId }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/prodotto/delete/${ prodottoId }`
     const header = {
         'Authorization' : 'Bearer ' + token
     }
@@ -49,7 +50,7 @@ export const removeProdottoFromDatabase = async (prodottoId , token) => {
 
 // FETCH PER L'ELIMINAZIONE DI UNA LISTA
 export const removeProductOnList = async (listaId , prodottoId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/lista/delete/lista/${ listaId }/prodotto/${ prodottoId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/lista/delete/lista/${ listaId }/prodotto/${ prodottoId }`;
 
     const header = {
         "Authorization" : `Bearer ${ token }`
@@ -74,7 +75,7 @@ export const removeProductOnList = async (listaId , prodottoId , token) => {
 
 // FETCH PER AGGIUNGERE UN PRODOTTO ALLA LISTA
 export const addProductOnList = async (listaId , prodottoId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/lista/add/lista/${ listaId }/prodotto/${ prodottoId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/lista/add/lista/${ listaId }/prodotto/${ prodottoId }`;
 
     try {
         const response = await fetch ( baseEndpoint , {
@@ -97,7 +98,7 @@ export const addProductOnList = async (listaId , prodottoId , token) => {
 
 // FETCH PER AGGIUNGERE UN NUOVO PRODOTTO NEL DATABASE
 export const addProduct = async (obj , token) => {
-    const baseEndpoint = `http://localhost:8080/api/prodotto/new`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/prodotto/new`
     const header = {
         'Content-Type' : 'application/json' ,
         'Authorization' : 'Bearer ' + token
@@ -123,7 +124,7 @@ export const addProduct = async (obj , token) => {
 
 // FETCH PER RIMUOVERE UNA LISTA DAL DATABASE
 export const removeLista = async (listaId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/lista/delete/${ listaId }`;
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/lista/delete/${ listaId }`;
 
     const header = {
         "Authorization" : `Bearer ${ token }`

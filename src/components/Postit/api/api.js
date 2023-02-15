@@ -1,8 +1,9 @@
 // FETCH PER AGGIUNGERE UN NUOVO POSTIT
 import { getPostitList } from "../../../redux/actions/actions";
+import {dynamicPort} from "../../../redux/port";
 
 export const addPostit = async (obj , key) => {
-    const baseEndpoint = `http://localhost:8080/api/postit/new`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/postit/new`
     const header = {
         'Content-Type' : 'application/json' ,
         'Authorization' : 'Bearer ' + key
@@ -28,7 +29,7 @@ export const addPostit = async (obj , key) => {
 
 // FETCH PER AGGIORNARE LO STATO DI UN POSTIT A COMPLETATO
 export const setPostitDone = async (postit , key) => {
-    const baseEndpoint = `http://localhost:8080/api/postit/update/${ postit.id }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/postit/update/${ postit.id }`
     const header = {
         'Content-Type' : 'application/json' ,
         'Authorization' : 'Bearer ' + key
@@ -56,7 +57,7 @@ export const setPostitDone = async (postit , key) => {
 
 // FETCH PER ELIMINARE UN POSTIT
 export const deletePostit = async (postitId , key) => {
-    const baseEndpoint = `http://localhost:8080/api/postit/delete/${ postitId }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/postit/delete/${ postitId }`
     const header = {
         'Authorization' : 'Bearer ' + key
     }

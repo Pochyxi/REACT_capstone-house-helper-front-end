@@ -1,7 +1,9 @@
 
 // RITORNA TUTTE LE BOLLETTE DI UN UTENTE LA CUI SCADENZA SI TROVA NEL RANGE DI DATE //
+import {dynamicPort} from "../../../redux/port";
+
 export const fetchBollettaScadenzaRange = async (inizio , fine , userId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/postit/scadenza-maggiore/${ inizio }/scadenza-minore/${ fine }/userId/${ userId }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/postit/scadenza-maggiore/${ inizio }/scadenza-minore/${ fine }/userId/${ userId }`
     const header = {
         'Authorization' : 'Bearer ' + token
     }

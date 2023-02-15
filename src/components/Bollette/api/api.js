@@ -1,9 +1,10 @@
 // FETCH DI RICERCA PER RANGE DI EMISSIONE
 
 import { getBolletteList , setBolletteList } from "../../../redux/actions/actions";
+import {dynamicPort} from "../../../redux/port";
 
 export const fetchRicercaEmissioneRange = async (inizio , fine , userId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/bolletta/emissione-range/${ inizio }/${ fine }/userId/${ userId }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/bolletta/emissione-range/${ inizio }/${ fine }/userId/${ userId }`
     const header = {
         'Authorization' : 'Bearer ' + token
     }
@@ -27,7 +28,7 @@ export const fetchRicercaEmissioneRange = async (inizio , fine , userId , token)
 
 // FETCH DI RICERCA PER RANGE DI SCADENZA
 export const fetchRicercaScadenzaRange = async (inizio , fine , userId , token) => {
-    const baseEndpoint = `http://localhost:8080/api/bolletta/scadenza-maggiore/${ inizio }/scadenza-minore/${ fine }/userId/${ userId }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/bolletta/scadenza-maggiore/${ inizio }/scadenza-minore/${ fine }/userId/${ userId }`
     const header = {
         'Authorization' : 'Bearer ' + token
     }
@@ -51,7 +52,7 @@ export const fetchRicercaScadenzaRange = async (inizio , fine , userId , token) 
 
 //FETCH PER AGGIUNGERE UNA BOLLETTA
 export const addBolletta = async (obj , key) => {
-    const baseEndpoint = `http://localhost:8080/api/bolletta/new`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/bolletta/new`
     const header = {
         'Content-Type' : 'application/json' ,
         'Authorization' : 'Bearer ' + key
@@ -76,7 +77,7 @@ export const addBolletta = async (obj , key) => {
 
 // FETCH PER ELIMINARE UNA BOLLETTA
 export const deleteBolletta = async (bollettaId , key) => {
-    const baseEndpoint = `http://localhost:8080/api/bolletta/delete/${ bollettaId }`
+    const baseEndpoint = `http://localhost:${dynamicPort}/api/bolletta/delete/${ bollettaId }`
     const header = {
         'Authorization' : 'Bearer ' + key
     }
