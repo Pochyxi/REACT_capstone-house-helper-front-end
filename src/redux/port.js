@@ -1,1 +1,1 @@
-export const dynamicPort = 50704
+export const dynamicPort = 65070
