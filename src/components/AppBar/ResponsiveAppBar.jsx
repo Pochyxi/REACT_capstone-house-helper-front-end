@@ -24,7 +24,6 @@ import { useEffect , useState } from "react";
 import { useDispatch , useSelector } from "react-redux";
 import { logout } from "../../redux/actions/actions";
 import LogoutIcon from '@mui/icons-material/Logout';
-import MapComponent from "../Home/MapComponent";
 import ChartBolletteComponent from "../Statistiche/ChartComponent/ChartBolletteComponent";
 import HouseHelper from '../../img/HHlogo.png'
 import SpeseV2Component from "../SpeseV2/SpeseV2Component";
@@ -258,7 +257,7 @@ const ResponsiveAppBar = (props) => {
 
 
     return (
-        <Box sx={ {display : 'flex'} }>
+        <Container fluid className={'p-lg-5'} sx={ {display : 'flex'} }>
             <AppBar sx={ colorNav } component="nav">
                 <Toolbar style={ {fontSize : '15px'} } className={ 'd-sm-flex justify-content-md-center' }>
                     <IconButton
@@ -449,14 +448,13 @@ const ResponsiveAppBar = (props) => {
                             <Route path="/postit" element={ <PostitComponent/> }/>
                             <Route path="/utenze" element={ <BolletteComponent/> }/>
                             <Route path="/statistiche" element={ <StatisticheComponent/> }/>
-                            <Route path="/map" element={ <MapComponent/> }/>
                             <Route path="/chart" element={ <ChartBolletteComponent/> }/>
                         </Routes>
                     </Row>
                     <FooterComponent />
                 </Container>
             </Box>
-        </Box>
+        </Container>
     );
 };
 

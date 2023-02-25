@@ -205,7 +205,7 @@ const CardSpesaComponentV2 = ({
                                                             removeProductOnList ( spesa.id , prodotto.id , user.token ).then ( r => {
                                                                 if ( r === 'success' ) {
                                                                     dispatch ( getSpeseList ( user.token , user.id ) );
-                                                                    handleClickProdottoList ()
+                                                                    // handleClickProdottoList ()
                                                                 } else {
                                                                     handleClickError ()
                                                                 }
@@ -218,7 +218,7 @@ const CardSpesaComponentV2 = ({
                                                         onClick={ () => {
                                                             addProductOnList ( spesa.id , prodotto.id , user.token ).then ( () => {
                                                                 dispatch ( getSpeseList ( user.token , user.id ) );
-                                                                handleClickAddProdottoList ()
+                                                                // handleClickAddProdottoList ()
                                                             } )
                                                         } }
                                                         aria-label="add">

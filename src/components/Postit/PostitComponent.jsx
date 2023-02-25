@@ -130,6 +130,8 @@ const PostitComponent = () => {
     //
     // FINE SNACKBARS //
 
+    console.log (postitList)
+
 
     return (
         <Container fluid>
@@ -316,7 +318,7 @@ const PostitComponent = () => {
                          {/*CARDS DEI POSTIT*/}
                         <Col>
                             {
-                                postitList.length > 0 ? (
+                                postitListFilter ( postitList ).length > 0 ? (
                                     <Row className={ "justify-content-center" }>
 
                                         {
